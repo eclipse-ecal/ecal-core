@@ -1,0 +1,122 @@
+name: Build Windows Server 2019
+
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-windows:
+    runs-on: windows-2019
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules:  'true'
+        fetch-depth: 0
+      
+    - name: Download NPCAP
+      run: |
+        cd %GITHUB_WORKSPACE%
+        powershell -Command "& 'build\windows\download_npcap.ps1'"
+      shell: cmd
+
+    - name: CMake Debug
+      run: |
+        mkdir "${{ runner.workspace }}\_build\sdk"
+        cd "${{ runner.workspace }}/_build\sdk"
+        cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
+        -DBUILD_SAMPLES=OFF ^
+        -DBUILD_ECAL_TESTS=OFF ^
+        -DECAL_LAYER_ICEORYX=OFF ^
+        -DECAL_INSTALL_SAMPLE_SOURCES=OFF ^
+        -DECAL_JOIN_MULTICAST_TWICE=OFF ^
+        -DECAL_NPCAP_SUPPORT=ON ^
+        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON ^
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON ^
+        -DECAL_THIRDPARTY_BUILD_GTEST=ON ^
+        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
+        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
+        -DBUILD_SHARED_LIBS=OFF ^
+        -DCPACK_PACK_WITH_INNOSETUP=OFF ^
+        -DCMAKE_BUILD_TYPE=Debug
+      shell: cmd
+
+    - name: CMake Complete
+      run: |
+        mkdir "${{ runner.workspace }}\_build\complete"
+        cd "${{ runner.workspace }}/_build\complete"
+        cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
+        -DBUILD_SAMPLES=ON ^
+        -DBUILD_ECAL_TESTS=ON ^
+        -DECAL_LAYER_ICEORYX=OFF ^
+        -DECAL_INSTALL_SAMPLE_SOURCES=ON ^
+        -DECAL_JOIN_MULTICAST_TWICE=OFF ^
+        -DECAL_NPCAP_SUPPORT=ON ^
+        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON ^
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON ^
+        -DECAL_THIRDPARTY_BUILD_GTEST=ON ^
+        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
+        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
+        -DBUILD_SHARED_LIBS=OFF ^
+        -DCPACK_PACK_WITH_INNOSETUP=ON ^
+        -DCMAKE_BUILD_TYPE=Release
+        mkdir "%ALLUSERSPROFILE%\eCAL"
+        copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.ini" "%ALLUSERSPROFILE%\eCAL"
+      shell: cmd
+
+    - name: Build Debug
+      run: cmake --build . --config Debug
+      working-directory: ${{ runner.workspace }}/_build/sdk
+
+    - name: Build Release
+      run: cmake --build . --config Release
+      working-directory: ${{ runner.workspace }}/_build/complete
+
+    - name: Run Tests
+      run: ctest -C Release -V
+      working-directory: ${{ runner.workspace }}/_build/complete
+
+    - name: Pack SDK
+      run: cpack -C Debug
+      working-directory: ${{ runner.workspace }}/_build/sdk
+
+    - name: Pack Complete
+      run: cpack -C Release
+      working-directory: ${{ runner.workspace }}/_build/complete
+
+    - name: Detect certificate
+      id: cert
+      run: |
+        if [[ -n "${{ secrets.CERT_BODY }}" \
+              && -n "${{ secrets.CERT_PSWD }}" \
+              && -n "${{ secrets.CERT_ALGO }}" \
+              && -n "${{ secrets.CERT_HASH }}" ]]
+        then
+          echo "ATTENTION: a certificate is available"
+          echo "::set-output name=is_available::true"
+        else
+          echo "WARNING: A certificate is not available"
+          echo "::set-output name=is_available::false"
+        fi
+      shell: bash
+
+    # https://github.com/OrhanKupusoglu/code-sign-action
+    - name: Sign the installer
+      if: fromJSON(steps.cert.outputs.is_available)
+      uses: OrhanKupusoglu/code-sign-action@v5.5.1
+      with:
+        cert_body: ${{ secrets.CERT_BODY }}
+        cert_pswd: ${{ secrets.CERT_PSWD }}
+        cert_algo: ${{ secrets.CERT_ALGO }}
+        cert_hash: ${{ secrets.CERT_HASH }}
+        folder: ${{ runner.workspace }}/_build/complete/_deploy
+        debug: true
+
+    - name: Upload Windows setup
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-setup
+        path: ${{ runner.workspace }}/_build/complete/_deploy/*.exe

@@ -1,0 +1,21 @@
+[submodule "thirdparty/asio"]
+	path = thirdparty/asio
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "thirdparty/googletest"]
+	path = thirdparty/googletest
+	url = https://github.com/google/googletest.git
+[submodule "thirdparty/protobuf"]
+	path = thirdparty/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
+[submodule "thirdparty/recycle"]
+	path = thirdparty/recycle
+	url = https://github.com/steinwurf/recycle.git
+[submodule "thirdparty/simpleini"]
+	path = thirdparty/simpleini
+	url = https://github.com/brofield/simpleini.git
+[submodule "thirdparty/tclap"]
+	path = thirdparty/tclap
+	url = https://github.com/xguerin/tclap.git
+[submodule "thirdparty/tcp_pubsub"]
+	path = thirdparty/tcp_pubsub
+	url = https://github.com/eclipse-ecal/tcp_pubsub.git

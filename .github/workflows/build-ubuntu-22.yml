@@ -1,0 +1,70 @@
+name: Build Ubuntu 22.04
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Install Dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install ninja-build libprotobuf-dev libprotoc-dev protobuf-compiler
+
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules:  'true'
+        fetch-depth: 0
+
+    - name: CMake
+      run: |
+        export CC=/usr/bin/gcc-11
+        export CXX=/usr/bin/g++-11
+        mkdir "${{ runner.workspace }}/_build"
+        cd "${{ runner.workspace }}/_build"
+        cmake $GITHUB_WORKSPACE -G "Ninja" \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+        -DHAS_CAPNPROTO=OFF \
+        -DBUILD_SAMPLES=ON \
+        -DBUILD_ECAL_TESTS=ON \
+        -DECAL_LAYER_ICEORYX=OFF \
+        -DECAL_INSTALL_SAMPLE_SOURCES=OFF \
+        -DECAL_JOIN_MULTICAST_TWICE=OFF \
+        -DECAL_NPCAP_SUPPORT=OFF \
+        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON \
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
+        -DECAL_THIRDPARTY_BUILD_GTEST=ON \
+        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON \
+        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
+        -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
+        sudo mkdir /etc/ecal
+        sudo cp "$GITHUB_WORKSPACE/ecal/core/cfg/ecal.ini" /etc/ecal
+      shell: bash
+
+    - name: Build Release
+      run: cmake --build . --config Release
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Run Tests
+      run: ctest -V
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Pack
+      run: cpack -G DEB
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Upload Debian
+      uses: actions/upload-artifact@v3
+      with:
+        name: ubuntu-debian
+        path: ${{ runner.workspace }}/_build/_deploy/*.deb
