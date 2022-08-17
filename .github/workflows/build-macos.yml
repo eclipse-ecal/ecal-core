@@ -1,0 +1,58 @@
+name: Build macOS
+
+on:  
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+    - name: Install Dependencies
+      run: brew install ninja protobuf
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules:  'true'
+        fetch-depth: 0
+
+    - name: CMake
+      run: |
+        mkdir "${{ runner.workspace }}/_build"
+        cd "${{ runner.workspace }}/_build"
+        cmake $GITHUB_WORKSPACE -G "Ninja" \
+        -DHAS_CAPNPROTO=OFF \
+        -DBUILD_SAMPLES=ON \
+        -DBUILD_ECAL_TESTS=ON \
+        -DECAL_LAYER_ICEORYX=OFF \
+        -DECAL_INSTALL_SAMPLE_SOURCES=ON \
+        -DECAL_JOIN_MULTICAST_TWICE=OFF \
+        -DECAL_NPCAP_SUPPORT=OFF \
+        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON \
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
+        -DECAL_THIRDPARTY_BUILD_GTEST=ON \
+        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON \
+        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_STANDARD=14
+        sudo mkdir /etc/ecal
+        sudo cp "$GITHUB_WORKSPACE/ecal/core/cfg/ecal.ini" /etc/ecal
+      shell: bash
+
+    - name: Build Release
+      run: cmake --build . --config Release
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Pack
+      run: cpack -G DragNDrop
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Upload DMG
+      uses: actions/upload-artifact@v2
+      with:
+        name: macos-dmg
+        path: ${{ runner.workspace }}/_build/_deploy/*.dmg
