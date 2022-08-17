@@ -21,7 +21,7 @@ sudo apt-get install ninja-build libprotobuf-dev libprotoc-dev protobuf-compiler
 ```
 
 
-#### Check it out
+### Check it out
 
 ```
 git clone https://github.com/eclipse-ecal/ecal-core.git
@@ -29,7 +29,7 @@ git submodule init
 git submodule update
 ```
 
-#### Build it
+### Build it
 
 ```
 mkdir _build
