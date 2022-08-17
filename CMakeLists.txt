@@ -253,7 +253,7 @@ add_subdirectory(ecal/core)
 # custom libs
 # --------------------------------------------------------
 add_subdirectory(lib/ecal_protobuf)
-add_subdirectory(lib/ecal_utils)
+add_subdirectory(thirdparty/ecal-utils)
 
 if(ECAL_NPCAP_SUPPORT)
   add_subdirectory(lib/udpcap)
