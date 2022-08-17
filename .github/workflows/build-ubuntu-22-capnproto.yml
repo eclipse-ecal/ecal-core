@@ -1,4 +1,4 @@
-name: Build Ubuntu 22.04 (Iceoryx)
+name: Build Ubuntu 22.04 (CapnProto)
 
 on:
   push:
