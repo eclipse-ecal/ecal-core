@@ -17,7 +17,7 @@ This is the new ecal "core-only" repository.
 
 ```
 sudo apt update
-sudo apt-get install ninja-build libprotobuf-dev libprotoc-dev protobuf-compiler
+sudo apt-get install libprotobuf-dev libprotoc-dev protobuf-compiler
 ```
 
 
