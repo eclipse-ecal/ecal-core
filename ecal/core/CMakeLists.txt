@@ -37,7 +37,7 @@ if     (IS_GIT_TREE OR NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/ecal/ecal
 endif  (IS_GIT_TREE OR NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/ecal/ecal_defs.h")
 
 
-if(ECAL_NPCAP_SUPPORT)
+if(ECAL_CORE_FEATURE_ENABLE_NPCAP)
 set(ecal_io_cpp_src_npcap 
    src/io/udp_receiver_npcap.cpp
 )
@@ -58,7 +58,7 @@ set(ecal_io_cpp_src
     ${ecal_io_cpp_src_npcap}
 )
 
-if(NOT ECAL_LAYER_ICEORYX)
+if(NOT ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_io_mem_cpp_src
       src/io/ecal_memfile.cpp
       src/io/ecal_memfile_db.cpp
@@ -76,7 +76,7 @@ if(NOT ECAL_LAYER_ICEORYX)
        src/io/win32/ecal_memfile_os.cpp
     )
   endif()
-endif(NOT ECAL_LAYER_ICEORYX)
+endif(NOT ECAL_CORE_FEATURE_ENABLE_ICEORYX)
 
 set(ecal_mon_cpp_src
     src/mon/ecal_monitoring_def.cpp
@@ -102,17 +102,17 @@ set(ecal_readwrite_cpp_src
     src/readwrite/ecal_writer_tcp.cpp
 )
 
-if(ECAL_LAYER_ICEORYX)
+if(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_readwrite_shm_cpp_src
     src/readwrite/ecal_reader_iceoryx.cpp
     src/readwrite/ecal_writer_iceoryx.cpp
   )
-else(ECAL_LAYER_ICEORYX)
+else(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_readwrite_shm_cpp_src
     src/readwrite/ecal_reader_shm.cpp
     src/readwrite/ecal_writer_shm.cpp
   )
-endif(ECAL_LAYER_ICEORYX)
+endif(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
 
 set(ecal_service_cpp_src
     src/service/ecal_clientgate.cpp
@@ -149,7 +149,7 @@ set(ecal_cmn_cpp_src
     src/sys_usage.cpp
 )
 
-if(ECAL_NPCAP_SUPPORT)
+if(ECAL_CORE_FEATURE_ENABLE_NPCAP)
 set(ecal_io_header_src_npcap 
    src/io/udp_receiver_npcap.h
 )
@@ -175,7 +175,7 @@ set(ecal_io_header_src
     ${ecal_io_header_src_npcap}
 )
 
-if(NOT ECAL_LAYER_ICEORYX)
+if(NOT ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_io_mem_header_src
       src/io/ecal_memfile.h
       src/io/ecal_memfile_db.h
@@ -197,7 +197,7 @@ if(NOT ECAL_LAYER_ICEORYX)
         src/io/linux/ecal_memfile_mtx.h
   )
   endif()
-endif(NOT ECAL_LAYER_ICEORYX)
+endif(NOT ECAL_CORE_FEATURE_ENABLE_ICEORYX)
 
 set(ecal_mon_header_src
     src/mon/ecal_monitoring_def.h
@@ -225,17 +225,17 @@ set(ecal_readwrite_header_src
     src/readwrite/ecal_tcp_pubsub_logger.h
 )
 
-if(ECAL_LAYER_ICEORYX)
+if(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_readwrite_shm_header_src
       src/readwrite/ecal_reader_iceoryx.h
       src/readwrite/ecal_writer_iceoryx.h
   )
-else(ECAL_LAYER_ICEORYX)
+else(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   set(ecal_readwrite_shm_header_src
       src/readwrite/ecal_reader_shm.h
       src/readwrite/ecal_writer_shm.h
   )
-endif(ECAL_LAYER_ICEORYX)
+endif(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
 
 set(ecal_service_header_src
     src/service/asio_server.h
@@ -420,20 +420,20 @@ target_compile_definitions(${PROJECT_NAME}
     ASIO_DISABLE_VISIBILITY
   PRIVATE eCAL_EXPORTS)
 
-if(ECAL_LAYER_ICEORYX)
+if(ECAL_CORE_FEATURE_ENABLE_ICEORYX)
   find_package(iceoryx_posh REQUIRED)
   target_link_libraries(${PROJECT_NAME} PRIVATE iceoryx_posh::iceoryx_posh)
-  target_compile_definitions(${PROJECT_NAME} PUBLIC ECAL_LAYER_ICEORYX)
+  target_compile_definitions(${PROJECT_NAME} PUBLIC ECAL_LAYER_ICEORYX) # TODO: Change to ECAL_CORE_FEATURE_ENABLE_ICEORYX
 endif()
 
-if(ECAL_NPCAP_SUPPORT)
+if(ECAL_CORE_FEATURE_ENABLE_NPCAP)
   target_compile_definitions(${PROJECT_NAME}
     PRIVATE ECAL_NPCAP_SUPPORT)
   target_link_libraries(${PROJECT_NAME}
     PRIVATE
       udpcap
   )
-endif(ECAL_NPCAP_SUPPORT)
+endif(ECAL_CORE_FEATURE_ENABLE_NPCAP)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE 

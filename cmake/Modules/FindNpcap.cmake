@@ -1,3 +1,5 @@
+#TODO: Properly return that Npcap is not found, if it is not found!
+
 set(Npcap_FOUND True)
 
 set(Npcap_DIR "${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/npcap/npcap-sdk")

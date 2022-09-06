@@ -33,12 +33,14 @@ add_subdirectory(c/services/minimal_server_c)
 # cpp samples
 # --------------------------------------------------------
 add_subdirectory(cpp/benchmarks/many_connections)
-if(HAS_CAPNPROTO)
-add_subdirectory(cpp/capnp/addressbook_snd)
-add_subdirectory(cpp/capnp/addressbook_rec)
-add_subdirectory(cpp/capnp/addressbook_rec_cb)
-add_subdirectory(cpp/capnp/addressbook_rec_dynamic)
-endif(HAS_CAPNPROTO)
+
+if(ECAL_CORE_FEATURE_ENABLE_CAPNPROTO)
+  add_subdirectory(cpp/capnp/addressbook_snd)
+  add_subdirectory(cpp/capnp/addressbook_rec)
+  add_subdirectory(cpp/capnp/addressbook_rec_cb)
+  add_subdirectory(cpp/capnp/addressbook_rec_dynamic)
+endif(ECAL_CORE_FEATURE_ENABLE_CAPNPROTO)
+
 add_subdirectory(cpp/counter/counter_rec_cb)
 add_subdirectory(cpp/counter/counter_snd)
 add_subdirectory(cpp/datarate/datarate_rec)

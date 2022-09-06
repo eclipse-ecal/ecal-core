@@ -18,14 +18,22 @@
 
 cmake_minimum_required(VERSION 3.13)
 
-include(CMakeDependentOption)
+project(eCAL)
+set(ECAL_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}") #TODO: Remove?
+
+# --------------------------------------------------------
+# CMake Module and Prefix Path
+# --------------------------------------------------------
 
 list(APPEND CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
-
-project(eCAL)
-set(ECAL_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}")
+  
+# Normalize backslashes from Windows paths
+file(TO_CMAKE_PATH "${CMAKE_MODULE_PATH}" CMAKE_MODULE_PATH)
+file(TO_CMAKE_PATH "${CMAKE_PREFIX_PATH}" CMAKE_PREFIX_PATH)
+message(STATUS "Module Path: ${CMAKE_MODULE_PATH}")
+message(STATUS "Prefix Path: ${CMAKE_PREFIX_PATH}")
 
 # --------------------------------------------------------
 # set msvc specific options
@@ -37,13 +45,6 @@ if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4")
   # support Windows 7 and newer
   add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
-# --------------------------------------------------------
-# set mingw specific options
-# --------------------------------------------------------
-if(MINGW)
-  add_definitions(-std=c++14 -DWINVER=0x0601)
 endif()
 
 # --------------------------------------------------------
@@ -65,36 +66,96 @@ if(UNIX)
   endif ()
 endif()
 
-# --------------------------------------------------------
+# ------------------------------------------------------------------------------
 # command line build options
 # use it that way cmake .. -DBUILD_SAMPLES=ON
-# --------------------------------------------------------
-option(HAS_CAPNPROTO                           "Platform supports Cap'n Proto library"                            OFF)
+# ------------------------------------------------------------------------------
 
-option(BUILD_SAMPLES                           "Build the eCAL samples"                                            ON)
-option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                       ON)
-
-option(ECAL_JOIN_MULTICAST_TWICE               "Specific Multicast Network Bug Workaround"                        OFF)
-option(ECAL_NPCAP_SUPPORT                      "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"  OFF)
-
-option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
-
-option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                               ON)
-
-# Set option regarding third party library builds
-option(ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS   "Build CMakeFunctions with eCAL"                                    ON)
-option(ECAL_THIRDPARTY_BUILD_TCP_PUBSUB        "Build tcp_pubsub library with eCAL"                                ON)
-option(ECAL_THIRDPARTY_BUILD_RECYCLE           "Build steinwurf::recylce with eCAL"                                ON)
-option(ECAL_THIRDPARTY_BUILD_GTEST             "Build gtest with eCAL"                                             ON)
-if(WIN32)
-  option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                          ON)
-else()
-  option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                         OFF)
-endif()
-
-option(CPACK_PACK_WITH_INNOSETUP               "Create Innosetup installer for the Windows build"                  ON)
+# ---- eCAL Version ----
 
 set(ECAL_BUILD_VERSION "0.0.0" CACHE STRING "Inject a build version if not building from a git repository")
+
+# ---- eCAL Components -----
+
+option(ECAL_CORE_COMPONENT_ENABLE_C_BINDING
+       "Build and install the pure C Binding of eCAL Core."
+       ON)
+
+option(ECAL_CORE_COMPONENT_ENABLE_CONFIG
+       "Build and install the eCAL config (-> ecal.ini)"
+       ON)
+
+if(WIN32)
+  option(ECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB
+       "Build and install the ecal_process_stub executable. This is needed on non-Windows operating systems to start other applications in a (graphical) terminal emulator from eCAL."
+       OFF)
+else()
+  option(ECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB
+       "Build and install the ecal_process_stub executable. This is needed on non-Windows operating systems to start other applications in a (graphical) terminal emulator from eCAL."
+       ON)
+endif()
+
+option(ECAL_CORE_COMPONENT_ENABLE_SAMPLES
+       "Build and install the eCAL samples"
+       ON)
+
+option(ECAL_CORE_COMPONENT_ENABLE_TESTS
+       "Build the eCAL tests. The tests require gtest to be available."
+       ON)
+
+option(ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE
+       "Install the sources of eCAL samples"
+       ON)
+
+# ---- eCAL Features -----
+
+option(ECAL_CORE_FEATURE_ENABLE_CAPNPROTO
+       "Compile eCAL against Cap'n Proto library. The library must be provided externally."
+       OFF)
+
+option(ECAL_CORE_FEATURE_ENABLE_NPCAP
+       "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix). Requires the npcap SDK and pcap++ to be available at compile time."
+       OFF)
+
+option(ECAL_CORE_FEATURE_ENABLE_ICEORYX
+       "Use iceoryx shared memory as local communication layer. If enabled, the original eCAL SHM layer will be replaced by iceoryx. Iceoryx must be avilable at compile time."
+       OFF)
+
+# ---- eCAL thirdparty libraries -----
+
+option(ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS
+       "Build CMakeFunctions with eCAL."
+       OFF)
+
+option(ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB
+       "Build tcp_pubsub library with eCAL. If enabled, eCAL Core builds its own version of tcp_pubsub, so it doens't neet to be provided externally."
+       OFF)
+
+option(ECAL_CORE_THIRDPARTY_BUILD_RECYCLE
+       "Build steinwurf::recylce with eCAL. If enabled, eCAL Core builds its own version of steinwurf::recycle, so it doens't neet to be provided externally."
+       OFF)
+
+option(ECAL_CORE_THIRDPARTY_BUILD_GTEST
+       "Build gtest with eCAL. If enabled, eCAL Core builds its own version of getest, so it doens't neet to be provided externally."
+       OFF)
+
+option(ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF
+       "Build protobuf with eCAL. If enabled, eCAL Core builds and installs its own version of protobuf, so it doens't neet to be provided externally."
+       OFF)
+
+# ---- Workarounds ----
+
+option(ECAL_CORE_WORKAROUND_JOIN_MULTICAST_TWICE
+       "Specific Multicast Network Bug Workaround"
+       OFF)
+
+
+
+
+
+
+
+
 
 # there is a CMake issue with testing threading availibility via TEST_RUN
 if(${CMAKE_CROSSCOMPILING})
@@ -112,12 +173,6 @@ else()
   # to make it visible it is explicitly set to OFF
   set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
 endif()
-
-# Normalize backslashes from Windows paths
-file(TO_CMAKE_PATH "${CMAKE_MODULE_PATH}" CMAKE_MODULE_PATH)
-file(TO_CMAKE_PATH "${CMAKE_PREFIX_PATH}" CMAKE_PREFIX_PATH)
-message(STATUS "Module Path: ${CMAKE_MODULE_PATH}")
-message(STATUS "Prefix Path: ${CMAKE_PREFIX_PATH}")
 
 if(MSVC)
   message(STATUS "supress thirdparty warnings for windows platform ..")
@@ -139,15 +194,11 @@ set(possible_subprojects
   CMakeFunctions
 )
 
-# We should rename the option, but don't know how to do in in a
-# backwards compatible way
-set(ECAL_THIRDPARTY_BUILD_CMAKEFUNCTIONS ${ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS})
-
 # For each dependency, check if option to build was set or not
 # if so append to `as_subproject` list
 foreach (dep IN LISTS possible_subprojects)
   string(TOUPPER ${dep} dep_upper)
-  if (ECAL_THIRDPARTY_BUILD_${dep_upper})
+  if (ECAL_CORE_THIRDPARTY_BUILD_${dep_upper})
     list(APPEND as_subproject ${dep})
   endif ()
 endforeach()
@@ -162,7 +213,7 @@ endmacro()
 foreach (dep IN LISTS possible_subprojects)
   string(TOUPPER ${dep} dep_upper)
   string(TOLOWER ${dep} dep_lower)
-  if (ECAL_THIRDPARTY_BUILD_${dep_upper})
+  if (ECAL_CORE_THIRDPARTY_BUILD_${dep_upper})
     include(thirdparty/build-${dep_lower}.cmake)
   endif ()
 endforeach ()
@@ -186,7 +237,7 @@ include(helper_functions/ecal_helper_functions)
 include(helper_functions/ecal_install_functions)
 
 if(MSVC)
-  set(eCAL_PLATFORM_TOOLSET ${CMAKE_VS_PLATFORM_TOOLSET})
+  set(eCAL_PLATFORM_TOOLSET ${CMAKE_VS_PLATFORM_TOOLSET}) #TODO: REmove?
 endif()
 
 # --------------------------------------------------------
@@ -254,21 +305,21 @@ add_subdirectory(ecal/core)
 add_subdirectory(lib/ecal_protobuf)
 add_subdirectory(thirdparty/ecal-utils)
 
-if(ECAL_NPCAP_SUPPORT)
+if(ECAL_CORE_FEATURE_ENABLE_NPCAP)
   add_subdirectory(lib/udpcap)
 endif()
 
 # --------------------------------------------------------
 # samples
 # --------------------------------------------------------
-if(BUILD_SAMPLES)
+if(ECAL_CORE_COMPONENT_ENABLE_SAMPLES)
   add_subdirectory(samples)
 endif()
 
 # ------------------------------------------------------
 # unit tests
 # --------------------------------------------------------
-if(BUILD_ECAL_TESTS)
+if(ECAL_CORE_COMPONENT_ENABLE_TESTS)
   enable_testing()
 
   add_subdirectory(testing/ecal/core_test)
@@ -289,9 +340,6 @@ add_subdirectory(ecal/core/cfg)
 # --------------------------------------------------------
 # debscripts
 # --------------------------------------------------------
-if (UNIX)
-  add_subdirectory(cpack/debscripts)
-endif()
 
 #install(EXPORT eCALTargets DESTINATION cmake NAMESPACE eCAL::)
 include(CMakePackageConfigHelpers)
@@ -328,7 +376,7 @@ install(EXPORT eCALCoreTargets
   COMPONENT sdk
 )
 
-if(ECAL_INSTALL_SAMPLE_SOURCES)
+if(ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE)
   install(DIRECTORY samples/
     DESTINATION ${eCAL_install_samples_src_dir}
   )
@@ -337,21 +385,21 @@ endif()
 # --------------------------------------------------------
 # create package
 # --------------------------------------------------------
-message(STATUS "Build Options:")
-message(STATUS "--------------------------------------------------------------------------------")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS                  : ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "HAS_CAPNPROTO                                  : ${HAS_CAPNPROTO}")
-message(STATUS "BUILD_SAMPLES                                  : ${BUILD_SAMPLES}")
-message(STATUS "BUILD_ECAL_TESTS                               : ${BUILD_ECAL_TESTS}")
-message(STATUS "ECAL_LAYER_ICEORYX                             : ${ECAL_LAYER_ICEORYX}")
-message(STATUS "ECAL_INSTALL_SAMPLE_SOURCES                    : ${ECAL_INSTALL_SAMPLE_SOURCES}")
-message(STATUS "ECAL_JOIN_MULTICAST_TWICE                      : ${ECAL_JOIN_MULTICAST_TWICE}")
-message(STATUS "ECAL_NPCAP_SUPPORT                             : ${ECAL_NPCAP_SUPPORT}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS          : ${ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_TCP_PUBSUB               : ${ECAL_THIRDPARTY_BUILD_TCP_PUBSUB}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_RECYCLE                  : ${ECAL_THIRDPARTY_BUILD_RECYCLE}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_GTEST                    : ${ECAL_THIRDPARTY_BUILD_GTEST}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_PROTOBUF                 : ${ECAL_THIRDPARTY_BUILD_PROTOBUF}")
-message(STATUS "CPACK_PACK_WITH_INNOSETUP                      : ${CPACK_PACK_WITH_INNOSETUP}")
-
-message(STATUS "--------------------------------------------------------------------------------")
+message(STATUS "eCAL Core Build Options:")
+message(STATUS "---- eCAL Core Build Options ---------------------------------------------------")
+message(STATUS "ECAL_CORE_COMPONENT_ENABLE_C_BINDING         : ${ECAL_CORE_COMPONENT_ENABLE_C_BINDING}")         #TODO: Support this setting
+message(STATUS "ECAL_CORE_COMPONENT_ENABLE_CONFIG            : ${ECAL_CORE_COMPONENT_ENABLE_CONFIG}")         #TODO: Support this setting
+message(STATUS "ECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB      : ${ECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB}")   #TODO: Support this setting
+message(STATUS "ECAL_CORE_COMPONENT_ENABLE_SAMPLES           : ${ECAL_CORE_COMPONENT_ENABLE_SAMPLES}")
+message(STATUS "ECAL_CORE_COMPONENT_ENABLE_TESTS             : ${ECAL_CORE_COMPONENT_ENABLE_TESTS}")
+message(STATUS "ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE    : ${ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE}")
+message(STATUS "ECAL_CORE_FEATURE_ENABLE_CAPNPROTO           : ${ECAL_CORE_FEATURE_ENABLE_CAPNPROTO}")
+message(STATUS "ECAL_CORE_FEATURE_ENABLE_NPCAP               : ${ECAL_CORE_FEATURE_ENABLE_NPCAP}")			# TODO: This setting does not work at the moment
+message(STATUS "ECAL_CORE_FEATURE_ENABLE_ICEORYX             : ${ECAL_CORE_FEATURE_ENABLE_ICEORYX}")
+message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS    : ${ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS}")
+message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB        : ${ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB}")
+message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_RECYCLE           : ${ECAL_CORE_THIRDPARTY_BUILD_RECYCLE}")
+message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_GTEST             : ${ECAL_CORE_THIRDPARTY_BUILD_GTEST}")
+message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF          : ${ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF}")
+message(STATUS "ECAL_CORE_WORKAROUND_JOIN_MULTICAST_TWICE    : ${ECAL_CORE_WORKAROUND_JOIN_MULTICAST_TWICE}")
+message(STATUS "---- (End eCAL Core Build Options) ---------------------------------------------")
