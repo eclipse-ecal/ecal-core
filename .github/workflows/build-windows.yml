@@ -79,9 +79,9 @@ jobs:
       run: ctest -C Release -V
       working-directory: ${{ runner.workspace }}/_build/complete
 
-    - name: Pack SDK
-      run: cpack -C Debug
-      working-directory: ${{ runner.workspace }}/_build/sdk
+    # - name: Pack SDK
+      # run: cpack -C Debug
+      # working-directory: ${{ runner.workspace }}/_build/sdk
 
     # - name: Pack Complete
       # run: cpack -C Release
