@@ -68,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ubuntu-debian
-        path: ${{ runner.workspace }}/_build/_deploy/*.deb
+        path: ${{ runner.workspace }}/_build/_package/*.deb
 
     #---------------------------------------------------------------------------
     # GNU tar - Excluding Some Files
@@ -81,7 +81,7 @@ jobs:
 #            --exclude='bin' \
 #            --exclude='doc' \
 #            --exclude='_build/_CPack_Packages' \
-#            --exclude='_build/_deploy' \
+#            --exclude='_build/_package' \
 #            --exclude='_build/lib' \
 #            --exclude='*.deb' \
 #            --exclude='*.a' \

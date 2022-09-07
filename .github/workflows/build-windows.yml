@@ -112,11 +112,11 @@ jobs:
         # cert_pswd: ${{ secrets.CERT_PSWD }}
         # cert_algo: ${{ secrets.CERT_ALGO }}
         # cert_hash: ${{ secrets.CERT_HASH }}
-        # folder: ${{ runner.workspace }}/_build/complete/_deploy
+        # folder: ${{ runner.workspace }}/_build/complete/_package
         # debug: true
 
     # - name: Upload Windows setup
       # uses: actions/upload-artifact@v2
       # with:
         # name: windows-setup
-        # path: ${{ runner.workspace }}/_build/complete/_deploy/*.exe
+        # path: ${{ runner.workspace }}/_build/complete/_package/*.exe
