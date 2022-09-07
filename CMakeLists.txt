@@ -382,8 +382,11 @@ if(ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE)
   )
 endif()
 
+# Make this package available for packing with CPack
+include("${CMAKE_CURRENT_LIST_DIR}/install/cpack_config.cmake")
+
 # --------------------------------------------------------
-# create package
+# Print options the user chose
 # --------------------------------------------------------
 message(STATUS "eCAL Core Build Options:")
 message(STATUS "---- eCAL Core Build Options ---------------------------------------------------")
