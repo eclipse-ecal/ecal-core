@@ -38,22 +38,25 @@ message(STATUS "Prefix Path: ${CMAKE_PREFIX_PATH}")
 # --------------------------------------------------------
 # set msvc specific options
 # --------------------------------------------------------
-if(MSVC)
-  message(STATUS "MSVC detected - Adding flags")
-  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-  add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4")
+#TODO: Remove or add again
+# if(MSVC)
+  # message(STATUS "MSVC detected - Adding flags")
+  # set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  # add_definitions(-D_SCL_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS)
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /W4")
   # support Windows 7 and newer
-  add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
+  # add_definitions(-D_WIN32_WINNT=0x0601)
+# endif()
 
 # --------------------------------------------------------
 # set gcc specific options
 # --------------------------------------------------------
 if(UNIX)
-  message(STATUS "GCC detected - Adding flags")
-  add_definitions(-Wall -Wextra)
+  #TODO: Remove or add again
+  # message(STATUS "GCC detected - Adding flags")
+  # add_definitions(-Wall -Wextra)
 
+  # Test-compile code with 64 bit std::atomic and add the linking flag, if required
   set(ATOMIC_TEST_CODE "
       #include <atomic>
       int main() { std::atomic<int64_t> i(0); i++; return 0; }
@@ -71,12 +74,14 @@ endif()
 # use it that way cmake .. -DBUILD_SAMPLES=ON
 # ------------------------------------------------------------------------------
 
+include(CMakeDependentOption)
+
 # ---- eCAL Version ----
 
 set(ECAL_BUILD_VERSION "0.0.0" CACHE STRING "Inject a build version if not building from a git repository")
 
 # ---- eCAL Components -----
-
+#TODO: Add option to disable ecal_protobuf
 option(ECAL_CORE_COMPONENT_ENABLE_C_BINDING
        "Build and install the pure C Binding of eCAL Core."
        ON)
@@ -123,25 +128,48 @@ option(ECAL_CORE_FEATURE_ENABLE_ICEORYX
 
 # ---- eCAL thirdparty libraries -----
 
-option(ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS
-       "Build CMakeFunctions with eCAL."
-       OFF)
+option(ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED
+       "Enable building external dependencies with eCAL. If ON, the dependencies can be specified more fine granular. If set to off, all dependencies must be provided by the user."
+       ON
+)
 
-option(ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB
-       "Build tcp_pubsub library with eCAL. If enabled, eCAL Core builds its own version of tcp_pubsub, so it doens't neet to be provided externally."
-       OFF)
+cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS
+                       "Build CMakeFunctions with eCAL."
+                       ON
+                       "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                       OFF)
 
-option(ECAL_CORE_THIRDPARTY_BUILD_RECYCLE
-       "Build steinwurf::recylce with eCAL. If enabled, eCAL Core builds its own version of steinwurf::recycle, so it doens't neet to be provided externally."
-       OFF)
+cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB
+                       "Build tcp_pubsub library with eCAL. If enabled, eCAL Core builds its own version of tcp_pubsub, so it doens't neet to be provided externally."
+                       ON
+                       "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                       OFF)
 
-option(ECAL_CORE_THIRDPARTY_BUILD_GTEST
-       "Build gtest with eCAL. If enabled, eCAL Core builds its own version of getest, so it doens't neet to be provided externally."
-       OFF)
+cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_RECYCLE
+                       "Build steinwurf::recylce with eCAL. If enabled, eCAL Core builds its own version of steinwurf::recycle, so it doens't neet to be provided externally."
+                       ON
+                       "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                       OFF)
 
-option(ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF
-       "Build protobuf with eCAL. If enabled, eCAL Core builds and installs its own version of protobuf, so it doens't neet to be provided externally."
-       OFF)
+cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_GTEST
+                       "Build gtest with eCAL. If enabled, eCAL Core builds its own version of getest, so it doens't neet to be provided externally."
+                       ON
+                       "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                       OFF)
+
+if(WIN32)
+    cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF
+                           "Build protobuf with eCAL. If enabled, eCAL Core builds and installs its own version of protobuf, so it doens't neet to be provided externally."
+                           ON
+                           "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                           OFF)
+else()
+    cmake_dependent_option(ECAL_CORE_THIRDPARTY_BUILD_PROTOBUF
+                           "Build protobuf with eCAL. If enabled, eCAL Core builds and installs its own version of protobuf, so it doens't neet to be provided externally."
+                           OFF
+                           "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED"
+                           OFF)
+endif()
 
 # ---- Workarounds ----
 
@@ -167,12 +195,13 @@ include(build_location)
 # find_project(eCAL calls shall be ignored, eCAL is build as part of the project)
 set(as_subproject eCAL)
 
-if(CMAKE_EXPORT_COMPILE_COMMANDS)
-  message(STATUS "Compilation database will be created")
-else()
-  # to make it visible it is explicitly set to OFF
-  set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
-endif()
+#TODO: Remove or add again, but this looks not very helpful
+# if(CMAKE_EXPORT_COMPILE_COMMANDS)
+  # message(STATUS "Compilation database will be created")
+# else()
+  #to make it visible it is explicitly set to OFF
+  # set(CMAKE_EXPORT_COMPILE_COMMANDS OFF)
+# endif()
 
 if(MSVC)
   message(STATUS "supress thirdparty warnings for windows platform ..")
@@ -236,9 +265,9 @@ include(helper_functions/ecal_add_functions)
 include(helper_functions/ecal_helper_functions)
 include(helper_functions/ecal_install_functions)
 
-if(MSVC)
-  set(eCAL_PLATFORM_TOOLSET ${CMAKE_VS_PLATFORM_TOOLSET}) #TODO: REmove?
-endif()
+# if(MSVC)
+  # set(eCAL_PLATFORM_TOOLSET ${CMAKE_VS_PLATFORM_TOOLSET}) #TODO: REmove?
+# endif()
 
 # --------------------------------------------------------
 # offer the user the choice of overriding the installation directories
@@ -303,7 +332,7 @@ add_subdirectory(ecal/core)
 # custom libs
 # --------------------------------------------------------
 add_subdirectory(lib/ecal_protobuf)
-add_subdirectory(thirdparty/ecal-utils)
+add_subdirectory(thirdparty/ecal-utils) #TODO: Make this available as thirdparty dependency
 
 if(ECAL_CORE_FEATURE_ENABLE_NPCAP)
   add_subdirectory(lib/udpcap)
@@ -397,8 +426,9 @@ message(STATUS "ECAL_CORE_COMPONENT_ENABLE_SAMPLES           : ${ECAL_CORE_COMPO
 message(STATUS "ECAL_CORE_COMPONENT_ENABLE_TESTS             : ${ECAL_CORE_COMPONENT_ENABLE_TESTS}")
 message(STATUS "ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE    : ${ECAL_CORE_COMPONENT_INSTALL_SAMPLE_SOURCE}")
 message(STATUS "ECAL_CORE_FEATURE_ENABLE_CAPNPROTO           : ${ECAL_CORE_FEATURE_ENABLE_CAPNPROTO}")
-message(STATUS "ECAL_CORE_FEATURE_ENABLE_NPCAP               : ${ECAL_CORE_FEATURE_ENABLE_NPCAP}")			# TODO: This setting does not work at the moment
+message(STATUS "ECAL_CORE_FEATURE_ENABLE_NPCAP               : ${ECAL_CORE_FEATURE_ENABLE_NPCAP}")
 message(STATUS "ECAL_CORE_FEATURE_ENABLE_ICEORYX             : ${ECAL_CORE_FEATURE_ENABLE_ICEORYX}")
+message(STATUS "ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED    : ${ECAL_CORE_THIRDPARTY_DEPENDENCIES_ENABLED}")
 message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS    : ${ECAL_CORE_THIRDPARTY_BUILD_CMAKEFUNCTIONS}")
 message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB        : ${ECAL_CORE_THIRDPARTY_BUILD_TCP_PUBSUB}")
 message(STATUS "ECAL_CORE_THIRDPARTY_BUILD_RECYCLE           : ${ECAL_CORE_THIRDPARTY_BUILD_RECYCLE}")
