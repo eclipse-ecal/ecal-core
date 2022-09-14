@@ -43,7 +43,7 @@ jobs:
         mkdir "${{ runner.workspace }}/_build"
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
-        -DECAL_CORE_COMPONENT_ENABLER_C_BINDING=ON \
+        -DECAL_CORE_COMPONENT_ENABLE_C_BINDING=ON \
         -DECAL_CORE_COMPONENT_ENABLE_CONFIG=ON \
         -DECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB=ON \
         -DECAL_CORE_COMPONENT_ENABLE_SAMPLES=ON \

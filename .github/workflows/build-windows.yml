@@ -28,7 +28,7 @@ jobs:
         mkdir "${{ runner.workspace }}\_build\sdk"
         cd "${{ runner.workspace }}/_build\sdk"
         cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DECAL_CORE_COMPONENT_ENABLER_C_BINDING=ON ^
+        -DECAL_CORE_COMPONENT_ENABLE_C_BINDING=ON ^
         -DECAL_CORE_COMPONENT_ENABLE_CONFIG=ON ^
         -DECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB=OFF ^
         -DECAL_CORE_COMPONENT_ENABLE_SAMPLES=OFF ^
@@ -49,7 +49,7 @@ jobs:
         mkdir "${{ runner.workspace }}\_build\complete"
         cd "${{ runner.workspace }}/_build\complete"
         cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DECAL_CORE_COMPONENT_ENABLER_C_BINDING=ON ^
+        -DECAL_CORE_COMPONENT_ENABLE_C_BINDING=ON ^
         -DECAL_CORE_COMPONENT_ENABLE_CONFIG=ON ^
         -DECAL_CORE_COMPONENT_ENABLE_PROCESS_STUB=OFF ^
         -DECAL_CORE_COMPONENT_ENABLE_SAMPLES=ON ^
