@@ -22,3 +22,6 @@
 [submodule "thirdparty/ecal-utils"]
 	path = thirdparty/ecal-utils
 	url = https://github.com/eclipse-ecal/ecal-utils.git
+[submodule "thirdparty/udpcap"]
+	path = thirdparty/udpcap
+	url = https://github.com/eclipse-ecal/udpcap
