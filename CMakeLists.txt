@@ -68,12 +68,12 @@ endif()
 
 # --------------------------------------------------------
 # command line build options
-# use it that way cmake .. -DBUILD_SAMPLES=ON
+# use it that way cmake .. -DECAL_BUILD_SAMPLES=ON
 # --------------------------------------------------------
-option(HAS_CAPNPROTO                           "Platform supports Cap'n Proto library"                            OFF)
+option(ECAL_HAS_CAPNPROTO                      "Platform supports Cap'n Proto library"                            OFF)
 
-option(BUILD_SAMPLES                           "Build the eCAL samples"                                            ON)
-option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                       ON)
+option(ECAL_BUILD_SAMPLES                      "Build the eCAL samples"                                            ON)
+option(ECAL_BUILD_TESTS                        "Build the eCAL google tests"                                       ON)
 
 option(ECAL_JOIN_MULTICAST_TWICE               "Specific Multicast Network Bug Workaround"                        OFF)
 option(ECAL_NPCAP_SUPPORT                      "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"  OFF)
@@ -95,7 +95,7 @@ else()
   option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                         OFF)
 endif()
 
-option(CPACK_PACK_WITH_INNOSETUP               "Create Innosetup installer for the Windows build"                  ON)
+option(ECAL_CPACK_PACK_WITH_INNOSETUP          "Create Innosetup installer for the Windows build"                  ON)
 
 set(ECAL_BUILD_VERSION "0.0.0" CACHE STRING "Inject a build version if not building from a git repository")
 
@@ -261,14 +261,14 @@ add_subdirectory(thirdparty/ecal-utils)
 # --------------------------------------------------------
 # samples
 # --------------------------------------------------------
-if(BUILD_SAMPLES)
+if(ECAL_BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
 
 # ------------------------------------------------------
 # unit tests
 # --------------------------------------------------------
-if(BUILD_ECAL_TESTS)
+if(ECAL_BUILD_TESTS)
   enable_testing()
 
   add_subdirectory(testing/ecal/core_test)
@@ -342,9 +342,9 @@ include(cpack/cpack_variables.cmake)
 message(STATUS "Build Options:")
 message(STATUS "--------------------------------------------------------------------------------")
 message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS                  : ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "HAS_CAPNPROTO                                  : ${HAS_CAPNPROTO}")
-message(STATUS "BUILD_SAMPLES                                  : ${BUILD_SAMPLES}")
-message(STATUS "BUILD_ECAL_TESTS                               : ${BUILD_ECAL_TESTS}")
+message(STATUS "ECAL_HAS_CAPNPROTO                             : ${ECAL_HAS_CAPNPROTO}")
+message(STATUS "ECAL_BUILD_SAMPLES                             : ${ECAL_BUILD_SAMPLES}")
+message(STATUS "ECAL_BUILD_TESTS                               : ${ECAL_BUILD_TESTS}")
 message(STATUS "ECAL_LAYER_ICEORYX                             : ${ECAL_LAYER_ICEORYX}")
 message(STATUS "ECAL_INSTALL_SAMPLE_SOURCES                    : ${ECAL_INSTALL_SAMPLE_SOURCES}")
 message(STATUS "ECAL_JOIN_MULTICAST_TWICE                      : ${ECAL_JOIN_MULTICAST_TWICE}")
@@ -355,6 +355,6 @@ message(STATUS "ECAL_THIRDPARTY_BUILD_RECYCLE                  : ${ECAL_THIRDPAR
 message(STATUS "ECAL_THIRDPARTY_BUILD_GTEST                    : ${ECAL_THIRDPARTY_BUILD_GTEST}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_PROTOBUF                 : ${ECAL_THIRDPARTY_BUILD_PROTOBUF}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_UDPCAP                   : ${ECAL_THIRDPARTY_BUILD_UDPCAP}")
-message(STATUS "CPACK_PACK_WITH_INNOSETUP                      : ${CPACK_PACK_WITH_INNOSETUP}")
+message(STATUS "ECAL_CPACK_PACK_WITH_INNOSETUP                 : ${ECAL_CPACK_PACK_WITH_INNOSETUP}")
 
 message(STATUS "--------------------------------------------------------------------------------")

@@ -1,6 +1,6 @@
 name: Build macOS
 
-on:  
+on:
   push:
   pull_request:
     branches:
@@ -25,9 +25,9 @@ jobs:
         mkdir "${{ runner.workspace }}/_build"
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
-        -DHAS_CAPNPROTO=OFF \
-        -DBUILD_SAMPLES=ON \
-        -DBUILD_ECAL_TESTS=ON \
+        -DECAL_HAS_CAPNPROTO=OFF \
+        -DECAL_BUILD_SAMPLES=ON \
+        -DECAL_BUILD_TESTS=ON \
         -DECAL_LAYER_ICEORYX=OFF \
         -DECAL_INSTALL_SAMPLE_SOURCES=ON \
         -DECAL_JOIN_MULTICAST_TWICE=OFF \

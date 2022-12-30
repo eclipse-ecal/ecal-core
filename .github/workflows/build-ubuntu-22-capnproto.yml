@@ -41,9 +41,9 @@ jobs:
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-        -DHAS_CAPNPROTO=ON \
-        -DBUILD_SAMPLES=ON \
-        -DBUILD_ECAL_TESTS=ON \
+        -DECAL_HAS_CAPNPROTO=ON \
+        -DECAL_BUILD_SAMPLES=ON \
+        -DECAL_BUILD_TESTS=ON \
         -DECAL_LAYER_ICEORYX=OFF \
         -DECAL_INSTALL_SAMPLE_SOURCES=OFF \
         -DECAL_JOIN_MULTICAST_TWICE=OFF \
