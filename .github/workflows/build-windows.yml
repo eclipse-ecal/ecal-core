@@ -1,6 +1,6 @@
 name: Build Windows Server 2019
 
-on:  
+on:
   push:
   pull_request:
     branches:
@@ -16,7 +16,7 @@ jobs:
       with:
         submodules:  'true'
         fetch-depth: 0
-      
+
     - name: Download NPCAP
       run: |
         cd %GITHUB_WORKSPACE%
@@ -28,8 +28,8 @@ jobs:
         mkdir "${{ runner.workspace }}\_build\sdk"
         cd "${{ runner.workspace }}/_build\sdk"
         cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DBUILD_SAMPLES=OFF ^
-        -DBUILD_ECAL_TESTS=OFF ^
+        -DECAL_BUILD_SAMPLES=OFF ^
+        -DECAL_BUILD_TESTS=OFF ^
         -DECAL_LAYER_ICEORYX=OFF ^
         -DECAL_INSTALL_SAMPLE_SOURCES=OFF ^
         -DECAL_JOIN_MULTICAST_TWICE=OFF ^
@@ -41,7 +41,7 @@ jobs:
         -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
         -DECAL_THIRDPARTY_BUILD_UDPCAP=ON ^
         -DBUILD_SHARED_LIBS=OFF ^
-        -DCPACK_PACK_WITH_INNOSETUP=OFF ^
+        -DECAL_CPACK_PACK_WITH_INNOSETUP=OFF ^
         -DCMAKE_BUILD_TYPE=Debug
       shell: cmd
 
@@ -50,8 +50,8 @@ jobs:
         mkdir "${{ runner.workspace }}\_build\complete"
         cd "${{ runner.workspace }}/_build\complete"
         cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DBUILD_SAMPLES=ON ^
-        -DBUILD_ECAL_TESTS=ON ^
+        -DECAL_BUILD_SAMPLES=ON ^
+        -DECAL_BUILD_TESTS=ON ^
         -DECAL_LAYER_ICEORYX=OFF ^
         -DECAL_INSTALL_SAMPLE_SOURCES=ON ^
         -DECAL_JOIN_MULTICAST_TWICE=OFF ^
@@ -63,7 +63,7 @@ jobs:
         -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
         -DECAL_THIRDPARTY_BUILD_UDPCAP=ON ^
         -DBUILD_SHARED_LIBS=OFF ^
-        -DCPACK_PACK_WITH_INNOSETUP=ON ^
+        -DECAL_CPACK_PACK_WITH_INNOSETUP=ON ^
         -DCMAKE_BUILD_TYPE=Release
         mkdir "%ALLUSERSPROFILE%\eCAL"
         copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.ini" "%ALLUSERSPROFILE%\eCAL"
