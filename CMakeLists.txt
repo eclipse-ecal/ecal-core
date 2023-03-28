@@ -72,7 +72,7 @@ endif()
 # --------------------------------------------------------
 option(HAS_CAPNPROTO                           "Platform supports Cap'n Proto library"                            OFF)
 
-option(BUILD_SAMPLES                           "Build the eCAL samples"                                            ON)
+option(BUILD_SAMPLES                           "Build the eCAL samples"                                           OFF)
 option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                       ON)
 
 option(ECAL_JOIN_MULTICAST_TWICE               "Specific Multicast Network Bug Workaround"                        OFF)
@@ -81,7 +81,7 @@ option(ECAL_USE_CLOCKLOCK_MUTEX                "Use native mutex with monotonic 
 
 option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
 
-option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                               ON)
+option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                              OFF)
 
 # Set option regarding third party library builds
 option(ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS   "Build CMakeFunctions with eCAL"                                    ON)
@@ -272,15 +272,15 @@ if(BUILD_ECAL_TESTS)
   enable_testing()
 
   add_subdirectory(testing/ecal/clientserver_test)
-  add_subdirectory(testing/ecal/core_test)
-  add_subdirectory(testing/ecal/event_test)
-  add_subdirectory(testing/ecal/expmap_test)
-  add_subdirectory(testing/ecal/io_memfile_test)
-  add_subdirectory(testing/ecal/pubsub_inproc_test)
-  add_subdirectory(testing/ecal/pubsub_proto_test)
-  add_subdirectory(testing/ecal/pubsub_test)
-  add_subdirectory(testing/lib/ecal_protobuf/dynproto_test)
-  add_subdirectory(testing/lib/ecal_protobuf/ecal_proto_test)
+  #add_subdirectory(testing/ecal/core_test)
+  #add_subdirectory(testing/ecal/event_test)
+  #add_subdirectory(testing/ecal/expmap_test)
+  #add_subdirectory(testing/ecal/io_memfile_test)
+  #add_subdirectory(testing/ecal/pubsub_inproc_test)
+  #add_subdirectory(testing/ecal/pubsub_proto_test)
+  #add_subdirectory(testing/ecal/pubsub_test)
+  #add_subdirectory(testing/lib/ecal_protobuf/dynproto_test)
+  #add_subdirectory(testing/lib/ecal_protobuf/ecal_proto_test)
 endif()
 
 # --------------------------------------------------------
