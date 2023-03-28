@@ -43,8 +43,7 @@
 #include <atomic>
 
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4100 4127 4146 4505 4800 4189 4592) // disable proto warnings
+#pragma warning(push, 0) // disable proto warnings
 #endif
 #include <ecal/core/pb/ecal.pb.h>
 #ifdef _MSC_VER
@@ -75,6 +74,8 @@ namespace eCAL
   };
 #endif
 
+  typedef std::function<void(const eCAL::pb::Sample&)> ApplySampleCallbackT;
+
   class CRegistrationReceiver
   {
   public:
@@ -91,6 +92,10 @@ namespace eCAL
 
     bool AddRegistrationCallback(enum eCAL_Registration_Event event_, RegistrationCallbackT callback_);
     bool RemRegistrationCallback(enum eCAL_Registration_Event event_);
+
+    void SetCustomApplySampleCallback(const ApplySampleCallbackT& callback_);
+    void RemCustomApplySampleCallback();
+
 
   protected:
     bool IsLocalHost(const eCAL::pb::Sample & ecal_sample_);
@@ -118,5 +123,7 @@ namespace eCAL
 
     bool m_use_network_monitoring;
     bool m_use_shm_monitoring;
+
+    ApplySampleCallbackT m_callback_custom_apply_sample;
   };
 };

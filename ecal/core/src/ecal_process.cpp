@@ -231,6 +231,7 @@ namespace eCAL
       sstream << "Network ttl              : " << Config::GetUdpMulticastTtl() << std::endl;
       sstream << "Network sndbuf           : " << GetBufferStr(Config::GetUdpMulticastSndBufSizeBytes()) << std::endl;
       sstream << "Network rcvbuf           : " << GetBufferStr(Config::GetUdpMulticastRcvBufSizeBytes()) << std::endl;
+      sstream << "Multicast cfg version    : v" << static_cast<uint32_t>(Config::GetUdpMulticastConfigVersion()) << std::endl;
       sstream << "Multicast group          : " << Config::GetUdpMulticastGroup() << std::endl;
       sstream << "Multicast mask           : " << Config::GetUdpMulticastMask() << std::endl;
       int port = Config::GetUdpMulticastPort();
@@ -884,6 +885,7 @@ namespace eCAL
           // Buffer size is too small.
           return "";
         }
+        length = strlen(buf);
 #elif defined(ECAL_OS_QNX)
         size_t length {0};
         // TODO: Find a suitable method on QNX to retrieve current process name

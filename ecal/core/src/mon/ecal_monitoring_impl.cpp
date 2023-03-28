@@ -34,6 +34,8 @@
 #include <regex>
 #include <sstream>
 
+#include "../ecal_registration_receiver.h"
+
 namespace eCAL
 {
   ////////////////////////////////////////////////////////
@@ -101,19 +103,8 @@ namespace eCAL
     // get name of this host
     m_host_name = Process::GetHostName();
 
-    // start registration receive thread
-    if (!Config::Experimental::IsNetworkMonitoringDisabled())
-    {
-      CRegistrationReceiveThread::RegMessageCallbackT regmsg_cb = std::bind(&CSampleReceiver::Receive, this, std::placeholders::_1);
-      m_reg_rcv_threadcaller = std::make_shared<CRegistrationReceiveThread>(regmsg_cb);
-    }
-
-#ifndef ECAL_LAYER_ICEORYX
-    if (Config::Experimental::IsShmMonitoringEnabled())
-    {
-      m_shm_reg_rcv_threadcaller = std::make_shared<CShmRegistrationReceiveThread>(std::bind(&CMonitoringImpl::ApplySample, this, std::placeholders::_1, eCAL::pb::tl_none));
-    }
-#endif
+    // utilize registration receiver to enrich monitor information
+    g_registration_receiver()->SetCustomApplySampleCallback([this](const auto& ecal_sample_){ApplySample(ecal_sample_, eCAL::pb::tl_none);});
 
     // start logging receive thread
     CLoggingReceiveThread::LogMessageCallbackT logmsg_cb = std::bind(&CMonitoringImpl::RegisterLogMessage, this, std::placeholders::_1);
@@ -137,6 +128,7 @@ namespace eCAL
 
   void CMonitoringImpl::Destroy()
   {
+    g_registration_receiver()->RemCustomApplySampleCallback();
     m_init = false;
   }
 
@@ -552,7 +544,7 @@ namespace eCAL
 
     // iterate map
     m_process_map.map->remove_deprecated();
-    for (auto process : (*m_process_map.map))
+    for (const auto& process : (*m_process_map.map))
     {
       // add host
       eCAL::pb::Process* pMonProcs = monitoring_.add_processes();
@@ -626,7 +618,7 @@ namespace eCAL
 
     // iterate map
     m_server_map.map->remove_deprecated();
-    for (auto service : (*m_server_map.map))
+    for (const auto& service : (*m_server_map.map))
     {
       // add host
       eCAL::pb::Service* pMonService = monitoring_.add_services();
@@ -676,7 +668,7 @@ namespace eCAL
 
     // iterate map
     m_client_map.map->remove_deprecated();
-    for (auto service : (*m_client_map.map))
+    for (const auto& service : (*m_client_map.map))
     {
       // add host
       eCAL::pb::Client* pMonClient = monitoring_.add_clients();
@@ -711,7 +703,7 @@ namespace eCAL
 
     // iterate map
     map_.map->remove_deprecated();
-    for (auto topic : (*map_.map))
+    for (const auto& topic : (*map_.map))
     {
       // add topic
       eCAL::pb::Topic* pMonTopic = monitoring_.add_topics();

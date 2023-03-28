@@ -32,6 +32,8 @@
 
 #include "ecal_log_impl.h"
 
+#include "io/udp_configurations.h"
+
 #include <mutex>
 #include <stdio.h>
 
@@ -47,8 +49,7 @@
 #include <chrono>
 
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4100 4127 4146 4505 4800 4189 4592) // disable proto warnings
+#pragma warning(push, 0) // disable proto warnings
 #endif
 #include <ecal/core/pb/monitoring.pb.h>
 #ifdef _MSC_VER
@@ -159,14 +160,13 @@ namespace eCAL
       // for local only communication we switch to local broadcasting to bypass vpn's or firewalls
       if (local_only)
       {
-        attr.ipaddr    = "127.255.255.255";
         attr.broadcast = true;
       }
       else
       {
-        attr.ipaddr    = Config::GetUdpMulticastGroup();
         attr.broadcast = false;
       }
+      attr.ipaddr   = UDP::GetLoggingMulticastAddress();
       attr.port     = Config::GetUdpMulticastPort() + NET_UDP_MULTICAST_PORT_LOG_OFF;
       attr.loopback = true;
       attr.ttl      = Config::GetUdpMulticastTtl();

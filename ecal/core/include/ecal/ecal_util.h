@@ -25,7 +25,11 @@
 #pragma once
 
 #include <ecal/ecal_os.h>
+
+#include <map>
+#include <unordered_map>
 #include <string>
+#include <vector>
 
 namespace eCAL
 {
@@ -135,6 +139,26 @@ namespace eCAL
     **/
     ECAL_API void PubShareDescription(bool state_);
 
+    struct STopicInfo
+    {
+      std::string type_name;        //!< Type name of the current topic
+      std::string type_description; //!< Descriptor string of the current topic.
+    };
+    /**
+     * @brief Get complete topic map (including types and descriptions).
+     *
+     * @param topic_info_map_  Map to store the topic informations.
+     *                         Map containing { TopicName -> (Type, Description) } mapping of all topics that are currently known.
+    **/
+    ECAL_API void GetTopics(std::unordered_map<std::string, STopicInfo>& topic_info_map_);
+
+    /**
+     * @brief Get all topic names.
+     *
+     * @param topic_names_ Vector to store the topic names.
+    **/
+    ECAL_API void GetTopicNames(std::vector<std::string>& topic_names_);
+
     /**
      * @brief Gets type name of the specified topic.
      *
@@ -172,6 +196,28 @@ namespace eCAL
      * @return  Topic description.
     **/
     ECAL_API std::string GetTopicDescription(const std::string& topic_name_);
+
+    struct SServiceMethodInfo
+    {
+      std::string request_type_name;         //!< Type name of the request message
+      std::string request_type_description;  //!< Descriptor string of the request description
+      std::string response_type_name;        //!< Type name of the response message
+      std::string response_type_description; //!< Descriptor string of the response message
+    };
+    /**
+     * @brief Get complete service map (including request and response types and descriptions).
+     *
+     * @param service_info_map_  Map to store the topic informations.
+     *                           Map { (ServiceName, MethodName) -> ( (ReqType, ReqDescription), (RespType, RespDescription) ) } mapping of all currently known services.
+    **/
+    ECAL_API void GetServices(std::map<std::tuple<std::string, std::string>, Util::SServiceMethodInfo>& service_info_map_);
+
+    /**
+     * @brief Get all service/method names.
+     *
+     * @param service_method_names_ Vector to store the service/method tuples (Vector { (ServiceName, MethodName) }).
+    **/
+    ECAL_API void GetServiceNames(std::vector<std::tuple<std::string, std::string>>& service_method_names_);
 
     /**
      * @brief Gets service method request and response type names.

@@ -32,6 +32,8 @@
 #include "service/ecal_clientgate.h"
 #include "service/ecal_servicegate.h"
 
+#include "io/udp_configurations.h"
+
 namespace eCAL
 {
   size_t CUdpRegistrationReceiver::ApplySample(const eCAL::pb::Sample& ecal_sample_, eCAL::pb::eTLayerType /*layer_*/)
@@ -108,7 +110,9 @@ namespace eCAL
                          m_callback_client(nullptr),
                          m_callback_process(nullptr),
                          m_use_network_monitoring(false),
-                         m_use_shm_monitoring(false)
+                         m_use_shm_monitoring(false),
+                         m_callback_custom_apply_sample([](const auto&){})
+
   {
   };
 
@@ -135,14 +139,13 @@ namespace eCAL
       // for local only communication we switch to local broadcasting to bypass vpn's or firewalls
       if (local_only)
       {
-        attr.ipaddr = "127.255.255.255";
         attr.broadcast = true;
       }
       else
       {
-        attr.ipaddr = Config::GetUdpMulticastGroup();
         attr.broadcast = false;
       }
+      attr.ipaddr = UDP::GetRegistrationMulticastAddress();
       attr.port = Config::GetUdpMulticastPort() + NET_UDP_MULTICAST_PORT_REG_OFF;
       attr.loopback = true;
       attr.rcvbuf = Config::GetUdpMulticastRcvBufSizeBytes();
@@ -203,6 +206,8 @@ namespace eCAL
   size_t CRegistrationReceiver::ApplySample(const eCAL::pb::Sample& ecal_sample_)
   {
     if(!m_created) return 0;
+
+    m_callback_custom_apply_sample(ecal_sample_);
 
     std::string reg_sample;
     if ( m_callback_pub
@@ -342,5 +347,15 @@ namespace eCAL
     if (host_name.empty()) return false;
     if (host_name != eCAL::Process::GetHostName()) return false;
     return true;
+  }
+
+  void CRegistrationReceiver::SetCustomApplySampleCallback(const ApplySampleCallbackT& callback_)
+  {
+    m_callback_custom_apply_sample = callback_;
+  }
+
+  void CRegistrationReceiver::RemCustomApplySampleCallback()
+  {
+    m_callback_custom_apply_sample = [](const auto&){};
   }
 };
