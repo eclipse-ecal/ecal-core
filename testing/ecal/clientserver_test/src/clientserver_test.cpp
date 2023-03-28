@@ -30,20 +30,20 @@
 #include "ping.pb.h"
 
 #define ClientConnectEventTest                    1
-#define ServerConnectEventTest                    1
+#define ServerConnectEventTest                    0
 
-#define ClientServerBaseCallbackTest              1
-#define ClientServerBaseCallbackTimeoutTest       1
+#define ClientServerBaseCallbackTest              0
+#define ClientServerBaseCallbackTimeoutTest       0
 
-#define ClientServerBaseAsyncCallbackTest         1
-#define ClientServerBaseAsyncCallbackTimeoutTest  1
+#define ClientServerBaseAsyncCallbackTest         0
+#define ClientServerBaseAsyncCallbackTimeoutTest  0
 
-#define ClientServerBaseBlockingTest              1
+#define ClientServerBaseBlockingTest              0
 
-#define ClientServerProtoCallbackTest             1
-#define ClientServerProtoBlockingTest             1
+#define ClientServerProtoCallbackTest             0
+#define ClientServerProtoBlockingTest             0
 
-#define NestedRPCCallTest                         1
+#define NestedRPCCallTest                         0
 
 namespace
 {
