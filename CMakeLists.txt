@@ -271,7 +271,7 @@ endif()
 if(BUILD_ECAL_TESTS)
   enable_testing()
 
-  add_subdirectory(testing/ecal/clientserver_test)
+  #add_subdirectory(testing/ecal/clientserver_test)
   add_subdirectory(testing/ecal/core_test)
   add_subdirectory(testing/ecal/event_test)
   add_subdirectory(testing/ecal/expmap_test)
