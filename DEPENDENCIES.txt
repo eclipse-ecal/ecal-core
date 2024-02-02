@@ -1,0 +1,29 @@
+ASIO:
+	path = thirdparty/asio/asio
+	url = https://github.com/chriskohlhoff/asio.git
+  version = 1.29.0
+
+Googletest:
+	path = thirdparty/gtest/googletest
+	url = https://github.com/google/googletest.git
+  version = v1.14.0
+
+Protobuf:
+	path = thirdparty/protobuf/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
+  version = v3.11.0
+
+Simpleini:
+	path = thirdparty/simpleini/simpleini
+	url = https://github.com/brofield/simpleini.git
+  version = v4.20
+
+Tclap:
+	path = thirdparty/tclap/tclap
+	url = https://github.com/xguerin/tclap.git
+  version = v1.2.5
+
+Udpcap:
+	path = thirdparty/udpcap/udpcap
+	url = https://github.com/eclipse-ecal/udpcap
+  version = 1.0.2

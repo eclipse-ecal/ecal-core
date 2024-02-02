@@ -1,124 +1,278 @@
 name: Build Windows Server 2019
 
-on:  
+on:
   push:
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build-windows:
     runs-on: windows-2019
 
+    strategy:
+      matrix:
+        build_configuration:
+          ########################################
+          - name: "default"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_COMMAND_LINE: "ON"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "ON"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "full"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_COMMAND_LINE: "ON"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "ON"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "ON"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "ON"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_proto"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_udp_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "OFF"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_tcp_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_shm_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "client_server"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "client_server_proto"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "monitoring_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "ON"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules:  'true'
         fetch-depth: 0
-      
-    - name: Download NPCAP
-      run: |
-        cd %GITHUB_WORKSPACE%
-        powershell -Command "& 'build\windows\download_npcap.ps1'"
-      shell: cmd
 
-    - name: CMake Debug
+    - name: CMake
       run: |
-        mkdir "${{ runner.workspace }}\_build\sdk"
-        cd "${{ runner.workspace }}/_build\sdk"
-        cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DBUILD_SAMPLES=OFF ^
-        -DBUILD_ECAL_TESTS=OFF ^
-        -DECAL_LAYER_ICEORYX=OFF ^
-        -DECAL_INSTALL_SAMPLE_SOURCES=OFF ^
-        -DECAL_JOIN_MULTICAST_TWICE=OFF ^
-        -DECAL_NPCAP_SUPPORT=ON ^
-        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON ^
-        -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON ^
-        -DECAL_THIRDPARTY_BUILD_GTEST=ON ^
-        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
-        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
-        -DECAL_THIRDPARTY_BUILD_UDPCAP=ON ^
-        -DBUILD_SHARED_LIBS=OFF ^
-        -DCPACK_PACK_WITH_INNOSETUP=OFF ^
-        -DCMAKE_BUILD_TYPE=Debug
-      shell: cmd
-
-    - name: CMake Complete
-      run: |
-        mkdir "${{ runner.workspace }}\_build\complete"
-        cd "${{ runner.workspace }}/_build\complete"
-        cmake %GITHUB_WORKSPACE% -G "Visual Studio 16 2019" -A x64 -T v140 ^
-        -DBUILD_SAMPLES=ON ^
-        -DBUILD_ECAL_TESTS=ON ^
-        -DECAL_LAYER_ICEORYX=OFF ^
-        -DECAL_INSTALL_SAMPLE_SOURCES=ON ^
-        -DECAL_JOIN_MULTICAST_TWICE=OFF ^
-        -DECAL_NPCAP_SUPPORT=ON ^
-        -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON ^
-        -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON ^
-        -DECAL_THIRDPARTY_BUILD_GTEST=ON ^
-        -DECAL_THIRDPARTY_BUILD_RECYCLE=ON ^
-        -DECAL_THIRDPARTY_BUILD_TCP_PUBSUB=ON ^
-        -DECAL_THIRDPARTY_BUILD_UDPCAP=ON ^
-        -DBUILD_SHARED_LIBS=OFF ^
-        -DCPACK_PACK_WITH_INNOSETUP=ON ^
-        -DCMAKE_BUILD_TYPE=Release
+        mkdir "${{ runner.workspace }}\_build\"
+        cd "${{ runner.workspace }}/_build"
+        cmake %GITHUB_WORKSPACE% -A x64 ^
+        -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} ^
+        -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES_PROTOBUF }} ^
+        -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} ^
+        -DECAL_CORE_BUILD_TESTS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS_PROTOBUF }} ^
+        -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} ^
+        -DECAL_CORE_COMMAND_LINE=${{ matrix.build_configuration.ECAL_CORE_COMMAND_LINE }} ^
+        -DECAL_CORE_REGISTRATION=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION }} ^
+        -DECAL_CORE_REGISTRATION_SHM=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION_SHM }} ^
+        -DECAL_CORE_MONITORING=${{ matrix.build_configuration.ECAL_CORE_MONITORING }} ^
+        -DECAL_CORE_PUBLISHER=${{ matrix.build_configuration.ECAL_CORE_PUBLISHER }} ^
+        -DECAL_CORE_SUBSCRIBER=${{ matrix.build_configuration.ECAL_CORE_SUBSCRIBER }} ^
+        -DECAL_CORE_SERVICE=${{ matrix.build_configuration.ECAL_CORE_SERVICE }} ^
+        -DECAL_CORE_TIMEPLUGIN=${{ matrix.build_configuration.ECAL_CORE_TIMEPLUGIN }} ^
+        -DECAL_CORE_TRANSPORT_UDP=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_UDP }} ^
+        -DECAL_CORE_TRANSPORT_TCP=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_TCP }} ^
+        -DECAL_CORE_TRANSPORT_SHM=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_SHM }} ^
+        -DECAL_CORE_NPCAP_SUPPORT=${{ matrix.build_configuration.ECAL_CORE_NPCAP_SUPPORT }} ^
+        -DBUILD_SHARED_LIBS=${{ matrix.build_configuration.BUILD_SHARED_LIBS }} ^
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_configuration.CMAKE_BUILD_TYPE }}
         mkdir "%ALLUSERSPROFILE%\eCAL"
-        copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.ini" "%ALLUSERSPROFILE%\eCAL"
+        copy "%GITHUB_WORKSPACE%\src\core\cfg\ecal.ini" "%ALLUSERSPROFILE%\eCAL"
       shell: cmd
-
-    - name: Build Debug
-      run: cmake --build . --config Debug
-      working-directory: ${{ runner.workspace }}/_build/sdk
 
     - name: Build Release
       run: cmake --build . --config Release
-      working-directory: ${{ runner.workspace }}/_build/complete
+      working-directory: ${{ runner.workspace }}/_build
 
     - name: Run Tests
       run: ctest -C Release -V
-      working-directory: ${{ runner.workspace }}/_build/complete
-
-    - name: Pack SDK
-      run: cpack -C Debug
-      working-directory: ${{ runner.workspace }}/_build/sdk
-
-    - name: Pack Complete
-      run: cpack -C Release
-      working-directory: ${{ runner.workspace }}/_build/complete
-
-    - name: Detect certificate
-      id: cert
-      run: |
-        if [[ -n "${{ secrets.CERT_BODY }}" \
-              && -n "${{ secrets.CERT_PSWD }}" \
-              && -n "${{ secrets.CERT_ALGO }}" \
-              && -n "${{ secrets.CERT_HASH }}" ]]
-        then
-          echo "ATTENTION: a certificate is available"
-          echo "::set-output name=is_available::true"
-        else
-          echo "WARNING: A certificate is not available"
-          echo "::set-output name=is_available::false"
-        fi
-      shell: bash
-
-    # https://github.com/OrhanKupusoglu/code-sign-action
-    - name: Sign the installer
-      if: fromJSON(steps.cert.outputs.is_available)
-      uses: OrhanKupusoglu/code-sign-action@v5.5.1
-      with:
-        cert_body: ${{ secrets.CERT_BODY }}
-        cert_pswd: ${{ secrets.CERT_PSWD }}
-        cert_algo: ${{ secrets.CERT_ALGO }}
-        cert_hash: ${{ secrets.CERT_HASH }}
-        folder: ${{ runner.workspace }}/_build/complete/_deploy
-        debug: true
-
-    - name: Upload Windows setup
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows-setup
-        path: ${{ runner.workspace }}/_build/complete/_deploy/*.exe
+      working-directory: ${{ runner.workspace }}/_build

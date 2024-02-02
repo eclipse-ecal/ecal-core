@@ -1,0 +1,289 @@
+name: Build on Ubuntu
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-ubuntu:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04]
+
+        build_configuration:
+          ########################################
+          - name: "default"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_COMMAND_LINE: "ON"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "ON"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "full"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_COMMAND_LINE: "ON"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "ON"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "ON"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_proto"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_udp_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "OFF"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "ON"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_tcp_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "ON"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "pubsub_shm_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "ON"
+            ECAL_CORE_SUBSCRIBER: "ON"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "ON"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "client_server"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "client_server_proto"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "ON"
+            ECAL_CORE_MONITORING: "OFF"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "ON"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+          ########################################
+          - name: "monitoring_only"
+          ########################################
+            ECAL_CORE_BUILD_SAMPLES: "ON"
+            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
+            ECAL_CORE_BUILD_TESTS: "ON"
+            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
+            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_COMMAND_LINE: "OFF"
+            ECAL_CORE_REGISTRATION: "ON"
+            ECAL_CORE_REGISTRATION_SHM: "OFF"
+            ECAL_CORE_MONITORING: "ON"
+            ECAL_CORE_PUBLISHER: "OFF"
+            ECAL_CORE_SUBSCRIBER: "OFF"
+            ECAL_CORE_SERVICE: "OFF"
+            ECAL_CORE_TIMEPLUGIN: "OFF"
+            ECAL_CORE_TRANSPORT_UDP: "OFF"
+            ECAL_CORE_TRANSPORT_TCP: "OFF"
+            ECAL_CORE_TRANSPORT_SHM: "OFF"
+            ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            BUILD_SHARED_LIBS: "OFF"
+            CMAKE_BUILD_TYPE: "Release"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install ninja-build libprotobuf-dev libprotoc-dev protobuf-compiler
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+
+    - name: CMake
+      run: |
+        mkdir "${{ runner.workspace }}/_build"
+        cd "${{ runner.workspace }}/_build"
+        cmake $GITHUB_WORKSPACE -G "Ninja" \
+        -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} \
+        -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES_PROTOBUF }} \
+        -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} \
+        -DECAL_CORE_BUILD_TESTS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS_PROTOBUF }} \
+        -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} \
+        -DECAL_CORE_COMMAND_LINE=${{ matrix.build_configuration.ECAL_CORE_COMMAND_LINE }} \
+        -DECAL_CORE_REGISTRATION=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION }} \
+        -DECAL_CORE_REGISTRATION_SHM=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION_SHM }} \
+        -DECAL_CORE_MONITORING=${{ matrix.build_configuration.ECAL_CORE_MONITORING }} \
+        -DECAL_CORE_PUBLISHER=${{ matrix.build_configuration.ECAL_CORE_PUBLISHER }} \
+        -DECAL_CORE_SUBSCRIBER=${{ matrix.build_configuration.ECAL_CORE_SUBSCRIBER }} \
+        -DECAL_CORE_SERVICE=${{ matrix.build_configuration.ECAL_CORE_SERVICE }} \
+        -DECAL_CORE_TIMEPLUGIN=${{ matrix.build_configuration.ECAL_CORE_TIMEPLUGIN }} \
+        -DECAL_CORE_TRANSPORT_UDP=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_UDP }} \
+        -DECAL_CORE_TRANSPORT_TCP=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_TCP }} \
+        -DECAL_CORE_TRANSPORT_SHM=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_SHM }} \
+        -DECAL_CORE_NPCAP_SUPPORT=${{ matrix.build_configuration.ECAL_CORE_NPCAP_SUPPORT }} \
+        -DBUILD_SHARED_LIBS=${{ matrix.build_configuration.BUILD_SHARED_LIBS }} \
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_configuration.CMAKE_BUILD_TYPE }} \
+        -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
+        -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
+        sudo mkdir /etc/ecal
+        sudo cp "$GITHUB_WORKSPACE/src/core/cfg/ecal.ini" /etc/ecal
+      shell: bash
+
+    - name: Build Release
+      run: cmake --build . --config Release
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Run Tests
+      run: ctest -V
+      working-directory: ${{ runner.workspace }}/_build
