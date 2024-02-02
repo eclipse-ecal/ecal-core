@@ -59,7 +59,9 @@ namespace
     return false;
   }
 
-  bool ApplyServiceToDescGate(const std::string& service_name_ ,const std::string& method_name_, const eCAL::SDataTypeInformation& request_type_information_, const eCAL::SDataTypeInformation& response_type_information_)
+  bool ApplyServiceToDescGate(const std::string& service_name_, const std::string& method_name_,
+    const eCAL::SDataTypeInformation& request_type_information_,
+    const eCAL::SDataTypeInformation& response_type_information_)
   {
     if (eCAL::g_descgate() != nullptr)
     {

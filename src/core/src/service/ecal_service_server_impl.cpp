@@ -25,6 +25,7 @@
 
 #include "registration/ecal_registration_provider.h"
 #include "ecal_servicegate.h"
+#include "ecal_descgate.h"
 #include "ecal_global_accessors.h"
 #include "ecal_service_server_impl.h"
 #include "ecal_service_singleton_manager.h"
@@ -34,6 +35,27 @@
 #include <iostream>
 #include <sstream>
 #include <utility>
+
+namespace
+{
+  bool ApplyServiceToDescGate(const std::string& service_name_, const std::string& method_name_,
+    const eCAL::SDataTypeInformation& request_type_information_,
+    const eCAL::SDataTypeInformation& response_type_information_)
+  {
+    if (eCAL::g_descgate() != nullptr)
+    {
+      // calculate the quality of the current info
+      eCAL::CDescGate::QualityFlags quality = eCAL::CDescGate::QualityFlags::NO_QUALITY;
+      if (!(request_type_information_.name.empty() && response_type_information_.name.empty()))
+        quality |= eCAL::CDescGate::QualityFlags::TYPE_AVAILABLE;
+      if (!(request_type_information_.descriptor.empty() && response_type_information_.descriptor.empty()))
+        quality |= eCAL::CDescGate::QualityFlags::DESCRIPTION_AVAILABLE;
+
+      return eCAL::g_descgate()->ApplyServiceDescription(service_name_, method_name_, request_type_information_, response_type_information_, quality);
+    }
+    return false;
+  }
+}
 
 namespace eCAL
 {
@@ -195,10 +217,8 @@ namespace eCAL
       }
     }
 
-    return true;
-
     // update descgate infos
-    //return ApplyServiceToDescGate(method_, request_type_information_, response_type_information_);
+    return ApplyServiceToDescGate(m_service_name, method_, request_type_information_, response_type_information_);
   }
 
   // add callback function for server method calls
