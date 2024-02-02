@@ -23,16 +23,27 @@ set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 project(monitoring_reg)
 
 find_package(eCAL REQUIRED)
+find_package(Protobuf REQUIRED)
 
 set(monitoring_reg_src
     src/monitoring_reg.cpp
 )
 
+set(monitoring_reg_proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/ecal.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/host.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/layer.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/process.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/service.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/topic.proto
+)
 ecal_add_sample(${PROJECT_NAME} ${monitoring_reg_src})
+PROTOBUF_TARGET_CPP(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf ${monitoring_reg_proto})
 
-target_link_libraries(${PROJECT_NAME} eCAL::core)
-
-target_link_libraries(${PROJECT_NAME} eCAL::core_pb)
+target_link_libraries(${PROJECT_NAME}
+    eCAL::core
+    protobuf::libprotobuf
+)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 

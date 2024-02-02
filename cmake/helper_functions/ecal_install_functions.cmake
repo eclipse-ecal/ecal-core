@@ -129,6 +129,7 @@ function(ecal_install_gtest TARGET_NAME)
   )
 endfunction()
 
+
 # Samples are sample applications that demonstrate eCAL capability
 # They will be installed to "${INSTALL_BIN_DIR}/ecal_samples"
 function(ecal_install_sample TARGET_NAME)
@@ -143,5 +144,15 @@ function(ecal_install_time_plugin TARGET_NAME)
 install(TARGETS ${TARGET_NAME}
     RUNTIME DESTINATION  "${eCAL_install_bin_dir}/${ECAL_TIME_PLUGIN_DIR}" COMPONENT app
     LIBRARY DESTINATION  "${eCAL_install_lib_dir}/${ECAL_TIME_PLUGIN_DIR}" COMPONENT app
+  )
+endfunction()
+
+# Use this function to install monitor plugins
+# We need to provide a similar function for installing custom build plugins.
+# For some unknown reason, a MODULE dll on Windows is considered as LIBRARY, not RUNTIME
+function(ecal_install_mon_plugin TARGET_NAME)
+install(TARGETS ${TARGET_NAME}
+    RUNTIME DESTINATION  "${eCAL_install_bin_dir}/${ECAL_MON_PLUGIN_DIR}" COMPONENT app
+    LIBRARY DESTINATION  $<IF:$<BOOL:${WIN32}>,${eCAL_install_bin_dir}/${ECAL_MON_PLUGIN_DIR},${eCAL_install_lib_dir}/${ECAL_MON_PLUGIN_DIR}> COMPONENT app
   )
 endfunction()
