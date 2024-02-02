@@ -7,15 +7,16 @@
 
 The **e**nhanced **C**ommunication **A**bstraction **L**ayer (eCAL) is a middleware that enables scalable, high performance interprocess communication on a single computer node or between different nodes in a computer network. 
 
-This eCAL core version has an reduced functionality compared to [Eclipse-eCAL](https://github.com/eclipse-ecal/ecal) (see _Differences to Eclipse-eCAL_). The goal of this reduced approach is to create a modular core with clearly defined dependencies depending on the configured features.
+This eCAL core version has an reduced functionality compared to [Eclipse-eCAL](https://github.com/eclipse-ecal/ecal) (see _Differences to Eclipse-eCAL_). The goal of this reduced approach is to create a modular core with clearly defined dependencies depending on the configured features. This will enormously reduce the integration effort into other projects and the porting effort to specific hardware.
 
 Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
 
 ## Differences to Eclipse-eCAL
-  - internal communication (discovery) independent from google::protobuf library
-  - communication core only, no additional eco system tools
+  - internal communication (discovery) independent from google::protobuf library (replaced by nanopb)
   - C++ and C language support only
   - reduced API functionality (removal of all deprecated functions)
+
+Besides this differences this core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
 
 ## How to build
 
