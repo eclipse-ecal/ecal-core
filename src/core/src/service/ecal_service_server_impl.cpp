@@ -38,7 +38,8 @@
 
 namespace
 {
-  bool ApplyServiceToDescGate(const std::string& service_name_, const std::string& method_name_,
+  // TODO: remove me with new CDescGate
+  bool ApplyServiceDescription(const std::string& service_name_, const std::string& method_name_,
     const eCAL::SDataTypeInformation& request_type_information_,
     const eCAL::SDataTypeInformation& response_type_information_)
   {
@@ -218,7 +219,7 @@ namespace eCAL
     }
 
     // update descgate infos
-    return ApplyServiceToDescGate(m_service_name, method_, request_type_information_, response_type_information_);
+    return ApplyServiceDescription(m_service_name, method_, request_type_information_, response_type_information_);
   }
 
   // add callback function for server method calls

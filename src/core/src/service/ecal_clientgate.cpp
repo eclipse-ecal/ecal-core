@@ -27,7 +27,8 @@
 
 namespace
 {
-  bool ApplyServiceToDescGate(const std::string& service_name_, const std::string& method_name_,
+  // TODO: remove me with new CDescGate
+  bool ApplyServiceDescription(const std::string& service_name_, const std::string& method_name_,
     const eCAL::SDataTypeInformation& request_type_information_,
     const eCAL::SDataTypeInformation& response_type_information_)
   {
@@ -140,7 +141,7 @@ namespace eCAL
       response_type.name       = method.resp_type;
       response_type.descriptor = method.resp_desc;
 
-      ApplyServiceToDescGate(ecal_sample_service.sname, method.mname, request_type, response_type);
+      ApplyServiceDescription(ecal_sample_service.sname, method.mname, request_type, response_type);
     }
 
     // create service key

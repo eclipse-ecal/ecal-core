@@ -30,7 +30,8 @@
 
 namespace
 {
-  bool ApplyTopicToDescGate(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
+  // TODO: remove me with new CDescGate
+  bool ApplyTopicDescription(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -149,7 +150,7 @@ namespace eCAL
 #endif
 
     // store description
-    ApplyTopicToDescGate(topic_name, topic_information);
+    ApplyTopicDescription(topic_name, topic_information);
 
     // register local subscriber
     const std::shared_lock<std::shared_timed_mutex> lock(m_topic_name_datawriter_sync);
@@ -203,7 +204,7 @@ namespace eCAL
 #endif
 
     // store description
-    ApplyTopicToDescGate(topic_name, topic_information);
+    ApplyTopicDescription(topic_name, topic_information);
 
     // register external subscriber
     const std::shared_lock<std::shared_timed_mutex> lock(m_topic_name_datawriter_sync);
