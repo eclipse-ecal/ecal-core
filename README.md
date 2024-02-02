@@ -16,7 +16,7 @@ Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
   - C++ and C language support only
   - reduced API functionality (removal of all deprecated functions)
 
-Besides this differences this core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
+In addition to these differences this core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
 
 ## How to build
 
