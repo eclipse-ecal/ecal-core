@@ -31,7 +31,8 @@
 
 namespace
 {
-  bool ApplyTopicToDescGate(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
+  // TODO: remove me with new CDescGate
+  bool ApplyTopicDescription(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -135,7 +136,7 @@ namespace eCAL
     g_subgate()->Register(topic_name_, m_datareader);
 
     // register to description gateway for type / description checking
-    ApplyTopicToDescGate(topic_name_, topic_info_);
+    ApplyTopicDescription(topic_name_, topic_info_);
 
     // we made it :-)
     m_created = true;

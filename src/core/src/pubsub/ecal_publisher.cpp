@@ -32,7 +32,8 @@
 
 namespace
 {
-  bool ApplyTopicToDescGate(const std::string& topic_name_, const eCAL::SDataTypeInformation& data_type_info_)
+  // TODO: remove me with new CDescGate
+  bool ApplyTopicDescription(const std::string& topic_name_, const eCAL::SDataTypeInformation& data_type_info_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -140,7 +141,7 @@ namespace eCAL
     g_pubgate()->Register(topic_name_, m_datawriter);
 
     // register to description gateway for type / description checking
-    ApplyTopicToDescGate(topic_name_, data_type_info_);
+    ApplyTopicDescription(topic_name_, data_type_info_);
 
     // we made it :-)
     m_created = true;
@@ -188,7 +189,7 @@ namespace eCAL
   bool CPublisher::SetDataTypeInformation(const SDataTypeInformation& data_type_info_)
   {
     if (m_datawriter == nullptr) return false;
-    ApplyTopicToDescGate(m_datawriter->GetTopicName(), data_type_info_);
+    ApplyTopicDescription(m_datawriter->GetTopicName(), data_type_info_);
     return m_datawriter->SetDataTypeInformation(data_type_info_);
   }
 

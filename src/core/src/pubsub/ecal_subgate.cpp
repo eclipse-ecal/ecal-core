@@ -30,7 +30,8 @@
 
 namespace
 {
-  bool ApplyTopicToDescGate(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
+  // TODO: remove me with new CDescGate
+  bool ApplyTopicDescription(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -245,7 +246,7 @@ namespace eCAL
     // store description
     const std::string& topic_id = ecal_sample.tid;
     const SDataTypeInformation topic_info{ eCALSampleToTopicInformation(ecal_sample_) };
-    ApplyTopicToDescGate(topic_name, topic_info);
+    ApplyTopicDescription(topic_name, topic_info);
 
     // get process id
     const std::string process_id = std::to_string(ecal_sample_.topic.pid);
@@ -277,7 +278,7 @@ namespace eCAL
 
     // store description
     const SDataTypeInformation topic_info{ eCALSampleToTopicInformation(ecal_sample_) };
-    ApplyTopicToDescGate(topic_name, topic_info);
+    ApplyTopicDescription(topic_name, topic_info);
 
     // unregister local publisher
     const std::shared_lock<std::shared_timed_mutex> lock(m_topic_name_datareader_sync);

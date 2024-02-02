@@ -39,7 +39,8 @@
 
 namespace
 {
-  bool ApplyTopicToDescGate(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_, bool topic_is_a_publisher_)
+  // TODO: remove me with new CDescGate
+  bool ApplyTopicDescription(const std::string& topic_name_, const eCAL::SDataTypeInformation& topic_info_, bool topic_is_a_publisher_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -59,7 +60,10 @@ namespace
     return false;
   }
 
-  bool ApplyServiceToDescGate(const std::string& service_name_ ,const std::string& method_name_, const eCAL::SDataTypeInformation& request_type_information_, const eCAL::SDataTypeInformation& response_type_information_)
+  // TODO: remove me with new CDescGate
+  bool ApplyServiceDescription(const std::string& service_name_, const std::string& method_name_,
+    const eCAL::SDataTypeInformation& request_type_information_,
+    const eCAL::SDataTypeInformation& response_type_information_)
   {
     if (eCAL::g_descgate() != nullptr)
     {
@@ -404,7 +408,7 @@ namespace eCAL
       topic_info.name       = topic_datatype.name;
       topic_info.descriptor = topic_datatype.desc;
 
-      ApplyTopicToDescGate(topic_name, topic_info, topic_is_a_publisher);
+      ApplyTopicDescription(topic_name, topic_info, topic_is_a_publisher);
 
       //////////////////////////////////////////////
       // send sample to registration layer
@@ -438,7 +442,7 @@ namespace eCAL
         response_type.name       = method.resp_type;
         response_type.descriptor = method.resp_desc;
 
-        ApplyServiceToDescGate(ecal_sample_service.sname, method.mname, request_type, response_type);
+        ApplyServiceDescription(ecal_sample_service.sname, method.mname, request_type, response_type);
       }
 
       //////////////////////////////////////////////

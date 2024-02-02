@@ -22,7 +22,30 @@
 **/
 
 #include "ecal_clientgate.h"
+#include "ecal_descgate.h"
 #include "service/ecal_service_client_impl.h"
+
+namespace
+{
+  // TODO: remove me with new CDescGate
+  bool ApplyServiceDescription(const std::string& service_name_, const std::string& method_name_,
+    const eCAL::SDataTypeInformation& request_type_information_,
+    const eCAL::SDataTypeInformation& response_type_information_)
+  {
+    if (eCAL::g_descgate() != nullptr)
+    {
+      // calculate the quality of the current info
+      eCAL::CDescGate::QualityFlags quality = eCAL::CDescGate::QualityFlags::NO_QUALITY;
+      if (!(request_type_information_.name.empty() && response_type_information_.name.empty()))
+        quality |= eCAL::CDescGate::QualityFlags::TYPE_AVAILABLE;
+      if (!(request_type_information_.descriptor.empty() && response_type_information_.descriptor.empty()))
+        quality |= eCAL::CDescGate::QualityFlags::DESCRIPTION_AVAILABLE;
+
+      return eCAL::g_descgate()->ApplyServiceDescription(service_name_, method_name_, request_type_information_, response_type_information_, quality);
+    }
+    return false;
+  }
+}
 
 namespace eCAL
 {
@@ -106,6 +129,20 @@ namespace eCAL
     service.version     = static_cast<unsigned int>(ecal_sample_service.version);
     service.tcp_port_v0 = static_cast<unsigned short>(ecal_sample_service.tcp_port_v0);
     service.tcp_port_v1 = static_cast<unsigned short>(ecal_sample_service.tcp_port_v1);
+
+    // store description
+    for (const auto& method : ecal_sample_service.methods)
+    {
+      SDataTypeInformation request_type;
+      request_type.name       = method.req_type;
+      request_type.descriptor = method.req_desc;
+
+      SDataTypeInformation response_type{};
+      response_type.name       = method.resp_type;
+      response_type.descriptor = method.resp_desc;
+
+      ApplyServiceDescription(ecal_sample_service.sname, method.mname, request_type, response_type);
+    }
 
     // create service key
     service.key = service.sname + ":" + service.sid + "@" + std::to_string(service.pid) + "@" + service.hname;
