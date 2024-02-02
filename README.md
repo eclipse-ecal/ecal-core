@@ -12,6 +12,7 @@ This eCAL core version has an reduced functionality compared to [Eclipse-eCAL](h
 Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
 
 ## Differences to Eclipse-eCAL
+  - internal communication (discovery) independent from google::protobuf library
   - communication core only, no additional eco system tools
   - C++ and C language support only
   - reduced API functionality (removal of all deprecated functions)
