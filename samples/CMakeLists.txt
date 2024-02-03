@@ -63,7 +63,9 @@ endif()
 # misc
 add_subdirectory(cpp/misc/process)
 add_subdirectory(cpp/misc/time)
-add_subdirectory(cpp/misc/timer)
+if(ECAL_CORE_PUBLISHER)
+  add_subdirectory(cpp/misc/timer)
+endif()
 
 # monitoring
 if(ECAL_CORE_MONITORING)
