@@ -60,6 +60,29 @@ if(ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
   add_subdirectory(cpp/benchmarks/perftool)
 endif()
 
+# misc
+add_subdirectory(cpp/misc/process)
+add_subdirectory(cpp/misc/time)
+add_subdirectory(cpp/misc/timer)
+
+# monitoring
+if(ECAL_CORE_MONITORING)
+  add_subdirectory(cpp/monitoring/monitoring_get_services)
+  add_subdirectory(cpp/monitoring/monitoring_get_topics)
+  add_subdirectory(cpp/monitoring/monitoring_performance)
+  if(ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
+    add_subdirectory(cpp/monitoring/monitoring_rec)
+    add_subdirectory(cpp/monitoring/monitoring_reg)
+  endif()
+endif()
+
+# orchestration
+if(ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER AND ECAL_CORE_SERVICE AND ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
+  add_subdirectory(cpp/orchestration/component1)
+  add_subdirectory(cpp/orchestration/component2)
+  add_subdirectory(cpp/orchestration/orchestrator)
+endif()
+
 # pubsub
 if(ECAL_CORE_PUBLISHER)
   add_subdirectory(cpp/pubsub/binary/binary_snd)
@@ -89,17 +112,6 @@ endif()
 if(ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
   if(ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
     add_subdirectory(cpp/pubsub/protobuf/person_loopback)
-  endif()
-endif()
-
-# monitoring
-if(ECAL_CORE_MONITORING)
-  add_subdirectory(cpp/monitoring/monitoring_get_services)
-  add_subdirectory(cpp/monitoring/monitoring_get_topics)
-  add_subdirectory(cpp/monitoring/monitoring_performance)
-  if(ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
-    add_subdirectory(cpp/monitoring/monitoring_rec)
-    add_subdirectory(cpp/monitoring/monitoring_reg)
   endif()
 endif()
 

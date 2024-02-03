@@ -20,22 +20,20 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
-project(proto_dyn_json_rec)
+project(time)
 
 find_package(eCAL REQUIRED)
 
-set(proto_dyn_json_rec_src
-    src/proto_dyn_json_rec.cpp
+set(time_src
+    src/time.cpp
 )
 
-ecal_add_sample(${PROJECT_NAME} ${proto_dyn_json_rec_src})
+ecal_add_sample(${PROJECT_NAME} ${time_src})
 
 target_link_libraries(${PROJECT_NAME} eCAL::core)
 
-find_package(Protobuf REQUIRED)
-target_link_libraries(${PROJECT_NAME} protobuf::libprotobuf)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 
 ecal_install_sample(${PROJECT_NAME})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER samples/cpp/pubsub/protobuf)
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER samples/cpp/misc)
