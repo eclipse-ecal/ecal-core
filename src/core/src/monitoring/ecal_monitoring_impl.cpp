@@ -270,7 +270,7 @@ namespace eCAL
       std::string topic_datatype_encoding = sample_topic.tdatatype.encoding;
       std::string topic_datatype_name     = sample_topic.tdatatype.name;
       std::string topic_datatype_desc     = sample_topic.tdatatype.desc;
-      auto attr                           = sample_topic.attr;
+      auto attr           = sample_topic.attr;
 
       // try to get topic info
       const std::string topic_name_id  = topic_name + topic_id;
@@ -458,16 +458,15 @@ namespace eCAL
     // update flexible content
     ServerInfo.rclock++;
     ServerInfo.methods.clear();
-    for (int i = 0; i < sample_.service.methods.size(); ++i)
+    for (const auto& sample_service_method : sample_.service.methods)
     {
       struct Monitoring::SMethodMon method;
-      auto sample_service_methods = sample_.service.methods[i];
-      method.mname      = sample_service_methods.mname;
-      method.req_type   = sample_service_methods.req_type;
-      method.req_desc   = sample_service_methods.req_desc;
-      method.resp_type  = sample_service_methods.resp_type;
-      method.resp_desc  = sample_service_methods.resp_desc;
-      method.call_count = sample_service_methods.call_count;
+      method.mname      = sample_service_method.mname;
+      method.req_type   = sample_service_method.req_type;
+      method.req_desc   = sample_service_method.req_desc;
+      method.resp_type  = sample_service_method.resp_type;
+      method.resp_desc  = sample_service_method.resp_desc;
+      method.call_count = sample_service_method.call_count;
       ServerInfo.methods.push_back(method);
     }
 
