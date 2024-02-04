@@ -94,6 +94,15 @@ function(ecal_install_private_shared_library TARGET_NAME)
   )
 endfunction()
 
+# Applications are all APPS that come with the eCAL Installation
+function(ecal_install_app TARGET_NAME)
+  set(oneValueArgs START_MENU_NAME)
+  cmake_parse_arguments(ECAL_INSTALL_APP "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  install(TARGETS ${TARGET_NAME}
+    RUNTIME DESTINATION  "${eCAL_install_app_dir}" COMPONENT app
+  )
+endfunction()
+
 function(ecal_install_gtest TARGET_NAME)
   install(TARGETS ${TARGET_NAME}
     RUNTIME DESTINATION  "${eCAL_install_tests_dir}" COMPONENT testing

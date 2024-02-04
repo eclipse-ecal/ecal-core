@@ -347,7 +347,7 @@ install(EXPORT eCALCoreTargets
 )
 
 # Make this package available for packing with CPack
-include("${CMAKE_CURRENT_LIST_DIR}/cpack_config.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cpack/cpack_config.cmake")
 
 # --------------------------------------------------------
 # log settings
