@@ -311,10 +311,6 @@ endif()
 # --------------------------------------------------------
 # debscripts
 # --------------------------------------------------------
-if (UNIX)
-  add_subdirectory(cpack/debscripts)
-endif()
-
 #install(EXPORT eCALTargets DESTINATION cmake NAMESPACE eCAL::)
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
@@ -350,11 +346,12 @@ install(EXPORT eCALCoreTargets
   COMPONENT sdk
 )
 
-# --------------------------------------------------------
-# create package
-# --------------------------------------------------------
-#include(cpack/cpack_variables.cmake)
+# Make this package available for packing with CPack
+include("${CMAKE_CURRENT_LIST_DIR}/cpack_config.cmake")
 
+# --------------------------------------------------------
+# log settings
+# --------------------------------------------------------
 message(STATUS "--------------------------------------------------------------------------------")
 message(STATUS "Build Options:")
 message(STATUS "--------------------------------------------------------------------------------")

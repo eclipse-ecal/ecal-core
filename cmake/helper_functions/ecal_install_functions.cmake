@@ -94,35 +94,6 @@ function(ecal_install_private_shared_library TARGET_NAME)
   )
 endfunction()
 
-# Applications are all APPS that come with the eCAL Installation
-# e.g. the eCAL Monitor, eCAL Player, eCAL recorder
-#
-function(ecal_install_app TARGET_NAME)
-  set(oneValueArgs START_MENU_NAME)
-  cmake_parse_arguments(ECAL_INSTALL_APP "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-  install(TARGETS ${TARGET_NAME}
-    RUNTIME DESTINATION  "${eCAL_install_app_dir}" COMPONENT app
-  )
-  set_property(INSTALL "${eCAL_install_app_dir}/$<TARGET_FILE_NAME:${TARGET_NAME}>"
-    PROPERTY CPACK_START_MENU_SHORTCUTS "${ECAL_INSTALL_APP_START_MENU_NAME}"
-  )
-
-  if(UNIX AND (DEFINED ECAL_INSTALL_APP_START_MENU_NAME))
-    configure_file("${CMAKE_CURRENT_LIST_DIR}/appmenu/app.desktop.in"
-                   "${CMAKE_CURRENT_BINARY_DIR}/appmenu/ecal_${TARGET_NAME}.desktop"
-                   @ONLY)
-    configure_file("${CMAKE_CURRENT_LIST_DIR}/appmenu/icon.png"
-                   "${CMAKE_CURRENT_BINARY_DIR}/appmenu/ecal_${TARGET_NAME}.png"
-                   COPYONLY)
-
-   INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/appmenu/ecal_${TARGET_NAME}.png"
-           DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps/")
-
-    INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/appmenu/ecal_${TARGET_NAME}.desktop"
-            DESTINATION "${CMAKE_INSTALL_DATADIR}/applications/")
-  endif()
-endfunction()
-
 function(ecal_install_gtest TARGET_NAME)
   install(TARGETS ${TARGET_NAME}
     RUNTIME DESTINATION  "${eCAL_install_tests_dir}" COMPONENT testing
@@ -144,15 +115,5 @@ function(ecal_install_time_plugin TARGET_NAME)
 install(TARGETS ${TARGET_NAME}
     RUNTIME DESTINATION  "${eCAL_install_bin_dir}/${ECAL_TIME_PLUGIN_DIR}" COMPONENT app
     LIBRARY DESTINATION  "${eCAL_install_lib_dir}/${ECAL_TIME_PLUGIN_DIR}" COMPONENT app
-  )
-endfunction()
-
-# Use this function to install monitor plugins
-# We need to provide a similar function for installing custom build plugins.
-# For some unknown reason, a MODULE dll on Windows is considered as LIBRARY, not RUNTIME
-function(ecal_install_mon_plugin TARGET_NAME)
-install(TARGETS ${TARGET_NAME}
-    RUNTIME DESTINATION  "${eCAL_install_bin_dir}/${ECAL_MON_PLUGIN_DIR}" COMPONENT app
-    LIBRARY DESTINATION  $<IF:$<BOOL:${WIN32}>,${eCAL_install_bin_dir}/${ECAL_MON_PLUGIN_DIR},${eCAL_install_lib_dir}/${ECAL_MON_PLUGIN_DIR}> COMPONENT app
   )
 endfunction()

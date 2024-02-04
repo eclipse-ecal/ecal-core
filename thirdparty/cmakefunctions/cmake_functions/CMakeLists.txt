@@ -39,5 +39,3 @@ foreach (f ${file_list})
   get_filename_component( dir ${f} DIRECTORY )
   install( FILES ${f} DESTINATION "${cmake_functions_install_cmake_dir}/${dir}" )
 endforeach()
-
-include(cmake/cpack_variables.cmake)
