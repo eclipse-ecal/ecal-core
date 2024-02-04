@@ -287,3 +287,13 @@ jobs:
     - name: Run Tests
       run: ctest -V
       working-directory: ${{ runner.workspace }}/_build
+
+    - name: Pack
+      run: cpack -C Release
+      working-directory: ${{ runner.workspace }}/_build
+
+    - name: Upload Debian
+      uses: actions/upload-artifact@v3
+      with:
+        name: ubuntu-debian
+        path: ${{ runner.workspace }}/_build/_package/*.deb
