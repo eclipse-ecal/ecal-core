@@ -282,12 +282,12 @@ jobs:
 #      run: ctest -V
 #      working-directory: ${{ runner.workspace }}/_build
 
-    - name: Pack
-      run: cpack -G DragNDrop
-      working-directory: ${{ runner.workspace }}/_build
+#    - name: Pack
+#      run: cpack -G DragNDrop
+#      working-directory: ${{ runner.workspace }}/_build
 
-    - name: Upload DMG
-      uses: actions/upload-artifact@v3
-      with:
-        name: macos-dmg
-        path: ${{ runner.workspace }}/_build/_package/*.dmg
+#    - name: Upload DMG
+#      uses: actions/upload-artifact@v3
+#      with:
+#        name: macos-dmg
+#        path: ${{ runner.workspace }}/_build/_package/*.dmg
