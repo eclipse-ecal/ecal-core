@@ -60,4 +60,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE ECAL_CORE_TRANSPORT_SHM)
 
 ecal_install_gtest(${PROJECT_NAME})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER testing/ecal)
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER tests/ecal/io)
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
+    ${${PROJECT_NAME}_src}
+)

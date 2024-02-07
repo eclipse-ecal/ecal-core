@@ -30,10 +30,18 @@ set(pubsub_test_src
 )
 
 ecal_add_gtest(${PROJECT_NAME} ${pubsub_test_src})
+
 target_link_libraries(${PROJECT_NAME}
   PRIVATE
     eCAL::core
     Threads::Threads)
+
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+
 ecal_install_gtest(${PROJECT_NAME})
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER testing/ecal)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER tests/ecal/pubsub)
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
+    ${${PROJECT_NAME}_src}
+)
