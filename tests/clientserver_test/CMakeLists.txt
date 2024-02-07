@@ -25,6 +25,7 @@ create_targets_protobuf()
 
 set(${PROJECT_NAME}_src
   src/atomic_signalable.h
+  src/clientserver_getservices.cpp
   src/clientserver_test.cpp
 )
 
