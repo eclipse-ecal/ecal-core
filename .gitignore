@@ -30,3 +30,6 @@ cmake-build-*
 
 # Visual Studio code
 *.vscode
+
+#QtCreator
+*.txt.user

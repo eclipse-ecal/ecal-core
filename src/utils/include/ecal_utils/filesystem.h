@@ -19,9 +19,10 @@
 
 #pragma once
 
+#include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <sys/stat.h>
 
