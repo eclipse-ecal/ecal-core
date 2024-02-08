@@ -19,9 +19,10 @@
 
 #pragma once
 
-#include <time.h>
+#include <bits/types/clockid_t.h>
 #include <mutex>
 #include <string>
+#include <time.h>
 
 #define CLOCKFD 3
 #define FD_TO_CLOCKID(fd)   ((~(clockid_t) (fd) << 3) | CLOCKFD)

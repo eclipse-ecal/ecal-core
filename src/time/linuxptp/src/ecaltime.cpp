@@ -17,8 +17,10 @@
  * ========================= eCAL LICENSE =================================
 */
 
-#include <ecaltime.h>
 #include <chrono>
+#include <cstring>
+#include <ecaltime.h>
+#include <string>
 #include <thread>
 
 #include "ecal_time_linuxptp.h"

@@ -19,14 +19,16 @@
 
 #include "ecal_time_linuxptp.h"
 
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <time.h>
-#include <linux/ptp_clock.h>
 #include <errno.h>
-#include <string.h>
+#include <fcntl.h>
 #include <iostream>
+#include <linux/ptp_clock.h>
+#include <mutex>
+#include <string.h>
+#include <string>
+#include <sys/ioctl.h>
+#include <time.h>
+#include <unistd.h>
 
 Linuxptp::Linuxptp():
   is_initialized(false),
