@@ -125,7 +125,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API virtual bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
+    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
 
     /**
      * @brief Creates this object.
@@ -134,14 +134,14 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API virtual bool Create(const std::string& topic_name_);
+    ECAL_API bool Create(const std::string& topic_name_);
 
     /**
      * @brief Destroys this object. 
      *
      * @return  True if it succeeds, false if it fails. 
     **/
-    ECAL_API virtual bool Destroy();
+    ECAL_API bool Destroy();
 
     /**
      * @brief Setup topic information.
@@ -282,7 +282,7 @@ namespace eCAL
      *
      * @return  The topic information.
     **/
-    ECAL_API virtual SDataTypeInformation GetDataTypeInformation() const;
+    ECAL_API SDataTypeInformation GetDataTypeInformation() const;
 
     /**
      * @brief Dump the whole class state into a string. 

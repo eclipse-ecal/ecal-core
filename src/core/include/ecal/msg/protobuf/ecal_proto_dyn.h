@@ -170,7 +170,7 @@ namespace eCAL
         *
         * @return true if succeeded otherwise false (details see error_s_)
       **/
-      static bool GetFileDescriptorFromString(const std::string& proto_string_, google::protobuf::FileDescriptorProto* file_desc_proto_, std::string& error_s_);
+      bool GetFileDescriptorFromString(const std::string& proto_string_, google::protobuf::FileDescriptorProto* file_desc_proto_, std::string& error_s_);
 
     protected:
       google::protobuf::DescriptorPool        m_descriptor_pool;
@@ -180,15 +180,15 @@ namespace eCAL
     class ParserErrorCollector : public google::protobuf::io::ErrorCollector
     {
     public:
-      ParserErrorCollector() = default;
-      ~ParserErrorCollector() override = default;
+      ParserErrorCollector() {}
+      ~ParserErrorCollector() {}
 
       std::string Get() { return (m_ss.str()); }
 
       // Indicates that there was an error in the input at the given line and
       // column numbers.  The numbers are zero-based, so you may want to add
       // 1 to each before printing them.
-      void AddError(int line_, int column_, const std::string& msg_) override
+      void AddError(int line_, int column_, const std::string& msg_)
       {
         Add(line_, column_, "ERROR: " + msg_);
       }
@@ -196,7 +196,7 @@ namespace eCAL
       // Indicates that there was a warning in the input at the given line and
       // column numbers.  The numbers are zero-based, so you may want to add
       // 1 to each before printing them.
-      void AddWarning(int line_, int column_, const std::string& msg_) override
+      void AddWarning(int line_, int column_, const std::string& msg_)
       {
         Add(line_, column_, "WARNING: " + msg_);
       }
@@ -213,8 +213,8 @@ namespace eCAL
     class DescriptorErrorCollector : public google::protobuf::DescriptorPool::ErrorCollector
     {
     public:
-      DescriptorErrorCollector() = default;
-      ~DescriptorErrorCollector() override = default;
+      DescriptorErrorCollector() {}
+      ~DescriptorErrorCollector() {}
 
       std::string Get() { return (m_ss.str()); }
 
@@ -224,7 +224,7 @@ namespace eCAL
         const google::protobuf::Message* descriptor,    // Descriptor of the erroneous element.
         ErrorLocation location,                         // One of the location constants, above.
         const std::string& message                      // Human-readable error message.
-      ) override
+      )
       {
         Add(filename, element_name, descriptor, location, "ERROR: " + message);
       }
@@ -235,7 +235,7 @@ namespace eCAL
         const google::protobuf::Message* descriptor,    // Descriptor of the erroneous element.
         ErrorLocation location,                         // One of the location constants, above.
         const std::string& message                      // Human-readable error message.
-      ) override
+      )
       {
         Add(filename, element_name, descriptor, location, "WARNING: " + message);
       }

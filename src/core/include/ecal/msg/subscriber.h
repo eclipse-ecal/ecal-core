@@ -64,7 +64,7 @@ namespace eCAL
     {
     }
 
-    ~CMsgSubscriber() override = default;
+    virtual ~CMsgSubscriber() = default;
 
     /**
      * @brief  Copy Constructor is not available.
@@ -79,7 +79,7 @@ namespace eCAL
     /**
     * @brief  Move Constructor
     **/
-    CMsgSubscriber(CMsgSubscriber&& rhs) noexcept
+    CMsgSubscriber(CMsgSubscriber&& rhs)
       : CSubscriber(std::move(rhs))
       , m_cb_callback(std::move(rhs.m_cb_callback))
     {
@@ -97,7 +97,7 @@ namespace eCAL
     /**
      * @brief  Move assignment
     **/
-    CMsgSubscriber& operator=(CMsgSubscriber&& rhs) noexcept
+    CMsgSubscriber& operator=(CMsgSubscriber&& rhs)
     {
       CSubscriber::operator=(std::move(rhs));
 
@@ -123,7 +123,7 @@ namespace eCAL
      *
      * @return  true if it succeeds, false if it fails.
     **/
-    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_) override
+    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_)
     {
       return(CSubscriber::Create(topic_name_, topic_info_));
     }
@@ -133,7 +133,7 @@ namespace eCAL
      *
      * @return  true if it succeeds, false if it fails.
     **/
-    bool Destroy() override
+    bool Destroy()
     {
       RemReceiveCallback();
       return(CSubscriber::Destroy());
@@ -193,7 +193,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    bool RemReceiveCallback() override
+    bool RemReceiveCallback()
     {
       bool ret = CSubscriber::RemReceiveCallback();
 
@@ -205,7 +205,7 @@ namespace eCAL
 
 protected:
     // We cannot make it pure virtual, as it would break a bunch of implementations, who are not (yet) implementing this function
-    struct SDataTypeInformation GetDataTypeInformation() const override { return SDataTypeInformation{}; }
+    virtual struct SDataTypeInformation GetDataTypeInformation() const { return SDataTypeInformation{}; }
     virtual bool Deserialize(T& msg_, const void* buffer_, size_t size_) const = 0;
 
   private:

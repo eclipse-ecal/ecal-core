@@ -67,7 +67,7 @@ namespace eCAL
        *
        * @param service_  Google protobuf service instance.
       **/
-      explicit CServiceServer(std::shared_ptr<T> service_) : m_service(nullptr)
+      CServiceServer(std::shared_ptr<T> service_) : m_service(nullptr)
       {
         Create(service_);
       }
@@ -86,7 +86,7 @@ namespace eCAL
       /**
        * @brief Destructor.
       **/
-      ~CServiceServer() override
+      ~CServiceServer()
       {
         Destroy();
       }
