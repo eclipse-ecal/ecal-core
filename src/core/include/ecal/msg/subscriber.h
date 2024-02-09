@@ -79,7 +79,7 @@ namespace eCAL
     /**
     * @brief  Move Constructor
     **/
-    CMsgSubscriber(CMsgSubscriber&& rhs)
+    CMsgSubscriber(CMsgSubscriber&& rhs) noexcept
       : CSubscriber(std::move(rhs))
       , m_cb_callback(std::move(rhs.m_cb_callback))
     {
@@ -97,7 +97,7 @@ namespace eCAL
     /**
      * @brief  Move assignment
     **/
-    CMsgSubscriber& operator=(CMsgSubscriber&& rhs)
+    CMsgSubscriber& operator=(CMsgSubscriber&& rhs) noexcept
     {
       CSubscriber::operator=(std::move(rhs));
 
@@ -193,7 +193,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    bool RemReceiveCallback()
+    bool RemReceiveCallback() override
     {
       bool ret = CSubscriber::RemReceiveCallback();
 
@@ -205,13 +205,13 @@ namespace eCAL
 
 protected:
     // We cannot make it pure virtual, as it would break a bunch of implementations, who are not (yet) implementing this function
-    virtual struct SDataTypeInformation GetDataTypeInformation() const { return SDataTypeInformation{}; }
+    struct SDataTypeInformation GetDataTypeInformation() const override { return SDataTypeInformation{}; }
     virtual bool Deserialize(T& msg_, const void* buffer_, size_t size_) const = 0;
 
   private:
     void ReceiveCallback(const char* topic_name_, const struct eCAL::SReceiveCallbackData* data_)
     {
-      MsgReceiveCallbackT fn_callback = nullptr;
+      MsgReceiveCallbackT fn_callback(nullptr);
       {
         std::lock_guard<std::mutex> callback_lock(m_cb_callback_mutex);
         fn_callback = m_cb_callback;

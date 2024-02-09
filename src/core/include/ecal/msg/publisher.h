@@ -106,7 +106,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_)
+    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_) override
     {
       return(CPublisher::Create(topic_name_, topic_info_));
     }
@@ -116,7 +116,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails. 
     **/
-    bool Destroy()
+    bool Destroy() override
     {
       return(CPublisher::Destroy());
     }
@@ -163,7 +163,7 @@ namespace eCAL
 
   protected:
     // We cannot make it pure virtual, as it would break a bunch of implementations, who are not (yet) implementing this function
-    virtual struct SDataTypeInformation GetDataTypeInformation() const { return SDataTypeInformation{}; }
+    struct SDataTypeInformation GetDataTypeInformation() const override { return SDataTypeInformation{}; }
   private:
     virtual size_t GetSize(const T& msg_) const = 0;
     virtual bool Serialize(const T& msg_, char* buffer_, size_t size_) const = 0;

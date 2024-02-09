@@ -209,7 +209,7 @@ namespace eCAL
      *
      * @return  True if succeeded, false if not. 
     **/
-    ECAL_API bool RemReceiveCallback();
+    ECAL_API virtual bool RemReceiveCallback();
 
     /**
      * @brief Add callback function for subscriber events.
@@ -256,7 +256,7 @@ namespace eCAL
      *
      * @return  The topic information.
     **/
-    ECAL_API SDataTypeInformation GetDataTypeInformation() const;
+    ECAL_API virtual SDataTypeInformation GetDataTypeInformation() const;
 
     /**
      * @brief Dump the whole class state into a string. 
