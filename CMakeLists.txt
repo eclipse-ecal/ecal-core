@@ -72,9 +72,9 @@ endif()
 # additional builds (adapt to your needs)
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 option(ECAL_CORE_BUILD_SAMPLES                           "Build the eCAL samples"                                                                                ON)
-option(ECAL_CORE_BUILD_SAMPLES_PROTOBUF                  "Build the eCAL samples using google protobuf message definition"                                      ON)
+option(ECAL_CORE_BUILD_SAMPLES_PROTOBUF                  "Build the eCAL samples using google protobuf message definition"                                       ON)
 option(ECAL_CORE_BUILD_TESTS                             "Build the eCAL google tests"                                                                           ON)
-option(ECAL_CORE_BUILD_TESTS_PROTOBUF                    "Build the eCAL google tests using google protobuf message definition"                                 ON)
+option(ECAL_CORE_BUILD_TESTS_PROTOBUF                    "Build the eCAL google tests using google protobuf message definition"                                  ON)
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # core internal feature configuration (adapt to your needs)
@@ -82,7 +82,7 @@ option(ECAL_CORE_BUILD_TESTS_PROTOBUF                    "Build the eCAL google 
 option(ECAL_CORE_CONFIG_INIFILE                          "Enables to configure eCAL via ecal.ini file"                                                           ON)
 option(ECAL_CORE_COMMAND_LINE                            "Enables eCAL application cmd line interfaces"                                                          ON)
 option(ECAL_CORE_REGISTRATION                            "Enables the eCAL registration layer"                                                                   ON)
-option(ECAL_CORE_MONITORING                              "Enables the eCAL monitoring functionality"                                                            ON)
+option(ECAL_CORE_MONITORING                              "Enables the eCAL monitoring functionality"                                                             ON)
 option(ECAL_CORE_PUBLISHER                               "Enables the eCAL publisher functionality"                                                              ON)
 option(ECAL_CORE_SUBSCRIBER                              "Enables the eCAL subscriber functionality"                                                             ON)
 option(ECAL_CORE_SERVICE                                 "Enables the eCAL server/client functionality"                                                          ON)
@@ -98,7 +98,7 @@ option(ECAL_CORE_REGISTRATION_SHM                        "Enables the eCAL regis
 # core transport layer options (change with care)
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 option(ECAL_CORE_TRANSPORT_UDP                           "Enables the eCAL to transport payload via UDP multicast"                                               ON)
-option(ECAL_CORE_TRANSPORT_TCP                           "Enables the eCAL to transport payload via TCP"                                                        ON)
+option(ECAL_CORE_TRANSPORT_TCP                           "Enables the eCAL to transport payload via TCP"                                                         ON)
 option(ECAL_CORE_TRANSPORT_SHM                           "Enables the eCAL to transport payload via local shared memory"                                         ON)
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
