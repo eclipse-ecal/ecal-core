@@ -19,6 +19,7 @@
 project(core VERSION ${eCAL_VERSION_STRING})
 
 find_package(asio             REQUIRED)
+find_package(Threads          REQUIRED)
 
 if (ECAL_CORE_CONFIG_INIFILE)
   find_package(simpleini      REQUIRED)
@@ -410,12 +411,12 @@ if (ECAL_CORE_COMMAND_LINE)
   )
 endif()
 
-
 ######################################
 # common
 ######################################
 set(ecal_cmn_src
     src/ecal.cpp
+    src/ecal_clang.cpp
     src/ecal_def.h
     src/ecal_def_ini.h
     src/ecal_descgate.cpp
@@ -463,6 +464,7 @@ set(ecal_header_cmn
     include/ecal/types/monitoring.h
     include/ecal/ecal.h
     include/ecal/ecal_callback.h
+    include/ecal/ecal_clang.h
     include/ecal/ecal_client.h
     include/ecal/ecal_config.h
     include/ecal/ecal_core.h
@@ -674,6 +676,7 @@ target_link_libraries(${PROJECT_NAME}
     $<$<BOOL:${WIN32}>:wsock32>
     $<$<BOOL:${QNXNTO}>:socket>
     asio::asio
+    Threads::Threads
     eCAL::ecal-utils
 )
 
@@ -712,9 +715,7 @@ if(NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0")
     ${ecal_pub_src} 
     ${ecal_sub_src} 
     ${ecal_writer_src} 
-    ${ecal_writer_udp_src}
     ${ecal_reader_src} 
-    ${ecal_reader_udp_src}
     ${ecal_registration_src}   
     ${ecal_serialization_src}    
     ${ecal_service_src}
@@ -738,5 +739,5 @@ if(UNIX)
 
     ecal_install_app(${PROJECT_NAME_PROCESS_STUB})
 
-    set_property(TARGET ${PROJECT_NAME_PROCESS_STUB} PROPERTY FOLDER ecal/core)
+    set_property(TARGET ${PROJECT_NAME_PROCESS_STUB} PROPERTY FOLDER core)
 endif(UNIX)

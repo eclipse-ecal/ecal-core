@@ -93,7 +93,7 @@ target_include_directories(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_NAME}
-    FOLDER core/service
+    FOLDER lib/service
 )
 
 ##################################

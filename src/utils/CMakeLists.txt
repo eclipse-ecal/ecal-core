@@ -58,4 +58,4 @@ source_group(TREE "${CMAKE_CURRENT_LIST_DIR}"
 
 ecal_install_library(${PROJECT_NAME})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER core/utils)
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER lib/utils)

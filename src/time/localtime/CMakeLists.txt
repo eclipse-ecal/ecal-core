@@ -52,5 +52,5 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 ecal_install_time_plugin(${PROJECT_NAME})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  FOLDER core/time
+  FOLDER lib/time
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<CONFIGURATION>/${ECAL_TIME_PLUGIN_DIR})
