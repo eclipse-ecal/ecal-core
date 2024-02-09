@@ -272,6 +272,7 @@ ECAL_API void log_message(const char* message_)
 }
 
 
+#if ECAL_CORE_PUBLISHER
 /****************************************/
 /*      pub_create                      */
 /****************************************/
@@ -357,8 +358,10 @@ ECAL_API bool pub_rem_event_callback(ECAL_HANDLE handle_, enum eCAL_Publisher_Ev
 
   return(pub->RemEventCallback(type_));
 }
+#endif // ECAL_CORE_PUBLISHER
 
 
+#if ECAL_CORE_SUBSCRIBER
 /****************************************/
 /*      sub_create                      */
 /****************************************/
@@ -532,8 +535,10 @@ ECAL_API bool sub_rem_event_callback(ECAL_HANDLE handle_, enum eCAL_Subscriber_E
 
   return(sub->RemEventCallback(type_));
 }
+#endif // ECAL_CORE_SUBSCRIBER
 
 
+#if ECAL_CORE_SERVICE
 /****************************************/
 /*      server_create                   */
 /****************************************/
@@ -698,6 +703,7 @@ ECAL_API bool client_call_method_async(ECAL_HANDLE handle_, const char* method_n
 /****************************************/
 /*      client_rem_response_callback    */
 /****************************************/
+#endif // ECAL_CORE_SERVICE
 
 
 #if ECAL_CORE_MONITORING
