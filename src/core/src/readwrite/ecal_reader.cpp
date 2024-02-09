@@ -48,7 +48,6 @@
 #include "tcp/ecal_reader_tcp.h"
 #endif
 
-#include <algorithm>
 #include <iterator>
 #include <sstream>
 #include <iostream>

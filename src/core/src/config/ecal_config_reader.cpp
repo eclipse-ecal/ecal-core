@@ -22,7 +22,6 @@
 **/
 
 #include <cctype>
-#include <ecal/ecal_defs.h>
 #include <ecal/ecal_os.h>
 
 #include "ecal_def.h"
