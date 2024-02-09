@@ -64,7 +64,7 @@ namespace eCAL
     {
     }
 
-    virtual ~CMsgSubscriber() = default;
+    ~CMsgSubscriber() override = default;
 
     /**
      * @brief  Copy Constructor is not available.
@@ -123,7 +123,7 @@ namespace eCAL
      *
      * @return  true if it succeeds, false if it fails.
     **/
-    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_)
+    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_) override
     {
       return(CSubscriber::Create(topic_name_, topic_info_));
     }
@@ -133,7 +133,7 @@ namespace eCAL
      *
      * @return  true if it succeeds, false if it fails.
     **/
-    bool Destroy()
+    bool Destroy() override
     {
       RemReceiveCallback();
       return(CSubscriber::Destroy());

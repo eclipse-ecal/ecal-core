@@ -102,7 +102,7 @@ namespace eCAL
      * 
      * @param topic_name_   Unique topic name.
     **/
-    ECAL_API CSubscriber(const std::string& topic_name_);
+    ECAL_API explicit CSubscriber(const std::string& topic_name_);
 
     /**
      * @brief Destructor. 
@@ -112,12 +112,12 @@ namespace eCAL
     /**
      * @brief CSubscribers are non-copyable
     **/
-    ECAL_API CSubscriber(const CSubscriber&) = delete;
+    CSubscriber(const CSubscriber&) = delete;
 
     /**
      * @brief CSubscribers are non-copyable
     **/
-    ECAL_API CSubscriber& operator=(const CSubscriber&) = delete;
+    CSubscriber& operator=(const CSubscriber&) = delete;
 
     /**
      * @brief CSubscribers are move-enabled
@@ -136,7 +136,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_);
+    ECAL_API virtual bool Create(const std::string& topic_name_);
 
     /**
      * @brief Creates this object.
@@ -146,14 +146,14 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
+    ECAL_API virtual bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
 
     /**
      * @brief Destroys this object. 
      *
      * @return  true if it succeeds, false if it fails. 
     **/
-    ECAL_API bool Destroy();
+    ECAL_API virtual bool Destroy();
 
     /**
      * @brief Set a set of id's to prefiltering topics (see CPublisher::SetID).

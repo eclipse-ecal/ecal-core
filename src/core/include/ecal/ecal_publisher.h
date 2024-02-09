@@ -90,7 +90,7 @@ namespace eCAL
      *
      * @param topic_name_   Unique topic name.
     **/
-    ECAL_API CPublisher(const std::string& topic_name_);
+    ECAL_API explicit CPublisher(const std::string& topic_name_);
 
     /**
      * @brief Destructor. 
@@ -100,12 +100,12 @@ namespace eCAL
     /**
      * @brief CPublishers are non-copyable
     **/
-    ECAL_API CPublisher(const CPublisher&) = delete;
+    CPublisher(const CPublisher&) = delete;
 
     /**
      * @brief CPublishers are non-copyable
     **/
-    ECAL_API CPublisher& operator=(const CPublisher&) = delete;
+    CPublisher& operator=(const CPublisher&) = delete;
 
     /**
      * @brief CPublishers are move-enabled
@@ -125,7 +125,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
+    ECAL_API virtual bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_);
 
     /**
      * @brief Creates this object.
@@ -134,14 +134,14 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_);
+    ECAL_API virtual bool Create(const std::string& topic_name_);
 
     /**
      * @brief Destroys this object. 
      *
      * @return  True if it succeeds, false if it fails. 
     **/
-    ECAL_API bool Destroy();
+    ECAL_API virtual bool Destroy();
 
     /**
      * @brief Setup topic information.

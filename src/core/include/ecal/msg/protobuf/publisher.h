@@ -76,11 +76,10 @@ namespace eCAL
         }
 
         size_t GetSize() override {
-          size_t size(0);
 #if GOOGLE_PROTOBUF_VERSION >= 3001000
-          size = static_cast<size_t>(message.ByteSizeLong());
+          auto size = static_cast<size_t>(message.ByteSizeLong());
 #else
-          size = static_cast<size_t>(message.ByteSize());
+          auto size = static_cast<size_t>(message.ByteSize());
 #endif
           return(size);
           };
@@ -143,7 +142,7 @@ namespace eCAL
        *
        * @return  True if it succeeds, false if it fails.
       **/
-      bool Create(const std::string& topic_name_)
+      bool Create(const std::string& topic_name_) override
       {
         return(eCAL::CPublisher::Create(topic_name_, GetDataTypeInformation()));
       }
