@@ -3,7 +3,7 @@
 
 [![License](https://img.shields.io/github/license/continental/ecal.svg?style=flat)](LICENSE.txt)
 
-<img src="https://github.com/ecal-io/ecal-core-udp/assets/49162693/7f4ab45a-989e-41b6-a44a-b23abfd3d47d" width="400">
+<img src="https://github.com/elipse-ecal/ecal-core/logos/ecal-cop-image.png" width="400">
 
 The **e**nhanced **C**ommunication **A**bstraction **L**ayer (eCAL) is a middleware that enables scalable, high performance interprocess communication on a single computer node or between different nodes in a computer network. 
 
