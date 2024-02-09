@@ -26,8 +26,6 @@
 #define CMN_REGISTRATION_REFRESH   1000
 #define CMN_MONITORING_TIMEOUT     5000
 
-#if ECAL_CORE_REGISTRATION // the registration provider is currently updating the descgate, maybe we need to separate this update logic
-
 TEST(PubSub, GetTopics)
 {
   // initialize eCAL API
@@ -140,5 +138,3 @@ TEST(PubSub, GetTopics)
   // finalize eCAL API
   eCAL::Finalize();
 }
-
-#endif // ECAL_CORE_REGISTRATION

@@ -28,7 +28,7 @@ if(ECAL_CORE_REGISTRATION_SHM OR ECAL_CORE_TRANSPORT_SHM)
   add_subdirectory(io_memfile_test)
 endif()
 
-if(ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
+if(ECAL_CORE_REGISTRATION AND ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
   add_subdirectory(core_test)
   if(ECAL_CORE_TRANSPORT_SHM OR ECAL_CORE_TRANSPORT_UDP) # this test is running for shm and udp layer only, needs to be fixed for tcp
     add_subdirectory(pubsub_test)
