@@ -81,17 +81,14 @@ namespace
 
     // topic content
     pb_sample_.has_content = true;
-    pb_sample_.content.id    = payload_.content.id;
+    pb_sample_.content.id = payload_.content.id;
     pb_sample_.content.clock = payload_.content.clock;
-    pb_sample_.content.time  = payload_.content.time;
-    pb_sample_.content.hash  = payload_.content.hash;
-    pb_sample_.content.size  = payload_.content.size;
+    pb_sample_.content.time = payload_.content.time;
+    pb_sample_.content.hash = payload_.content.hash;
+    pb_sample_.content.size = payload_.content.size;
 
     // topic content payload
     eCAL::nanopb::encode_bytes(pb_sample_.content.payload, nano_bytes_);
-
-    // padding
-    eCAL::nanopb::encode_bytes(pb_sample_.padding, payload_.padding);
 
     ///////////////////////////////////////////////
     // evaluate byte size
@@ -156,9 +153,6 @@ namespace
     // topic content payload
     payload_.content.payload.type = eCAL::Payload::pl_vec;
     eCAL::nanopb::decode_bytes(pb_sample.content.payload, payload_.content.payload.vec);
-
-    // padding
-    eCAL::nanopb::decode_bytes(pb_sample.padding, payload_.padding);
 
     ///////////////////////////////////////////////
     // decode it

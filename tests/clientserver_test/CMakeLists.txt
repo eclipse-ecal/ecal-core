@@ -21,8 +21,6 @@ project(test_clientserver)
 find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
-create_targets_protobuf()
-
 set(${PROJECT_NAME}_src
   src/atomic_signalable.h
   src/clientserver_getservices.cpp
