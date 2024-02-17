@@ -1,0 +1,67 @@
+name: clang-tidy-review
+
+on:
+  pull_request:
+    paths:
+      - '**.cpp'
+      - '**.cxx'
+      - '**.cc'
+      - '**.h'
+      - '**.hxx'
+      - '**.c'
+      - '**.hpp'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules:  'true'
+          fetch-depth: 0
+
+      - name: Run clang-tidy
+        uses: ZedThree/clang-tidy-review@v0.14.0
+        id: review
+        with:
+          build_dir: _build
+          apt_packages: "cmake,ninja-build,libprotobuf-dev,libprotoc-dev,protobuf-compiler"
+          config_file: ".clang-tidy"
+          exclude: "thirdparty/*,_build/*,convert_utf.cpp,convert_utf.h,tests/*"
+          split_workflow: true
+          lgtm_comment_body: ""
+          cmake_command: |
+            cmake . -B _build \
+                    -G Ninja \
+                    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DECAL_CORE_BUILD_SAMPLES=ON \
+                    -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=ON \
+                    -DECAL_CORE_BUILD_TESTS=ON \
+                    -DECAL_CORE_BUILD_TESTS_PROTOBUF=ON \
+                    -DECAL_CORE_CONFIG_INIFILE=ON \
+                    -DECAL_CORE_COMMAND_LINE=ON \
+                    -DECAL_CORE_REGISTRATION=ON \
+                    -DECAL_CORE_REGISTRATION_SHM=ON \
+                    -DECAL_CORE_MONITORING=ON \
+                    -DECAL_CORE_PUBLISHER=ON \
+                    -DECAL_CORE_SUBSCRIBER=ON \
+                    -DECAL_CORE_SERVICE=ON \
+                    -DECAL_CORE_TIMEPLUGIONN=ON \
+                    -DECAL_CORE_TRANSPORT_UDPON=ON \
+                    -DECAL_CORE_TRANSPORT_TCPON=ON \
+                    -DECAL_CORE_TRANSPORT_SHMON=ON \
+                    -DECAL_CORE_NPCAP_SUPPORT=OFF \
+                    -DBUILD_SHARED_LIBS=ON \
+                    -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+                    -DCMAKE_INSTALL_PREFIX=/usr \
+                    -DCMAKE_INSTALL_LOCALSTATEDONIR=/var \
+                    -DCMAKE_INSTALL_LIBDIR=lib/x86_FF4-linux-gnu
+            cmake --build _build
+            
+      - uses: ZedThree/clang-tidy-review/upload@v0.14.0
