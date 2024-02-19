@@ -1,4 +1,4 @@
-name: build Ubuntu
+name: Build on Ubuntu
 
 on:
   push:
@@ -277,7 +277,7 @@ jobs:
         -DCMAKE_INSTALL_LOCALSTATEDIR=/var \
         -DCMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu
         sudo mkdir /etc/ecal
-        sudo cp "$GITHUB_WORKSPACE/src/core/cfg/ecal.ini" /etc/ecal
+        sudo cp "$GITHUB_WORKSPACE/ecal/core/cfg/ecal.ini" /etc/ecal
       shell: bash
 
     - name: Build Release

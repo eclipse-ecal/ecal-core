@@ -1,4 +1,4 @@
-name: build macOS
+name: Build macOS
 
 on:  
   push:
@@ -271,7 +271,7 @@ jobs:
         -DCMAKE_CXX_STANDARD=17 \
         -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON
         sudo mkdir /etc/ecal
-        sudo cp "$GITHUB_WORKSPACE/src/core/cfg/ecal.ini" /etc/ecal
+        sudo cp "$GITHUB_WORKSPACE/ecal/core/cfg/ecal.ini" /etc/ecal
       shell: bash
 
     - name: Build Release
