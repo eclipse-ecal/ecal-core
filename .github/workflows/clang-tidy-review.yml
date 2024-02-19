@@ -1,4 +1,4 @@
-name: clang-tidy-review
+name: clang tidy review
 
 on:
   pull_request:
