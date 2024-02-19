@@ -1,4 +1,4 @@
-name: clang tidy review post comments
+name: clang-tidy-review post comments
 
 on:
   workflow_run:
