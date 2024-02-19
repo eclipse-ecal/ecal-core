@@ -19,10 +19,10 @@
 
 syntax = "proto3";
 
-import "host.proto";
-import "process.proto";
-import "service.proto";
-import "topic.proto";
+import "ecal/core/pb/host.proto";
+import "ecal/core/pb/process.proto";
+import "ecal/core/pb/service.proto";
+import "ecal/core/pb/topic.proto";
 
 package eCAL.pb;
 
