@@ -184,6 +184,9 @@ namespace eCAL
   // blocking call, all responses will be returned in service_response_vec_
   bool CServiceClientImpl::Call(const std::string& method_name_, const std::string& request_, int timeout_ms_, ServiceResponseVecT* service_response_vec_)
   {
+    // look that clang-tidy !
+    service_response_vec_->clear();
+
     if(service_response_vec_ == nullptr) return false;
     service_response_vec_->clear();
 
