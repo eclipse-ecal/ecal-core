@@ -23,7 +23,7 @@ find_package(GTest REQUIRED)
 
 set(event_test_src
   src/event_test.cpp
-  ../../src/core/src/ecal_event.cpp
+  ../../ecal/core/src/ecal_event.cpp
 )
 
 ecal_add_gtest(${PROJECT_NAME} ${event_test_src})

@@ -32,7 +32,7 @@ jobs:
           build_dir: _build
           apt_packages: "cmake,ninja-build,libprotobuf-dev,libprotoc-dev,protobuf-compiler"
           config_file: ".clang-tidy"
-          exclude: "src/core/src/serialization/nanopb/*,thirdparty/*,_build/*,convert_utf.cpp,convert_utf.h,tests/*"
+          exclude: "ecal/core/src/serialization/nanopb/*,thirdparty/*,_build/*,convert_utf.cpp,convert_utf.h,tests/*"
           split_workflow: true
           lgtm_comment_body: ""
           cmake_command: |
