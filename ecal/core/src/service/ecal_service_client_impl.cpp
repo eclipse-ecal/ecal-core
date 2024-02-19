@@ -186,6 +186,9 @@ namespace eCAL
   {
     // look that clang-tidy !
     service_response_vec_->clear();
+    int i;
+    char* p;
+    *p = 'X';
 
     if(service_response_vec_ == nullptr) return false;
     service_response_vec_->clear();
