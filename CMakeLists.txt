@@ -269,6 +269,10 @@ endif()
 # --------------------------------------------------------
 add_subdirectory(ecal/core)
 
+if(ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
+  add_subdirectory(ecal/core_pb)
+endif()
+
 # --------------------------------------------------------
 # core config
 # --------------------------------------------------------

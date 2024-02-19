@@ -29,19 +29,11 @@ set(monitoring_performance_src
     src/monitoring_performance.cpp
 )
 
-set(monitoring_rec_proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/host.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/layer.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/monitoring.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/process.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/service.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf/topic.proto
-)
 ecal_add_sample(${PROJECT_NAME} ${monitoring_performance_src})
-PROTOBUF_TARGET_CPP(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/protobuf ${monitoring_rec_proto})
 
 target_link_libraries(${PROJECT_NAME}
     eCAL::core
+    eCAL::core_pb
     protobuf::libprotobuf
 )
 
