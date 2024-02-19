@@ -267,31 +267,31 @@ endif()
 # --------------------------------------------------------
 # core
 # --------------------------------------------------------
-add_subdirectory(src/core)
+add_subdirectory(ecal/core)
 
 # --------------------------------------------------------
 # core config
 # --------------------------------------------------------
-add_subdirectory(src/core/cfg)
+add_subdirectory(ecal/core/cfg)
 
 # --------------------------------------------------------
 # services
 # --------------------------------------------------------
 if(ECAL_CORE_SERVICE)
-  add_subdirectory(src/service)
+  add_subdirectory(ecal/service)
 endif()
 
 # --------------------------------------------------------
 # time plugins
 # --------------------------------------------------------
 if(ECAL_CORE_TIMEPLUGIN)
-  add_subdirectory(src/time)
+  add_subdirectory(ecal/time)
 endif()
 
 # --------------------------------------------------------
 # utils
 # --------------------------------------------------------
-add_subdirectory(src/utils)
+add_subdirectory(ecal/utils)
 
 # --------------------------------------------------------
 # samples
