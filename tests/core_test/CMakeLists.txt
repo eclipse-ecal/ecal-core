@@ -22,7 +22,7 @@ find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
 set(core_test_src
-  ecal/core_test.cpp
+  src/core_test.cpp
 )
 
 ecal_add_gtest(${PROJECT_NAME} ${core_test_src})
