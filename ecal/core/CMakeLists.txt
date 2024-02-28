@@ -432,7 +432,6 @@ set(ecal_cmn_src
     src/ecal_sample_to_topicinfo.h
     src/ecal_util.cpp
     src/ecal_win_main.h
-    src/ecalc.cpp
 )
 if (WIN32)
   list(APPEND ecal_cmn_src
@@ -444,7 +443,19 @@ endif()
 # c interface
 ######################################
 set(ecal_c_src
-    src/ecalc.cpp
+    src/cimpl/ecal_c_common.cpp
+    src/cimpl/ecal_c_common.h
+    src/cimpl/ecal_client_cimpl.cpp
+    src/cimpl/ecal_core_cimpl.cpp
+    src/cimpl/ecal_log_cimpl.cpp
+    src/cimpl/ecal_monitoring_cimpl.cpp
+    src/cimpl/ecal_process_cimpl.cpp
+    src/cimpl/ecal_publisher_cimpl.cpp
+    src/cimpl/ecal_server_cimpl.cpp
+    src/cimpl/ecal_subscriber_cimpl.cpp
+    src/cimpl/ecal_time_cimpl.cpp
+    src/cimpl/ecal_timer_cimpl.cpp
+    src/cimpl/ecal_util_cimpl.cpp    
 )
 
 ######################################
@@ -500,7 +511,6 @@ set(ecal_header_cimpl
     include/ecal/cimpl/ecal_process_cimpl.h
     include/ecal/cimpl/ecal_publisher_cimpl.h
     include/ecal/cimpl/ecal_server_cimpl.h
-    include/ecal/cimpl/ecal_service_cimpl.h
     include/ecal/cimpl/ecal_service_info_cimpl.h
     include/ecal/cimpl/ecal_subscriber_cimpl.h
     include/ecal/cimpl/ecal_time_cimpl.h
