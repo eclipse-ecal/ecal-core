@@ -22,11 +22,12 @@
  * @brief  C API common helper functions
 **/
 
+#include "ecal_c_common.h"
+
 #include <ecal/ecalc_types.h>
 
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 int CopyBuffer(void* target_, int target_len_, const std::string& source_s_)
 {
@@ -36,7 +37,7 @@ int CopyBuffer(void* target_, int target_len_, const std::string& source_s_)
   {
     void* buf_alloc = malloc(source_s_.size());
     if(buf_alloc == nullptr) return(0);
-    int copied = CopyBuffer(buf_alloc, static_cast<int>(source_s_.size()), source_s_);
+    const int copied = CopyBuffer(buf_alloc, static_cast<int>(source_s_.size()), source_s_);
     if(copied > 0)
     {
      *((void**)target_) = buf_alloc; //-V206

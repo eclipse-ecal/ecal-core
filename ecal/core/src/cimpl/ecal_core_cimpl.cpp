@@ -68,7 +68,7 @@ extern "C"
 
   ECALC_API int eCAL_Ok()
   {
-    return(eCAL::Ok());
+    return static_cast<int>(eCAL::Ok());
   }
 
   ECALC_API void eCAL_FreeMem(void* mem_)

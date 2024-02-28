@@ -30,62 +30,65 @@
 
 #include <mutex>
 
-ECALC_API int eCAL_Time_GetName(void* name_, int name_len_)
+extern "C"
 {
-  const std::string name = eCAL::Time::GetName();
-  if (!name.empty())
+  ECALC_API int eCAL_Time_GetName(void* name_, int name_len_)
   {
-    return(CopyBuffer(name_, name_len_, name));
-  }
-  return(0);
-}
-
-ECALC_API long long eCAL_Time_GetMicroSeconds()
-{
-  return(eCAL::Time::GetMicroSeconds());
-}
-
-ECALC_API long long eCAL_Time_GetNanoSeconds()
-{
-  return(eCAL::Time::GetNanoSeconds());
-}
-
-ECALC_API int eCAL_Time_SetNanoSeconds(long long time_)
-{
-  return(eCAL::Time::SetNanoSeconds(time_));
-}
-
-ECALC_API int eCAL_Time_IsTimeSynchronized()
-{
-  return(eCAL::Time::IsSynchronized());
-}
-
-ECALC_API int eCAL_Time_IsTimeMaster()
-{
-  return(eCAL::Time::IsMaster());
-}
-
-ECALC_API void eCAL_Time_SleepForNanoseconds(long long duration_nsecs_)
-{
-  eCAL::Time::SleepForNanoseconds(duration_nsecs_);
-}
-
-ECALC_API int eCAL_Time_GetStatus(int* error_, char** status_message_, const int max_len_)
-{
-  if (max_len_ == ECAL_ALLOCATE_4ME || max_len_ > 0)
-  {
-    std::string status_message;
-    eCAL::Time::GetStatus(*error_, &status_message);
-
-    if (!status_message.empty())
+    const std::string name = eCAL::Time::GetName();
+    if (!name.empty())
     {
-      return CopyBuffer(status_message_, max_len_, status_message);
+      return(CopyBuffer(name_, name_len_, name));
     }
-    return 0;
+    return(0);
   }
-  else
+
+  ECALC_API long long eCAL_Time_GetMicroSeconds()
   {
-    eCAL::Time::GetStatus(*error_, nullptr);
-    return 0;
+    return(eCAL::Time::GetMicroSeconds());
+  }
+
+  ECALC_API long long eCAL_Time_GetNanoSeconds()
+  {
+    return(eCAL::Time::GetNanoSeconds());
+  }
+
+  ECALC_API int eCAL_Time_SetNanoSeconds(long long time_)
+  {
+    return(eCAL::Time::SetNanoSeconds(time_));
+  }
+
+  ECALC_API int eCAL_Time_IsTimeSynchronized()
+  {
+    return(eCAL::Time::IsSynchronized());
+  }
+
+  ECALC_API int eCAL_Time_IsTimeMaster()
+  {
+    return(eCAL::Time::IsMaster());
+  }
+
+  ECALC_API void eCAL_Time_SleepForNanoseconds(long long duration_nsecs_)
+  {
+    eCAL::Time::SleepForNanoseconds(duration_nsecs_);
+  }
+
+  ECALC_API int eCAL_Time_GetStatus(int* error_, char** status_message_, const int max_len_)
+  {
+    if (max_len_ == ECAL_ALLOCATE_4ME || max_len_ > 0)
+    {
+      std::string status_message;
+      eCAL::Time::GetStatus(*error_, &status_message);
+
+      if (!status_message.empty())
+      {
+        return CopyBuffer(status_message_, max_len_, status_message);
+      }
+      return 0;
+    }
+    else
+    {
+      eCAL::Time::GetStatus(*error_, nullptr);
+      return 0;
+    }
   }
 }

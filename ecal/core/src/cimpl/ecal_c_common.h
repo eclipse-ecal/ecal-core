@@ -22,4 +22,6 @@
  * @brief  C API common helper functions
 **/
 
+#include <string>
+
 int CopyBuffer(void* target_, int target_len_, const std::string& source_s_);

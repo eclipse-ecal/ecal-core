@@ -36,7 +36,7 @@ extern "C"
 
   ECALC_API int eCAL_Process_GetHostName(void* name_, int name_len_)
   {
-    std::string name = eCAL::Process::GetHostName();
+    const std::string name = eCAL::Process::GetHostName();
     if (!name.empty())
     {
       return(CopyBuffer(name_, name_len_, name));
@@ -46,7 +46,7 @@ extern "C"
 
   ECALC_API int eCAL_Process_GetUnitName(void* name_, int name_len_)
   {
-    std::string name = eCAL::Process::GetUnitName();
+    const std::string name = eCAL::Process::GetUnitName();
     if (!name.empty())
     {
       return(CopyBuffer(name_, name_len_, name));
@@ -56,7 +56,7 @@ extern "C"
 
   ECALC_API int eCAL_Process_GetTaskParameter(void* par_, int par_len_, const char* sep_)
   {
-    std::string par = eCAL::Process::GetTaskParameter(sep_);
+    const std::string par = eCAL::Process::GetTaskParameter(sep_);
     if (!par.empty())
     {
       return(CopyBuffer(par_, par_len_, par));
@@ -76,7 +76,7 @@ extern "C"
 
   ECALC_API int eCAL_Process_GetProcessName(void* name_, int name_len_)
   {
-    std::string name = eCAL::Process::GetProcessName();
+    const std::string name = eCAL::Process::GetProcessName();
     if (!name.empty())
     {
       return(CopyBuffer(name_, name_len_, name));
@@ -86,7 +86,7 @@ extern "C"
 
   ECALC_API int eCAL_Process_GetProcessParameter(void* par_, int par_len_)
   {
-    std::string par = eCAL::Process::GetProcessParameter();
+    const std::string par = eCAL::Process::GetProcessParameter();
     if (!par.empty())
     {
       return(CopyBuffer(par_, par_len_, par));
