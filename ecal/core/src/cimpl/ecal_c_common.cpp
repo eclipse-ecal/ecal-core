@@ -25,6 +25,7 @@
 #include <ecal/ecalc_types.h>
 
 #include <cstdlib>
+#include <cstring>
 #include <string>
 
 int CopyBuffer(void* target_, int target_len_, const std::string& source_s_)
