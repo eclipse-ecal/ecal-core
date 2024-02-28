@@ -32,7 +32,7 @@ extern "C"
 #if ECAL_CORE_MONITORING
   ECALC_API void eCAL_Util_ShutdownUnitName(const char* unit_name_)
   {
-    std::string unit_name = unit_name_;
+    const std::string unit_name = unit_name_;
     eCAL::Util::ShutdownProcess(unit_name);
   }
 
