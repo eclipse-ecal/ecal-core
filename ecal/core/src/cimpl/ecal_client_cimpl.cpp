@@ -32,7 +32,7 @@
 #if ECAL_CORE_SERVICE
 namespace
 {
-  std::recursive_mutex g_response_callback_mtx;
+  std::recursive_mutex g_response_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_response_callback(const struct eCAL::SServiceResponse& service_response_, const ResponseCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_response_callback_mtx);
@@ -49,7 +49,7 @@ namespace
     callback_(&service_response, par_);
   }
 
-  std::recursive_mutex g_client_event_callback_mtx;
+  std::recursive_mutex g_client_event_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_client_event_callback(const char* name_, const struct eCAL::SClientEventCallbackData* data_, const ClientEventCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_client_event_callback_mtx);
@@ -73,7 +73,7 @@ extern "C"
   {
     if (handle_ == nullptr) return(0);
     auto* client = static_cast<eCAL::CServiceClient*>(handle_);
-    delete client;
+    delete client; // NOLINT(*-owning-memory)
     return(1);
   }
 

@@ -32,7 +32,7 @@
 #if ECAL_CORE_PUBLISHER
 namespace
 {
-  std::recursive_mutex g_pub_event_callback_mtx;
+  std::recursive_mutex g_pub_event_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_pub_event_callback(const char* topic_name_, const struct eCAL::SPubEventCallbackData* data_, const PubEventCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_pub_event_callback_mtx);
@@ -52,7 +52,7 @@ extern "C"
 {
   ECALC_API ECAL_HANDLE eCAL_Pub_New()
   {
-    auto* pub = new eCAL::CPublisher;
+    auto* pub = new eCAL::CPublisher; // NOLINT(*-owning-memory)
     return(pub);
   }
 
@@ -69,7 +69,7 @@ extern "C"
   {
     if (handle_ == nullptr) return(0);
     auto* pub = static_cast<eCAL::CPublisher*>(handle_);
-    delete pub;
+    delete pub; // NOLINT(*-owning-memory)
     return(1);
   }
 

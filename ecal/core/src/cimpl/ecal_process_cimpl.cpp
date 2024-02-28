@@ -106,11 +106,11 @@ extern "C"
 
   ECALC_API int eCAL_Process_StopProcessName(const char* proc_name_)
   {
-    return(eCAL::Process::StopProcess(proc_name_));
+    return static_cast<int>(eCAL::Process::StopProcess(proc_name_));
   }
 
   ECALC_API int eCAL_Process_StopProcessID(int proc_id_)
   {
-    return(eCAL::Process::StopProcess(proc_id_));
+    return static_cast<int>(eCAL::Process::StopProcess(proc_id_));
   }
 }

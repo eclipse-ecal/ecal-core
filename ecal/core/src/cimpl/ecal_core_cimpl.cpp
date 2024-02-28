@@ -73,6 +73,6 @@ extern "C"
 
   ECALC_API void eCAL_FreeMem(void* mem_)
   {
-    free(mem_);
+    free(mem_); // NOLINT(*-owning-memory, *-no-malloc)
   }
 }

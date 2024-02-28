@@ -32,7 +32,7 @@
 #if ECAL_CORE_SERVICE
 namespace
 {
-  std::recursive_mutex g_method_callback_mtx;
+  std::recursive_mutex g_method_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   int g_method_callback(const std::string& method_, const std::string& req_type_, const std::string& resp_type_, const std::string& request_, std::string& response_, MethodCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_method_callback_mtx);
@@ -46,7 +46,7 @@ namespace
     return ret_state;
   }
 
-  std::recursive_mutex g_server_event_callback_mtx;
+  std::recursive_mutex g_server_event_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_server_event_callback(const char* name_, const struct eCAL::SServerEventCallbackData* data_, const ServerEventCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_server_event_callback_mtx);
@@ -55,7 +55,7 @@ namespace
     data.type = data_->type;
     callback_(name_, &data, par_);
   }
-};
+}
 
 extern "C"
 {
@@ -70,7 +70,7 @@ extern "C"
   {
     if (handle_ == nullptr) return(0);
     auto* server = static_cast<eCAL::CServiceServer*>(handle_);
-    delete server;
+    delete server; // NOLINT(*-owning-memory)
     return(1);
   }
 
@@ -79,14 +79,14 @@ extern "C"
     if (handle_ == nullptr) return(0);
     auto* server = static_cast<eCAL::CServiceServer*>(handle_);
     auto callback = std::bind(g_method_callback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, callback_, par_);
-    return server->AddMethodCallback(method_, req_type_, resp_type_, callback);
+    return static_cast<int>(server->AddMethodCallback(method_, req_type_, resp_type_, callback));
   }
 
   ECALC_API int eCAL_Server_RemMethodCallback(ECAL_HANDLE handle_, const char* method_)
   {
     if (handle_ == nullptr) return(0);
     auto* server = static_cast<eCAL::CServiceServer*>(handle_);
-    return server->RemMethodCallback(method_);
+    return static_cast<int>(server->RemMethodCallback(method_));
   }
 
   ECALC_API int eCAL_Server_AddEventCallback(ECAL_HANDLE handle_, enum eCAL_Server_Event type_, ServerEventCallbackCT callback_, void* par_)

@@ -48,7 +48,7 @@ extern "C"
   ECALC_API int eCAL_Monitoring_GetMonitoring(void* buf_, int buf_len_)
   {
     std::string buf;
-    if (eCAL::Monitoring::GetMonitoring(buf))
+    if (eCAL::Monitoring::GetMonitoring(buf) != 0)
     {
       return(CopyBuffer(buf_, buf_len_, buf));
     }
@@ -58,7 +58,7 @@ extern "C"
   ECALC_API int eCAL_Monitoring_GetLogging(void* buf_, int buf_len_)
   {
     std::string buf;
-    if (eCAL::Logging::GetLogging(buf))
+    if (eCAL::Logging::GetLogging(buf) != 0)
     {
       return(CopyBuffer(buf_, buf_len_, buf));
     }

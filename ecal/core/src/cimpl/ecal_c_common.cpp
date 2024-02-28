@@ -35,18 +35,18 @@ int CopyBuffer(void* target_, int target_len_, const std::string& source_s_)
   if(source_s_.empty())  return(0);
   if(target_len_ == ECAL_ALLOCATE_4ME)
   {
-    void* buf_alloc = malloc(source_s_.size());
+    void* buf_alloc = malloc(source_s_.size()); // NOLINT(*-owning-memory, *-no-malloc)
     if(buf_alloc == nullptr) return(0);
     const int copied = CopyBuffer(buf_alloc, static_cast<int>(source_s_.size()), source_s_);
     if(copied > 0)
     {
-     *((void**)target_) = buf_alloc; //-V206
+     *((void**)target_) = buf_alloc; // NOLINT(*-pro-type-cstyle-cast)
      return(copied);
     }
     else
     {
       // copying buffer failed, so free allocated memory.
-      free(buf_alloc);
+      free(buf_alloc); // NOLINT(*-owning-memory, *-no-malloc)
     }
   }
   else

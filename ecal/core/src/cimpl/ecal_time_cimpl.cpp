@@ -28,8 +28,6 @@
 
 #include "ecal_c_common.h"
 
-#include <mutex>
-
 extern "C"
 {
   ECALC_API int eCAL_Time_GetName(void* name_, int name_len_)
@@ -54,17 +52,17 @@ extern "C"
 
   ECALC_API int eCAL_Time_SetNanoSeconds(long long time_)
   {
-    return(eCAL::Time::SetNanoSeconds(time_));
+    return static_cast<int>(eCAL::Time::SetNanoSeconds(time_));
   }
 
   ECALC_API int eCAL_Time_IsTimeSynchronized()
   {
-    return(eCAL::Time::IsSynchronized());
+    return static_cast<int>(eCAL::Time::IsSynchronized());
   }
 
   ECALC_API int eCAL_Time_IsTimeMaster()
   {
-    return(eCAL::Time::IsMaster());
+    return static_cast<int>(eCAL::Time::IsMaster());
   }
 
   ECALC_API void eCAL_Time_SleepForNanoseconds(long long duration_nsecs_)
@@ -81,7 +79,7 @@ extern "C"
 
       if (!status_message.empty())
       {
-        return CopyBuffer(status_message_, max_len_, status_message);
+        return CopyBuffer(status_message_, max_len_, status_message); // NOLINT(*-multi-level-implicit-pointer-conversion)
       }
       return 0;
     }

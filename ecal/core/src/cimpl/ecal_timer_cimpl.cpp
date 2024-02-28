@@ -29,7 +29,7 @@
 
 namespace
 {
-  std::recursive_mutex g_timer_callback_mtx;
+  std::recursive_mutex g_timer_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_timer_callback(const TimerCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_timer_callback_mtx);
@@ -41,7 +41,7 @@ extern "C"
 {
   ECALC_API ECAL_HANDLE eCAL_Timer_Create()
   {
-    auto* timer = new eCAL::CTimer;
+    auto* timer = new eCAL::CTimer; // NOLINT(*-owning-memory)
     return(timer);
   }
 
@@ -49,7 +49,7 @@ extern "C"
   {
     if (handle_ == nullptr) return(0);
     auto* timer = static_cast<eCAL::CTimer*>(handle_);
-    delete timer;
+    delete timer; // NOLINT(*-owning-memory)
     return(1);
   }
 

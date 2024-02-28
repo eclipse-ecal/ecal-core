@@ -32,7 +32,7 @@
 #if ECAL_CORE_SUBSCRIBER
 namespace
 {
-  std::recursive_mutex g_sub_receive_callback_mtx;
+  std::recursive_mutex g_sub_receive_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_sub_receive_callback(const char* topic_name_, const struct eCAL::SReceiveCallbackData* data_, const ReceiveCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_sub_receive_callback_mtx);
@@ -45,7 +45,7 @@ namespace
     callback_(topic_name_, &data, par_);
   }
 
-  std::recursive_mutex g_sub_event_callback_mtx;
+  std::recursive_mutex g_sub_event_callback_mtx; // NOLINT(*-avoid-non-const-global-variables)
   void g_sub_event_callback(const char* topic_name_, const struct eCAL::SSubEventCallbackData* data_, const SubEventCallbackCT callback_, void* par_)
   {
     const std::lock_guard<std::recursive_mutex> lock(g_sub_event_callback_mtx);
@@ -65,7 +65,7 @@ extern "C"
 {
   ECALC_API ECAL_HANDLE eCAL_Sub_New()
   {
-    auto* sub = new eCAL::CSubscriber;
+    auto* sub = new eCAL::CSubscriber; // NOLINT(*-owning-memory)
     return(sub);
   }
 
@@ -82,7 +82,7 @@ extern "C"
   {
     if (handle_ == nullptr) return(0);
     auto* sub = static_cast<eCAL::CSubscriber*>(handle_);
-    delete sub;
+    delete sub; // NOLINT(*-owning-memory)
     return(1);
   }
 
@@ -151,7 +151,7 @@ extern "C"
     std::string buf;
     if (sub->ReceiveBuffer(buf, time_, rcv_timeout_))
     {
-      return(CopyBuffer(buf_, ECAL_ALLOCATE_4ME, buf));
+      return(CopyBuffer(buf_, ECAL_ALLOCATE_4ME, buf)); // NOLINT(*-multi-level-implicit-pointer-conversion)
     }
     return(0);
   }
@@ -164,7 +164,7 @@ extern "C"
     std::string buf;
     if (sub->ReceiveBuffer(buf, time_, rcv_timeout_))
     {
-      CopyBuffer(buf_, ECAL_ALLOCATE_4ME, buf);
+      CopyBuffer(buf_, ECAL_ALLOCATE_4ME, buf); // NOLINT(*-multi-level-implicit-pointer-conversion)
       if (buf_len_ != nullptr) *buf_len_ = static_cast<int>(buf.size());
       return(1);
     }
