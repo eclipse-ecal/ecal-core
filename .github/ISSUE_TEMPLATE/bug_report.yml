@@ -62,21 +62,8 @@ body:
       
       This is my CMake command line: `cmake .. -DMY_VAR=ON`
   validations:
-    required: true
+    required: false
     
-- type: dropdown
-  id: download
-  attributes:
-    label: How did you get eCAL?
-    options:
-      - I don't know
-      - Download from Release Page
-      - Ubuntu PPA (apt-get)
-      - Custom Build / Built from source
-      - Other
-  validations:
-    required: true
-
 - type: textarea
   id: environment
   attributes:
@@ -86,20 +73,18 @@ body:
       
       - eCAL Version
       - Operating System
-      - Python Version _(for python related issues)_
       - CMake and compiler version _(for build related issues)_
       - Versions of any other relevant tools you're using.
       
     placeholder: |
       - eCAL:
       - OS: 
-      - Python: 
       - CMake:
       - gcc: 
       - ...
       
   validations:
-    required: true
+    required: false
     
 - type: textarea
   id: ecal_system_information
@@ -121,7 +106,7 @@ body:
       Default INI              : C:\ProgramData\eCAL\ecal.ini
 
       ------------------------- NETWORK --------------------------------
-      Host name                : FRLBJRXW
+      Host name                : MYHOST
       Network mode             : cloud
       Network ttl              : 2
       Network sndbuf           : 5 MByte
@@ -150,5 +135,6 @@ body:
       Layer Mode TCP           : on
       Layer Mode UDP MC        : on
       Npcap UDP Reciever       : off
+
   validations:
     required: false
