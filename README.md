@@ -13,8 +13,8 @@ Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
 
 ## Differences to Eclipse-eCAL
   - C/C++ language support only
-  - internal communication protocol based on nanopb instead of google::protobuf (simplifies integration, cross compiling)
-  - innerprocess communication layer remmoved (innerprocess pub/sub connections handled by shared memory transport layer)
+  - internal communication protocol based on nanopb instead of google::protobuf
+  - innerprocess communication layer removed (handled by shared memory transport layer too)
 
 The core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
 
