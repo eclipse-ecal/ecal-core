@@ -497,8 +497,6 @@ set(ecal_header_cmn
     include/ecal/ecal_tlayer.h
     include/ecal/ecal_types.h
     include/ecal/ecal_util.h
-    include/ecal/ecalc.h
-    include/ecal/ecalc_types.h
 )
 
 set(ecal_header_cimpl
@@ -516,6 +514,8 @@ set(ecal_header_cimpl
     include/ecal/cimpl/ecal_time_cimpl.h
     include/ecal/cimpl/ecal_timer_cimpl.h
     include/ecal/cimpl/ecal_util_cimpl.h
+    include/ecal/ecalc.h
+    include/ecal/ecalc_types.h
 )
 
 set(ecal_header_msg
@@ -561,7 +561,6 @@ set(ecal_sources
     ${ecal_cmn_src}
     ${ecal_header_cmn}
     ${ecal_header_msg}
-    ${ecal_header_cimpl}
 )
 
 ecal_add_ecal_shared_library(${PROJECT_NAME}
