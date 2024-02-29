@@ -443,9 +443,9 @@ endif()
 # c interface
 ######################################
 set(ecal_c_src
-    src/cimpl/ecal_c_common.cpp
-    src/cimpl/ecal_c_common.h
     src/cimpl/ecal_client_cimpl.cpp
+    src/cimpl/ecal_common_cimpl.cpp
+    src/cimpl/ecal_common_cimpl.h
     src/cimpl/ecal_core_cimpl.cpp
     src/cimpl/ecal_log_cimpl.cpp
     src/cimpl/ecal_monitoring_cimpl.cpp
@@ -534,13 +534,7 @@ set(ecal_header_msg
     include/ecal/msg/subscriber.h
 )
 
-set(ecal_header_public
-    ${ecal_header_cmn}
-    ${ecal_header_cimpl}
-    ${ecal_header_msg}
-)
-
-ecal_add_ecal_shared_library(${PROJECT_NAME} 
+set(ecal_sources
     ${ecal_config_src}
     ${ecal_io_mtx_src}
     ${ecal_io_mtx_linux_src}
@@ -565,7 +559,13 @@ ecal_add_ecal_shared_library(${PROJECT_NAME}
     ${ecal_time_src}
     ${ecal_util_src}
     ${ecal_cmn_src}
-    ${ecal_header_public}
+    ${ecal_header_cmn}
+    ${ecal_header_msg}
+    ${ecal_header_cimpl}
+)
+
+ecal_add_ecal_shared_library(${PROJECT_NAME}
+    ${ecal_sources}
     ${CMAKE_CURRENT_BINARY_DIR}/include/ecal/ecal_defs.h
 )
 
@@ -573,7 +573,15 @@ if(UNIX)
   set_source_files_properties(src/util/convert_utf.cpp PROPERTIES COMPILE_FLAGS -Wno-implicit-fallthrough)
 endif()
 
-ecal_add_ecal_shared_library(${PROJECT_NAME}_c ${ecal_c_src} ${ecal_c_win_src})
+set(ecal_c_sources
+    ${ecal_c_src}
+    ${ecal_c_win_src}
+    ${ecal_header_cimpl}
+)
+
+ecal_add_ecal_shared_library(${PROJECT_NAME}_c 
+    ${ecal_c_sources}
+)
 
 add_library(eCAL::${PROJECT_NAME}   ALIAS ${PROJECT_NAME})
 add_library(eCAL::${PROJECT_NAME}_c ALIAS ${PROJECT_NAME}_c)
@@ -700,45 +708,19 @@ install(DIRECTORY
    "include/" DESTINATION "${INSTALL_INCLUDE_DIR}" COMPONENT sdk
     FILES_MATCHING PATTERN "*.h")
 
-#Install generated ecal_defs.h file    
+# install generated ecal_defs.h file    
 install(DIRECTORY
    "${CMAKE_CURRENT_BINARY_DIR}/include/" DESTINATION "${INSTALL_INCLUDE_DIR}" COMPONENT sdk
     FILES_MATCHING PATTERN "*.h")
-    
 
 if(NOT ${CMAKE_VERSION} VERSION_LESS "3.8.0") 
   source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
-    ${ecal_config_src}
-    ${ecal_io_mtx_src}
-    ${ecal_io_mtx_linux_src}
-    ${ecal_io_mtx_win_src}
-    ${ecal_io_shm_src}
-    ${ecal_io_shm_linux_src}
-    ${ecal_io_shm_win_src}
-    ${ecal_io_udp_fragmentation_src}
-    ${ecal_io_udp_sendreceive_src}
-    ${ecal_io_udp_src}
-    ${ecal_io_udp_sendreceive_linux_src}
-    ${ecal_io_udp_sendreceive_win_src}
-    ${ecal_logging_src} 
-    ${ecal_monitoring_src}
-    ${ecal_pub_src} 
-    ${ecal_sub_src} 
-    ${ecal_writer_src} 
-    ${ecal_reader_src} 
-    ${ecal_registration_src}   
-    ${ecal_serialization_src}    
-    ${ecal_service_src}
-    ${ecal_time_src}
-    ${ecal_util_src}
-    ${ecal_cmn_src}
-    ${ecal_c_src}
-    ${ecal_c_win_src}
-    ${ecal_header_public}
+    ${ecal_sources}
+    ${ecal_c_sources}
   )
 endif()
 
-# eCAL Process stub
+# eCAL process stub
 if(UNIX)
     set(PROJECT_NAME_PROCESS_STUB process_stub)
 
