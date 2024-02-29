@@ -22,7 +22,7 @@
  * @brief  C API common helper functions
 **/
 
-#include "ecal_c_common.h"
+#include "ecal_common_cimpl.h"
 
 #include <ecal/ecalc_types.h>
 

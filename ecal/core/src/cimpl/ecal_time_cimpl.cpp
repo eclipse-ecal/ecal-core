@@ -26,7 +26,7 @@
 #include <ecal/ecalc_types.h>
 #include <ecal/cimpl/ecal_time_cimpl.h>
 
-#include "ecal_c_common.h"
+#include "ecal_common_cimpl.h"
 
 extern "C"
 {

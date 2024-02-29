@@ -25,7 +25,7 @@
 #include <ecal/ecal.h>
 #include <ecal/cimpl/ecal_monitoring_cimpl.h>
 
-#include "ecal_c_common.h"
+#include "ecal_common_cimpl.h"
 
 #if ECAL_CORE_MONITORING
 extern "C"
