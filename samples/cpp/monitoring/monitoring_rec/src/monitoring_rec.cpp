@@ -29,15 +29,18 @@
 #pragma warning(pop)
 #endif
 
-static int          g_mon_timing = 1000;   // refresh time in ms
-static bool         g_do_monitor_hosts = true;   // monitor host infos
-static bool         g_do_monitor_procs = true;   // monitor process infos
-static bool         g_do_monitor_services = true;   // monitor service infos
-static bool         g_do_monitor_topics = true;   // monitor topic infos
-static std::string  g_host_filt_string = "";     // specify host name to monitor ("" == all hosts)
-static std::string  g_procs_filt_string = "";     // specify process name to monitor ("" == all processes)
-static std::string  g_topics_filt_string = "";     // specify topic name to monitor ("" == all topics)
-static std::string  g_services_filt_string = "";     // specify service name to monitor ("" == all services)
+namespace
+{
+  int          g_mon_timing           = 1000;  // refresh time in ms
+  bool         g_do_monitor_hosts     = true;  // monitor host infos
+  bool         g_do_monitor_procs     = true;  // monitor process infos
+  bool         g_do_monitor_services  = true;  // monitor service infos
+  bool         g_do_monitor_topics    = true;  // monitor topic infos
+  std::string  g_host_filt_string     = "";    // specify host name to monitor ("" == all hosts)
+  std::string  g_procs_filt_string    = "";    // specify process name to monitor ("" == all processes)
+  std::string  g_topics_filt_string   = "";    // specify topic name to monitor ("" == all topics)
+  std::string  g_services_filt_string = "";    // specify service name to monitor ("" == all services)
+}
 
 int main(int argc, char** argv)
 {
@@ -62,7 +65,7 @@ int main(int argc, char** argv)
       std::cout << "-------- HOSTS ----------" << std::endl;
 
       // for all hosts
-      for (auto host : monitoring.hosts())
+      for (const auto& host : monitoring.hosts())
       {
         // check filtering
         if (!g_host_filt_string.empty() && (g_host_filt_string != host.hname())) continue;
@@ -85,7 +88,7 @@ int main(int argc, char** argv)
       std::cout << "------- PROCESSES -------" << std::endl;
 
       // for all processes
-      for (auto process : monitoring.processes())
+      for (const auto& process : monitoring.processes())
       {
         // check filtering
         if (!g_procs_filt_string.empty() && (g_procs_filt_string != process.uname())) continue;
@@ -115,7 +118,7 @@ int main(int argc, char** argv)
       std::cout << "------- SERVICES -------" << std::endl;
 
       // for all processes
-      for (auto service : monitoring.services())
+      for (const auto& service : monitoring.services())
       {
         // check filtering
         if (!g_services_filt_string.empty() && (g_services_filt_string != service.sname())) continue;
@@ -152,7 +155,7 @@ int main(int argc, char** argv)
       std::cout << "-------- TOPICS ---------" << std::endl;
 
       // for all topics
-      for (auto topic : monitoring.topics())
+      for (const auto& topic : monitoring.topics())
       {
         // check filtering
         if (!g_topics_filt_string.empty() && (g_topics_filt_string != topic.tname())) continue;
@@ -169,7 +172,7 @@ int main(int argc, char** argv)
         std::cout << "ttype name      : " << topic.tdatatype().name() << std::endl;   // topic type name
         std::cout << "ttype encoding  : " << topic.tdatatype().encoding() << std::endl;   // topic type encoding
         //std::cout << "tdesc           : " << topic.tdatatype().desc()     << std::endl;   // topic description
-        for (auto layer : topic.tlayer())
+        for (const auto& layer : topic.tlayer())
         {
           std::string layer_type("unknown");
           switch (layer.type())
