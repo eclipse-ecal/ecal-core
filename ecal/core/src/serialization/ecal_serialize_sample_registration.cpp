@@ -72,6 +72,8 @@ namespace
     eCAL::nanopb::encode_string(pb_sample_.process.uname, registration_.process.uname);
     // pparam
     eCAL::nanopb::encode_string(pb_sample_.process.pparam, registration_.process.pparam);
+    // state
+    pb_sample_.process.has_state = true;
     // state.severity
     pb_sample_.process.state.severity = static_cast<eCAL_pb_eProcessSeverity>(registration_.process.state.severity);
     // state.severity_level
@@ -162,6 +164,10 @@ namespace
     eCAL::nanopb::encode_string(pb_sample_.topic.tname, registration_.topic.tname);
     // direction
     eCAL::nanopb::encode_string(pb_sample_.topic.direction, registration_.topic.direction);
+    // ttype
+    eCAL::nanopb::encode_string(pb_sample_.topic.ttype, registration_.topic.ttype);
+    // tdesc
+    eCAL::nanopb::encode_string(pb_sample_.topic.tdesc, registration_.topic.tdesc);
     // tdatatype
     pb_sample_.topic.has_tdatatype = true;
     // tdatatype.name
@@ -320,6 +326,10 @@ namespace
     eCAL::nanopb::decode_string(pb_sample_.topic.tname, registration_.topic.tname);
     // direction
     eCAL::nanopb::decode_string(pb_sample_.topic.direction, registration_.topic.direction);
+    // ttype
+    eCAL::nanopb::decode_string(pb_sample_.topic.ttype, registration_.topic.ttype);
+    // tdesc
+    eCAL::nanopb::decode_string(pb_sample_.topic.tdesc, registration_.topic.tdesc);
     // tdatatype.name
     eCAL::nanopb::decode_string(pb_sample_.topic.tdatatype.name, registration_.topic.tdatatype.name);
     // tdatatype.encoding
