@@ -16,39 +16,21 @@
 #
 # ========================= eCAL LICENSE =================================
 
-project(test_memfile)
+project(test_event)
 
 find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
-set(memfile_test_src
-    src/memfile_test.cpp
-    src/memfile_naming_test.cpp
-    ../../core/src/io/mtx/ecal_named_mutex.cpp
-    ../../core/src/io/shm/ecal_memfile.cpp
-    ../../core/src/io/shm/ecal_memfile_db.cpp
-    ../../core/src/io/shm/ecal_memfile_naming.cpp
+set(event_test_src
+  src/event_test.cpp
+  ../../../core/src/ecal_event.cpp
 )
 
-if(UNIX)
-set(memfile_test_os_src
-    ../../core/src/io/mtx/linux/ecal_named_mutex_impl.cpp
-    ../../core/src/io/shm/linux/ecal_memfile_os.cpp
-)
-endif()
-
-if(WIN32)
-set(memfile_test_os_src
-    ../../core/src/io/mtx/win32/ecal_named_mutex_impl.cpp
-    ../../core/src/io/shm/win32/ecal_memfile_os.cpp
-)
-endif()
-
-ecal_add_gtest(${PROJECT_NAME} ${memfile_test_src} ${memfile_test_os_src})
+ecal_add_gtest(${PROJECT_NAME} ${event_test_src})
 
 target_include_directories(${PROJECT_NAME} PRIVATE $<TARGET_PROPERTY:eCAL::core,INCLUDE_DIRECTORIES>)
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
   PRIVATE
     $<$<BOOL:${UNIX}>:dl>
     $<$<AND:$<BOOL:${UNIX}>,$<NOT:$<BOOL:${APPLE}>>>:rt>
@@ -56,7 +38,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
-target_compile_definitions(${PROJECT_NAME} PRIVATE ECAL_CORE_TRANSPORT_SHM)
 
 ecal_install_gtest(${PROJECT_NAME})
 
