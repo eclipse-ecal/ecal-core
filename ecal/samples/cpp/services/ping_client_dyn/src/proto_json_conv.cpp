@@ -26,7 +26,7 @@
 
 std::string GetSerialzedMessageFromJSON(google::protobuf::Message* msg_proto_, const std::string& msg_json_)
 {
-  if (!msg_proto_)
+  if (msg_proto_ == nullptr)
   {
     std::cerr << "Google message pointer empty." << std::endl;
     return "";

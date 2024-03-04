@@ -28,7 +28,7 @@
 const auto g_snd_size (8* 1024 * 1024);
 const auto g_snd_loops(1000);
 
-void throughput_test(int snd_size, int snd_loops, eCAL::TLayer::eTransportLayer layer, bool zero_copy = false)
+void throughput_test(int snd_size, int snd_loops, eCAL::TLayer::eTransportLayer /*layer*/, bool /*zero_copy*/)
 {
   // create payload
   CBinaryPayload payload(snd_size);

@@ -77,8 +77,8 @@ int main(int argc, char **argv)
   while(eCAL::Ok() && ping_client.IsConnected())
   {
     // create JSON request
-    std::string req_json = "{\"message\": \"HELLO WORLD FROM DYNAMIC PING CLIENT (" + std::to_string(++cnt) + ")\"}";
-    std::string ping_request = GetSerialzedMessageFromJSON(req_msg.get(), req_json);
+    const std::string req_json = R"({"message": "HELLO WORLD FROM DYNAMIC PING CLIENT ()" + std::to_string(++cnt) + ")\"}";
+    const std::string ping_request = GetSerialzedMessageFromJSON(req_msg.get(), req_json);
 
     if (!ping_request.empty())
     {
@@ -88,14 +88,14 @@ int main(int argc, char **argv)
       {
         std::cout << std::endl << "PingService::Ping method called with message (JSON) : " << req_json << std::endl;
 
-        for (auto service_response : service_response_vec)
+        for (const auto& service_response : service_response_vec)
         {
           switch (service_response.call_state)
           {
           // service successful executed
           case call_state_executed:
           {
-            std::string resp_json = GetJSONFromSerialzedMessage(resp_msg.get(), service_response.response);
+            const std::string resp_json = GetJSONFromSerialzedMessage(resp_msg.get(), service_response.response);
             std::cout << "Received response PingService / Ping         (JSON) : " << resp_json << " from host " << service_response.host_name << std::endl;
           }
           break;
