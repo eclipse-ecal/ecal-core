@@ -28,7 +28,7 @@ std::string GetSerialzedMessageFromJSON(google::protobuf::Message* msg_proto_, c
 {
   if (msg_proto_ == nullptr)
   {
-    std::cerr << "Google message pointer empty." << std::endl;
+    std::cerr << "Google message pointer empty." << '\n';
     return "";
   }
 
@@ -36,7 +36,7 @@ std::string GetSerialzedMessageFromJSON(google::protobuf::Message* msg_proto_, c
   auto status = google::protobuf::util::JsonStringToMessage(msg_json_, msg_proto_);
   if (!status.ok())
   {
-    std::cerr << "Could not convert JSON to google message." << std::endl;
+    std::cerr << "Could not convert JSON to google message." << '\n';
     return "";
   }
 
@@ -45,16 +45,16 @@ std::string GetSerialzedMessageFromJSON(google::protobuf::Message* msg_proto_, c
 
 std::string GetJSONFromSerialzedMessage(google::protobuf::Message* msg_proto_, const std::string& msg_ser_)
 {
-  if (!msg_proto_)
+  if (msg_proto_ == nullptr)
   {
-    std::cerr << "Google message pointer empty." << std::endl;
+    std::cerr << "Google message pointer empty." << '\n';
     return "";
   }
 
   // read serialized message string into message object
   if (!msg_proto_->ParseFromString(msg_ser_))
   {
-    std::cerr << "Could not parse google message content from string." << std::endl;
+    std::cerr << "Could not parse google message content from string." << '\n';
     return "";
   }
 
@@ -63,7 +63,7 @@ std::string GetJSONFromSerialzedMessage(google::protobuf::Message* msg_proto_, c
   auto status = google::protobuf::util::MessageToJsonString(*msg_proto_, &msg_json);
   if (!status.ok())
   {
-    std::cerr << "Could not convert google message to JSON." << std::endl;
+    std::cerr << "Could not convert google message to JSON." << '\n';
     return "";
   }
 
