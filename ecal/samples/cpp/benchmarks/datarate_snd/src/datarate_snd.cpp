@@ -34,20 +34,32 @@ int main(int argc, char **argv)
   TCLAP::ValueArg<std::string> arg_topic_name       ("t", "topic_name",       "Topic name to publish.",                  false, "topic", "string");
   TCLAP::ValueArg<int>         arg_size             ("s", "size",             "Message size in MB.",                     false,       8,    "int");
   TCLAP::ValueArg<int>         arg_sleep            ("d", "delay",            "Delay between publication in ms.",        false,       1,    "int");
+  TCLAP::SwitchArg             arg_zero_copy        ("z", "zero_copy",        "Zero copy mode on/off."                                           );
+  TCLAP::ValueArg<int>         arg_buffer_count     ("b", "buffer_count",     "Number of memory file buffers.",          false,       1,    "int");
+  TCLAP::ValueArg<int>         arg_acknowledge_time ("a", "acknowledge_time", "Handshake acknowledgement timout in ms.", false,       0,    "int");
   cmd.add(arg_topic_name);
   cmd.add(arg_size);
   cmd.add(arg_sleep);
+  cmd.add(arg_zero_copy);
+  cmd.add(arg_buffer_count);
+  cmd.add(arg_acknowledge_time);
   cmd.parse(argc, argv);
   
   // get parameters
   const std::string topic_name(arg_topic_name.getValue());
   size_t            size(arg_size.getValue());
   const int         sleep(arg_sleep.getValue());
+  const bool        zero_copy(arg_zero_copy.getValue());
+  const int         buffer_count(arg_buffer_count.getValue());
+  const int         acknowledge_time(arg_acknowledge_time.getValue());
 
   // log parameter
   std::cout << "Topic name           = " << topic_name                   << std::endl;
   std::cout << "Message size         = " << size             << " MByte" << std::endl;
   std::cout << "Sleep time           = " << sleep            << " ms"    << std::endl;
+  std::cout << "Zero copy mode       = " << zero_copy                    << std::endl;
+  std::cout << "Buffer count         = " << buffer_count                 << std::endl;
+  std::cout << "Acknowledgement time = " << acknowledge_time << " ms"    << std::endl;
 
   // initialize eCAL API
   eCAL::Initialize(argc, argv, "datarate_snd");
@@ -63,6 +75,15 @@ int main(int argc, char **argv)
     send_s += send_s;
   }
   send_s.resize(size);
+
+  // set zero copy
+  //pub.ShmEnableZeroCopy(zero_copy);  // TODO: NEW PARAMETER API
+  
+  // set buffering
+  //pub.ShmSetBufferCount(buffer_count);  // TODO: NEW PARAMETER API
+
+  // set handshake acknowledgement timeout [ms]
+  //pub.ShmSetAcknowledgeTimeout(acknowledge_time);  // TODO: NEW PARAMETER API
 
   // send updates
   while(eCAL::Ok())

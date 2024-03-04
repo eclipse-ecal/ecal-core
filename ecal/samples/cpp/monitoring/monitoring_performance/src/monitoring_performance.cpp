@@ -24,7 +24,7 @@
 #include <string>
 
 #ifdef _MSC_VER
-#pragma warning(push, 0)
+#pragma warning(push, 0) // disable protobuf warnings
 #endif
 #include <ecal/core/pb/monitoring.pb.h>
 #ifdef _MSC_VER
