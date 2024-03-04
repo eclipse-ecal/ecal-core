@@ -1,6 +1,6 @@
 # ========================= eCAL LICENSE =================================
 #
-# Copyright (C) 2016 - 2023 Continental Corporation
+# Copyright (C) 2016 - 2019 Continental Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,24 +16,23 @@
 #
 # ========================= eCAL LICENSE =================================
 
-project(service_sample)
+cmake_minimum_required(VERSION 3.10)
 
-find_package(Threads REQUIRED)
+project(binary_zero_copy_snd)
 
-set(sources
-  src/main.cpp
-)
+# set project properties
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+set(binary_zero_copy_snd_src src/binary_zero_copy_snd.cpp)
 
-add_executable(${PROJECT_NAME} ${sources})
+# find packages
+message("-- Checking for modules 'eCAL'")
+find_package(eCAL REQUIRED)
 
-target_link_libraries(${PROJECT_NAME}
-  PRIVATE
-    ecal_service)
-
+# add and configure sample project
+ecal_add_sample(${PROJECT_NAME} ${binary_zero_copy_snd_src})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
+target_link_libraries(${PROJECT_NAME} eCAL::core)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER core/service)
-
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
-    ${sources}
-)
+# install and set properties
+ecal_install_sample(${PROJECT_NAME})
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER core/samples/cpp/pubsub/binary)
