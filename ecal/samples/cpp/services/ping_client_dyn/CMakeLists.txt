@@ -1,6 +1,6 @@
 # ========================= eCAL LICENSE =================================
 #
-# Copyright (C) 2016 - 2023 Continental Corporation
+# Copyright (C) 2016 - 2019 Continental Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,24 +16,29 @@
 #
 # ========================= eCAL LICENSE =================================
 
-project(service_sample)
+cmake_minimum_required(VERSION 3.10)
 
-find_package(Threads REQUIRED)
+set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
-set(sources
-  src/main.cpp
+project(ping_client_dyn)
+
+find_package(eCAL REQUIRED)
+find_package(Protobuf REQUIRED)
+
+set(ping_client_dyn_src
+    src/ping_client_dyn.cpp
+    src/proto_json_conv.cpp
 )
 
-add_executable(${PROJECT_NAME} ${sources})
+ecal_add_sample(${PROJECT_NAME} ${ping_client_dyn_src})
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE
-    ecal_service)
+    eCAL::core
+    protobuf::libprotobuf
+)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_14)
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER core/service)
+ecal_install_sample(${PROJECT_NAME})
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES 
-    ${sources}
-)
+set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER core/samples/cpp/services/ping)

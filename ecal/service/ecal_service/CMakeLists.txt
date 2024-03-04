@@ -80,7 +80,9 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_14)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
                            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-                                -Wall -Wextra>)
+                                -Wall -Wextra>
+                           $<$<CXX_COMPILER_ID:MSVC>:
+                                /W4>)
 
 # Add own public include directory
 target_include_directories(${PROJECT_NAME}
@@ -93,7 +95,7 @@ target_include_directories(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_NAME}
-    FOLDER lib/service
+    FOLDER core/service
 )
 
 ##################################
