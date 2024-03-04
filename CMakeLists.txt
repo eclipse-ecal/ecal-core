@@ -265,40 +265,9 @@ if(WIN32)
 endif()
 
 # --------------------------------------------------------
-# core
+# ecal-core
 # --------------------------------------------------------
-add_subdirectory(ecal/core)
-
-if(ECAL_CORE_BUILD_SAMPLES_PROTOBUF)
-  add_subdirectory(ecal/core_pb)
-endif()
-
-# --------------------------------------------------------
-# core config
-# --------------------------------------------------------
-add_subdirectory(ecal/core/cfg)
-
-# --------------------------------------------------------
-# services
-# --------------------------------------------------------
-if(ECAL_CORE_SERVICE)
-  add_subdirectory(ecal/service)
-endif()
-
-# --------------------------------------------------------
-# samples
-# --------------------------------------------------------
-if(ECAL_CORE_BUILD_SAMPLES)
-  add_subdirectory(ecal/samples)
-endif()
-
-# --------------------------------------------------------
-# tests
-# --------------------------------------------------------
-if(ECAL_CORE_BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(ecal/tests)
-endif()
+add_subdirectory(ecal)
 
 # --------------------------------------------------------
 # time plugins
