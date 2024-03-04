@@ -99,7 +99,7 @@ target_include_directories(${PROJECT_NAME}
   PRIVATE 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../core/src/serialization/nanopb/nanopb>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../core/src/serialization/nanopb>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../core/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../core/include>
 )
 
 target_link_libraries(${PROJECT_NAME}
