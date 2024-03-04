@@ -51,7 +51,7 @@ void PrintStatistic(const std::string& topic_name_, const std::chrono::duration<
 int main(int argc, char **argv)
 {
   // initialize eCAL API
-  eCAL::Initialize(argc, argv, "performance_rec_cb");
+  eCAL::Initialize(argc, argv, "performance_rec");
 
   // create subscriber for topic "Performance"
   eCAL::CSubscriber sub("Performance");

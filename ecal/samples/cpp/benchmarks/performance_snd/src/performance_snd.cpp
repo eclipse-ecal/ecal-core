@@ -27,6 +27,9 @@
 #include "binary_payload_writer.h"
 
 // performance settings
+const bool   zero_copy              (true);
+const int    buffer_count           (1);
+const int    acknowledge_timeout_ms (50);
 const size_t payload_size_default   (8* 1024 * 1024);
 
 // main entry
@@ -45,6 +48,19 @@ int main(int argc, char **argv)
   // create publisher
   eCAL::CPublisher pub("Performance");
  
+  // enable zero copy mode
+  //std::cout << "Zero copy mode: " << zero_copy << std::endl;
+  //pub.ShmEnableZeroCopy(zero_copy);  // TODO: NEW PARAMETER API
+
+  // set write buffer count
+  //std::cout << "Number of write buffers: " << buffer_count << std::endl;
+  //pub.ShmSetBufferCount(buffer_count);  // TODO: NEW PARAMETER API
+  
+  // enable handshake mode
+  //std::cout << "Acknowledge timeout: " << acknowledge_timeout_ms << " ms" << std::endl;
+  //pub.ShmSetAcknowledgeTimeout(acknowledge_timeout_ms);  // TODO: NEW PARAMETER API
+  //std::cout << std::endl;
+
   // counter
   long long msgs (0);
   long long bytes(0);
