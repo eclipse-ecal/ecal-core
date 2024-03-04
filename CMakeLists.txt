@@ -286,22 +286,10 @@ if(ECAL_CORE_SERVICE)
 endif()
 
 # --------------------------------------------------------
-# time plugins
-# --------------------------------------------------------
-if(ECAL_CORE_TIMEPLUGIN)
-  add_subdirectory(ecal/time)
-endif()
-
-# --------------------------------------------------------
-# utils
-# --------------------------------------------------------
-add_subdirectory(ecal/utils)
-
-# --------------------------------------------------------
 # samples
 # --------------------------------------------------------
 if(ECAL_CORE_BUILD_SAMPLES)
-  add_subdirectory(samples)
+  add_subdirectory(ecal/samples)
 endif()
 
 # --------------------------------------------------------
@@ -309,8 +297,20 @@ endif()
 # --------------------------------------------------------
 if(ECAL_CORE_BUILD_TESTS)
   enable_testing()
-  add_subdirectory(tests)
+  add_subdirectory(ecal/tests)
 endif()
+
+# --------------------------------------------------------
+# time plugins
+# --------------------------------------------------------
+if(ECAL_CORE_TIMEPLUGIN)
+  add_subdirectory(contrib/ecaltime)
+endif()
+
+# --------------------------------------------------------
+# utils (needs to get a thirdparty)
+# --------------------------------------------------------
+add_subdirectory(lib/ecalutils)
 
 # --------------------------------------------------------
 # debscripts
