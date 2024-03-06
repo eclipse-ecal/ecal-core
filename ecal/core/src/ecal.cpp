@@ -234,7 +234,7 @@ namespace eCAL
   {
     if (unit_name_ == nullptr) return -1;
     
-    std::string uname = unit_name_;
+    const std::string uname = unit_name_;
     if (uname.empty()) return -1;
  
     g_unit_name = uname;
