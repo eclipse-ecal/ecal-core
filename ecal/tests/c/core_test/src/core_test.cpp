@@ -22,7 +22,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(Core_C, GetVersion)
+TEST(core_c, Core_GetVersion)
 {
   // get eCAL version string
   EXPECT_STREQ(ECAL_VERSION, eCAL_GetVersionString());
@@ -40,7 +40,7 @@ TEST(Core_C, GetVersion)
   EXPECT_EQ(ECAL_VERSION_PATCH, patch);
 }
 
-TEST(Core_C, InitializeFinalize)
+TEST(core_c, Core_InitializeFinalize)
 {
   // Is eCAL API initialized ?
   EXPECT_EQ(0, eCAL_IsInitialized(0));
@@ -70,7 +70,7 @@ TEST(Core_C, InitializeFinalize)
   EXPECT_EQ(1, eCAL_Finalize(0));
 }
 
-TEST(Core_C, MultipleInitializeFinalize)
+TEST(core_c, Core_MultipleInitializeFinalize)
 {
   // try to initialize / finalize multiple times
   for (auto i = 0; i < 4; ++i)
@@ -83,7 +83,7 @@ TEST(Core_C, MultipleInitializeFinalize)
   }
 }
 
-TEST(Core_C, UnitName)
+TEST(core_c, Core_UnitName)
 {
   // initialize eCAL API with empty unit name (eCAL will use process name as unit name)
   EXPECT_EQ(0, eCAL_Initialize(0, nullptr, "", 0));
@@ -104,7 +104,7 @@ TEST(Core_C, UnitName)
   EXPECT_EQ(0, eCAL_Finalize(0));
 }
 
-TEST(Core_C, eCAL_Ok)
+TEST(core_c, Core_eCAL_Ok)
 {
   // check uninitialized eCAL, should not be okay
   EXPECT_EQ(0, eCAL_Ok());
