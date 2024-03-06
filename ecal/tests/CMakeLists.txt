@@ -21,6 +21,9 @@ cmake_minimum_required(VERSION 3.13)
 # --------------------------------------------------------
 # c tests
 # --------------------------------------------------------
+if(ECAL_CORE_REGISTRATION AND ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
+  add_subdirectory(c/core_test)
+endif()
 
 # --------------------------------------------------------
 # cpp tests
