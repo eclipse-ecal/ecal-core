@@ -17,28 +17,37 @@
  * ========================= eCAL LICENSE =================================
 */
 
-#include <ecal/types/logging.h>
+/**
+ * @file   logging.h
+ * @brief  eCAL logging struct interface
+**/
 
-#include <cstdlib>
+#pragma once
+
+#include <ecal/ecal_log_level.h>
+
+#include <cstdint>
+#include <list>
+#include <string>
 
 namespace eCAL
 {
-  std::string GenerateString(size_t length);
-
   namespace Logging
   {
-    SLogMessage GenerateLogMessage()
+    struct SLogMessage
     {
-      SLogMessage logMessage;
-      logMessage.time    = rand() % 1000;
-      logMessage.hname   = GenerateString(10);
-      logMessage.pid     = rand() % 1000;
-      logMessage.pname   = GenerateString(8);
-      logMessage.uname   = GenerateString(6);
-      logMessage.level   = static_cast<eCAL_Logging_eLogLevel>(rand() % 2);
-      logMessage.content = GenerateString(50);
+      int64_t                time  = 0;               // time
+      std::string            hname;                   // host name
+      int32_t                pid   = 0;               // process id
+      std::string            pname;                   // process name
+      std::string            uname;                   // unit name
+      eCAL_Logging_eLogLevel level = log_level_none;  // message level
+      std::string            content;                 // message content
+    };
 
-      return logMessage;
-    }
+    struct SLogging
+    {
+      std::list<SLogMessage>  log_messages;            // log messages
+    };
   }
 }
