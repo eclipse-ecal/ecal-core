@@ -68,8 +68,8 @@ namespace eCAL
 
     void RegisterSendThread();
 
-    Registration::Sample CRegistrationProvider::GetProcessRegisterSample();
-    Registration::Sample CRegistrationProvider::GetProcessUnregisterSample();
+    Registration::Sample GetProcessRegisterSample();
+    Registration::Sample GetProcessUnregisterSample();
 
     static std::atomic<bool>            m_created;
 
