@@ -867,7 +867,7 @@ namespace eCAL
     ecal_reg_sample_topic.connections_ext = static_cast<int32_t>(ext_connections);
 
     // register publisher
-    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterTopic(m_topic_name, m_topic_id, ecal_reg_sample, force_);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(ecal_reg_sample, force_);
 
 #ifndef NDEBUG
     // log it
@@ -897,7 +897,7 @@ namespace eCAL
     ecal_reg_sample_topic.uname  = Process::GetUnitName();
 
     // unregister publisher
-    if (g_registration_provider() != nullptr) g_registration_provider()->UnregisterTopic(m_topic_name, m_topic_id, ecal_unreg_sample, true);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(ecal_unreg_sample, true);
 
 #ifndef NDEBUG
     // log it

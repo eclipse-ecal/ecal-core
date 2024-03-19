@@ -632,7 +632,7 @@ namespace eCAL
     service_client.sid     = m_service_id;
 
     // register entity
-    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterClient(m_service_name, m_service_id, sample, force_);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(sample, force_);
 
     // refresh connected services map
     CheckForNewServices();
@@ -685,7 +685,7 @@ namespace eCAL
     service_client.version = m_client_version;
 
     // unregister entity
-    if (g_registration_provider() != nullptr) g_registration_provider()->UnregisterClient(m_service_name, m_service_id, sample, true);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(sample, true);
   }
 
   void CServiceClientImpl::CheckForNewServices()
