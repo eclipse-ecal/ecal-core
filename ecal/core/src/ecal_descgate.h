@@ -77,7 +77,7 @@ namespace eCAL
     bool GetServiceDescription(const std::string& service_name_, const std::string& method_name_, std::string& req_type_desc_, std::string& resp_type_desc_);
 
   protected:
-    bool CDescGate::ApplySample(const Registration::Sample& sample_, eTLayerType layer_);
+    bool ApplySample(const Registration::Sample& sample_, eTLayerType layer_);
       
     bool ApplyTopicDescription(const std::string& topic_name_,
                                const SDataTypeInformation& topic_info_,

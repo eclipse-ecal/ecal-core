@@ -24,7 +24,6 @@
 #include <ecal/ecal_config.h>
 
 #include "registration/ecal_registration_provider.h"
-#include "ecal_descgate.h"
 #include "ecal_global_accessors.h"
 #include "ecal_service_server_impl.h"
 #include "ecal_service_singleton_manager.h"

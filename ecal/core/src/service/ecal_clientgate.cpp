@@ -22,8 +22,8 @@
 **/
 
 #include "ecal_clientgate.h"
-#include "ecal_descgate.h"
 #include "service/ecal_service_client_impl.h"
+
 #include <atomic>
 #include <mutex>
 #include <shared_mutex>
