@@ -132,9 +132,18 @@ namespace eCAL
     m_created = false;
   }
 
-  bool CRegistrationProvider::RegisterSample(const Registration::Sample& sample_, const bool force_)
+  bool CRegistrationProvider::ApplySample(const Registration::Sample& sample_, const bool force_)
   {
     if (!m_created) return(false);
+
+    // forward all registration samples to outside "customer" (e.g. monitoring, descgate)
+    {
+      const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
+      for (const auto& iter : m_callback_custom_apply_sample_map)
+      {
+        iter.second(sample_);
+      }
+    }
 
     // update sample list
     AddSample2SampleList(sample_);
@@ -150,6 +159,22 @@ namespace eCAL
     }
 
     return(true);
+  }
+
+  void CRegistrationProvider::SetCustomApplySampleCallback(const std::string& customer_, const ApplySampleCallbackT& callback_)
+  {
+    const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
+    m_callback_custom_apply_sample_map[customer_] = callback_;
+  }
+
+  void CRegistrationProvider::RemCustomApplySampleCallback(const std::string& customer_)
+  {
+    const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
+    auto iter = m_callback_custom_apply_sample_map.find(customer_);
+    if (iter != m_callback_custom_apply_sample_map.end())
+    {
+      m_callback_custom_apply_sample_map.erase(iter);
+    }
   }
 
   void CRegistrationProvider::AddSample2SampleList(const Registration::Sample& sample_)
@@ -174,6 +199,7 @@ namespace eCAL
         return m_reg_sample_snd->Send("reg_sample", m_sample_buffer) != 0;
       }
     }
+    return(false);
   }
 
   bool CRegistrationProvider::SendSampleList2UDP()

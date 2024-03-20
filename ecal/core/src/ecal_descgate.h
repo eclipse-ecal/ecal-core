@@ -29,6 +29,7 @@
 
 #include "ecal_global_accessors.h"
 #include "ecal_def.h"
+#include "serialization/ecal_serialize_sample_registration.h"
 #include "util/ecal_expmap.h"
 
 #include <map>
@@ -66,19 +67,9 @@ namespace eCAL
     void Create();
     void Destroy();
 
-    bool ApplyTopicDescription(const std::string& topic_name_, 
-                               const SDataTypeInformation& topic_info_,
-                               QualityFlags description_quality_);
-
     void GetTopics(std::unordered_map<std::string, SDataTypeInformation>& topic_info_map_);
     void GetTopicNames(std::vector<std::string>& topic_names_);
     bool GetDataTypeInformation(const std::string& topic_name_, SDataTypeInformation& topic_info_);
-
-    bool ApplyServiceDescription(const std::string& service_name_, 
-                                 const std::string& method_name_, 
-                                 const SDataTypeInformation& request_type_information_,
-                                 const SDataTypeInformation& response_type_information_,
-                                 QualityFlags description_quality_);
 
     void GetServices(std::map<std::tuple<std::string, std::string>, SServiceMethodInformation>& service_info_map_);
     void GetServiceNames(std::vector<std::tuple<std::string, std::string>>& service_method_names_);
@@ -86,6 +77,18 @@ namespace eCAL
     bool GetServiceDescription(const std::string& service_name_, const std::string& method_name_, std::string& req_type_desc_, std::string& resp_type_desc_);
 
   protected:
+    bool CDescGate::ApplySample(const Registration::Sample& sample_, eTLayerType layer_);
+      
+    bool ApplyTopicDescription(const std::string& topic_name_,
+                               const SDataTypeInformation& topic_info_,
+                               QualityFlags description_quality_);
+
+    bool ApplyServiceDescription(const std::string& service_name_, 
+                                 const std::string& method_name_, 
+                                 const SDataTypeInformation& request_type_information_,
+                                 const SDataTypeInformation& response_type_information_,
+                                 QualityFlags description_quality_);
+
     struct STopicInfoQuality
     {
       SDataTypeInformation info;                                                       //!< Topic info struct with type encoding, name and descriptor.

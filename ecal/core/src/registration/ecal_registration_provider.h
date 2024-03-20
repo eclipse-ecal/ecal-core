@@ -56,7 +56,11 @@ namespace eCAL
     void Create();
     void Destroy();
 
-    bool RegisterSample(const Registration::Sample& sample_, bool force_);
+    bool ApplySample(const Registration::Sample& sample_, bool force_);
+
+    using ApplySampleCallbackT = std::function<void(const Registration::Sample&)>;
+    void SetCustomApplySampleCallback(const std::string& customer_, const ApplySampleCallbackT& callback_);
+    void RemCustomApplySampleCallback(const std::string& customer_);
 
   protected:
     void AddSample2SampleList(const Registration::Sample& sample_);
@@ -90,5 +94,8 @@ namespace eCAL
 
     bool                                m_use_registration_udp;
     bool                                m_use_registration_shm;
+
+    std::mutex                            m_callback_custom_apply_sample_map_mtx;
+    std::map<std::string, ApplySampleCallbackT> m_callback_custom_apply_sample_map;
   };
 }

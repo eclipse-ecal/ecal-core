@@ -27,7 +27,7 @@
 #define CMN_MONITORING_TIMEOUT     5000
 
 TEST(core_cpp_pubsub, GetTopics)
-{
+  {
   // initialize eCAL API
   eCAL::Initialize(0, nullptr, "pubsub_gettopics");
 
