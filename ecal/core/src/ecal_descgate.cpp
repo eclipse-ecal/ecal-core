@@ -46,16 +46,20 @@ namespace eCAL
 
   void CDescGate::Create()
   {
+#if ECAL_CORE_REGISTRATION
     // utilize registration provider and receiver to get descriptions
     g_registration_provider()->SetCustomApplySampleCallback("descgate", [this](const auto& sample_) {this->ApplySample(sample_, tl_none); });
     g_registration_receiver()->SetCustomApplySampleCallback("descgate", [this](const auto& sample_) {this->ApplySample(sample_, tl_none); });
+#endif
   }
 
   void CDescGate::Destroy()
   {
+#if ECAL_CORE_REGISTRATION
     // stop registration provider and receiver utilization to get descriptions
     g_registration_provider()->RemCustomApplySampleCallback("descgate");
     g_registration_receiver()->RemCustomApplySampleCallback("descgate");
+#endif
   }
 
   void CDescGate::GetTopics(std::unordered_map<std::string, SDataTypeInformation>& topic_info_map_)
