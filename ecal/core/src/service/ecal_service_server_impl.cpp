@@ -200,6 +200,9 @@ namespace eCAL
       }
     }
 
+    // register this service
+    Register(false);
+
     return true;
   }
 
@@ -234,6 +237,9 @@ namespace eCAL
         m_method_map[method_] = method;
       }
     }
+
+    // register this service
+    Register(false);
 
     return true;
   }
