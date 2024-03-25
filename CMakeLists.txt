@@ -89,7 +89,7 @@ else()
 endif()
 
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_UDPCAP      "Build udpcap library with eCAL"      ON   "ECAL_CORE_NPCAP_SUPPORT"                                   OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_THIRDPARTY_BUILD_UDPCAP OR ECAL_THIRDPARTY_BUILD_TCP_PUBSUB" OFF)
+cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_THIRDPARTY_BUILD_ECALUDP OR ECAL_THIRDPARTY_BUILD_TCP_PUBSUB" OFF)
 
 option(ECAL_THIRDPARTY_BUILD_ECALUDP                     "Build the builtin ecaludp library from the submodule"                                                  ON)
 
