@@ -78,9 +78,9 @@ option(ECAL_THIRDPARTY_BUILD_CMAKEFUNCTIONS              "Build CMakeFunctions w
 
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_GTEST       "Build gtest with eCAL"               ON   "ECAL_CORE_BUILD_TESTS"                                     OFF)
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_TCP_PUBSUB  "Build tcp_pubsub library with eCAL"  ON   "ECAL_CORE_TRANSPORT_TCP"                                   OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_CORE_TRANSPORT_TCP"                                   OFF)
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_SIMPLEINI   "Build simpleini with eCAL"           ON   "ECAL_CORE_CONFIG_INIFILE"                                  OFF)
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_TCLAP       "Build tclap library with eCAL"       ON   "ECAL_CORE_COMMAND_LINE"                                    OFF)
+cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_THIRDPARTY_BUILD_RECYCLE or ECAL_THIRDPARTY_BUILD_TCP_PUBSUB" OFF)
 
 if(WIN32)
   cmake_dependent_option(ECAL_THIRDPARTY_BUILD_PROTOBUF  "Build protobuf with eCAL"           OFF   "NOT ECAL_CORE_BUILD_SAMPLES_PROTOBUF; NOT ECAL_CORE_BUILD_TESTS_PROTOBUF"  ON)
