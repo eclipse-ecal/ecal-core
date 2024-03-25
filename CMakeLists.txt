@@ -82,16 +82,16 @@ cmake_dependent_option(ECAL_THIRDPARTY_BUILD_SIMPLEINI   "Build simpleini with e
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_TCLAP       "Build tclap library with eCAL"       ON   "ECAL_CORE_COMMAND_LINE"                                    OFF)
 
 if(WIN32)
-  cmake_dependent_option(ECAL_THIRDPARTY_BUILD_PROTOBUF  "Build protobuf with eCAL"           OFF   "NOT ECAL_CORE_BUILD_SAMPLES_PROTOBUF; NOT ECAL_CORE_BUILD_TESTS_PROTOBUF"  ON)
+cmake_dependent_option(ECAL_THIRDPARTY_BUILD_PROTOBUF  "Build protobuf with eCAL"           OFF   "NOT ECAL_CORE_BUILD_SAMPLES_PROTOBUF; NOT ECAL_CORE_BUILD_TESTS_PROTOBUF"  ON)
 else()
-  option(ECAL_CORE_NPCAP_SUPPORT                         "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"                                      OFF)
-  option(ECAL_THIRDPARTY_BUILD_PROTOBUF                  "Build protobuf with eCAL"                                                                             OFF)
+option(ECAL_CORE_NPCAP_SUPPORT                         "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"                                      OFF)
+option(ECAL_THIRDPARTY_BUILD_PROTOBUF                  "Build protobuf with eCAL"                                                                             OFF)
 endif()
 
+option(ECAL_THIRDPARTY_BUILD_ECALUDP                     "Build the builtin ecaludp library from the submodule"                                                  ON)
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_UDPCAP      "Build udpcap library with eCAL"      ON   "ECAL_CORE_NPCAP_SUPPORT"                                   OFF)
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_THIRDPARTY_BUILD_ECALUDP OR ECAL_THIRDPARTY_BUILD_TCP_PUBSUB OR ECAL_CORE_SERVICE" OFF)
 
-option(ECAL_THIRDPARTY_BUILD_ECALUDP                     "Build the builtin ecaludp library from the submodule"                                                  ON)
 
 if(NOT ECAL_CORE_REGISTRATION)
   if(ECAL_CORE_TRANSPORT_TCP)
