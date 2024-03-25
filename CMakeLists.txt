@@ -91,6 +91,8 @@ endif()
 
 cmake_dependent_option(ECAL_THIRDPARTY_BUILD_UDPCAP      "Build udpcap library with eCAL"      ON   "ECAL_CORE_NPCAP_SUPPORT"                                   OFF)
 
+option(ECAL_THIRDPARTY_BUILD_ECALUDP                     "Build the builtin ecaludp library from the submodule"                                                  ON)
+
 if(NOT ECAL_CORE_REGISTRATION)
   if(ECAL_CORE_TRANSPORT_TCP)
     message(STATUS "Switching ECAL_CORE_TRANSPORT_TCP to OFF because registration (ECAL_CORE_REGISTRATION) is not activated")
@@ -148,6 +150,7 @@ set(possible_subprojects
   tclap
   tcp_pubsub
   udpcap
+  ecaludp
 )
 
 # if a package does need to be build, include the cmake file with build instructions
@@ -328,4 +331,5 @@ message(STATUS "ECAL_THIRDPARTY_BUILD_PROTOBUF                 : ${ECAL_THIRDPAR
 message(STATUS "ECAL_THIRDPARTY_BUILD_SIMPLEINI                : ${ECAL_THIRDPARTY_BUILD_SIMPLEINI}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_TCLAP                    : ${ECAL_THIRDPARTY_BUILD_TCLAP}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_UDPCAP                   : ${ECAL_THIRDPARTY_BUILD_UDPCAP}")
+message(STATUS "ECAL_THIRDPARTY_BUILD_ECALUDP                  : ${ECAL_THIRDPARTY_BUILD_ECALUDP}")
 message(STATUS "--------------------------------------------------------------------------------")
