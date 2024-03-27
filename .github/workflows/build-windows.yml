@@ -11,6 +11,7 @@ jobs:
     runs-on: windows-2019
 
     strategy:
+      fail-fast: false
       matrix:
         build_configuration:
           ########################################

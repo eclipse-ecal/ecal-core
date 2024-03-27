@@ -22,3 +22,6 @@
 [submodule "thirdparty/recycle/recycle"]
 	path = thirdparty/recycle/recycle
 	url = https://github.com/steinwurf/recycle.git
+[submodule "thirdparty/ecaludp/ecaludp"]
+	path = thirdparty/ecaludp/ecaludp
+	url = https://github.com/eclipse-ecal/ecaludp.git
