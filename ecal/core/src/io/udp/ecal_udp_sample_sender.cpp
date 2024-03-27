@@ -22,51 +22,76 @@
 **/
 
 #include "ecal_udp_sample_sender.h"
-#include "io/udp/fragmentation/snd_fragments.h"
 
-#include <functional>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <vector>
-
-namespace
-{
-  size_t TransmitToUDP(const void* buf_, const size_t len_, const std::shared_ptr<IO::UDP::CUDPSender>& sample_sender_, const std::string& mcast_address_)
-  {
-    return (sample_sender_->Send(buf_, len_, mcast_address_.c_str()));
-  }
-}
+#include <chrono>
+#include <iostream>
 
 namespace eCAL
 {
   namespace UDP
   {
-    CSampleSender::CSampleSender(const IO::UDP::SSenderAttr& attr_)
+    CSampleSender::CSampleSender(const IO::UDP::SSenderAttr& attr_) :
+      m_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
     {
-      m_udp_sender = std::make_shared<IO::UDP::CUDPSender>(attr_);
+      m_io_context = std::make_shared<asio::io_context>();
+      m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
+
+      if (attr_.broadcast)
+      {
+        // set unicast packet TTL
+        const asio::ip::unicast::hops ttl(attr_.ttl);
+        asio::error_code ec;
+        m_socket->set_option(ttl, ec);
+        if (ec)
+          std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << std::endl;
+      }
+      else
+      {
+        // set multicast packet TTL
+        {
+          const asio::ip::multicast::hops ttl(attr_.ttl);
+          asio::error_code ec;
+          m_socket->set_option(ttl, ec);
+          if (ec)
+            std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << std::endl;
+        }
+
+        // set loopback option
+        {
+          const asio::ip::multicast::enable_loopback loopback(attr_.loopback);
+          asio::error_code ec;
+          m_socket->set_option(loopback, ec);
+          if (ec)
+            std::cerr << "CSampleSender: Error setting loopback option: " << ec.message() << std::endl;
+        }
+      }
+
+      if (attr_.broadcast)
+      {
+        asio::error_code ec;
+        m_socket->set_option(asio::socket_base::broadcast(true), ec);
+        if (ec)
+          std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << std::endl;
+      }
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
     {
-      if (!m_udp_sender) return(0);
+      const asio::socket_base::message_flags flags(0);
+      
+      asio::const_buffer serialized_asio_buffer(serialized_sample_.data(), serialized_sample_.size());
+      m_socket->async_send_to({ serialized_asio_buffer }
+        , m_endpoint
+        , [serialized_asio_buffer](asio::error_code ec)
+        {
+          if (ec)
+          {
+            std::cout << "CSampleSender: Error sending: " << ec.message() << std::endl;
+            return;
+          }
+        });
 
-      std::lock_guard<std::mutex> const send_lock(m_payload_mutex);
-      // return value
-      size_t sent_sum(0);
-
-      const size_t data_size = IO::UDP::CreateSampleBuffer(sample_name_, serialized_sample_, m_payload);
-      if (data_size > 0)
-      {
-        // and send it
-        sent_sum = SendFragmentedMessage(m_payload.data(), data_size, std::bind(TransmitToUDP, std::placeholders::_1, std::placeholders::_2, m_udp_sender, m_attr.address));
-
-        // log it
-        //std::cout << "UDP Sample Buffer Sent (" << std::to_string(sent_sum) << " Bytes)" << std::endl;;
-      }
-
-      // return bytes sent
-      return(sent_sum);
+      return 0;
     }
   }
 }

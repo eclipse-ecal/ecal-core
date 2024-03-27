@@ -81,10 +81,6 @@
 #include <libutil.h>
 #endif
 
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-#include <udpcap/npcap_helpers.h>
-#endif // ECAL_CORE_NPCAP_SUPPORT
-
 #ifndef NDEBUG
 #define STD_COUT_DEBUG( x ) { std::stringstream ss; ss << x; std::cout << ss.str(); }
 #else

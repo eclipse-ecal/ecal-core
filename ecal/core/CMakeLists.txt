@@ -20,6 +20,7 @@ project(core VERSION ${eCAL_VERSION_STRING})
 
 find_package(asio             REQUIRED)
 find_package(Threads          REQUIRED)
+find_package(ecaludp          REQUIRED)
 
 if (ECAL_CORE_CONFIG_INIFILE)
   find_package(simpleini      REQUIRED)
@@ -31,10 +32,6 @@ endif()
 
 if (ECAL_CORE_TRANSPORT_TCP)
   find_package(tcp_pubsub     REQUIRED)
-endif()
-
-if (ECAL_CORE_NPCAP_SUPPORT)
-  find_package(udpcap         REQUIRED)
 endif()
 
 # If we're currently doing a build within a git repository, we will configure the header files.
@@ -139,56 +136,16 @@ endif()
 ######################################
 # io/udp
 ######################################
-# io/udp/fragmentation
-set(ecal_io_udp_fragmentation_src
-    src/io/udp/fragmentation/msg_type.h
-    src/io/udp/fragmentation/rcv_fragments.cpp
-    src/io/udp/fragmentation/rcv_fragments.h
-    src/io/udp/fragmentation/snd_fragments.cpp
-    src/io/udp/fragmentation/snd_fragments.h
-)
-
-# io/udp/sendreceive (npcap)
-if(ECAL_CORE_NPCAP_SUPPORT)
-set(ecal_io_udp_sendreceive_src_npcap 
-   src/io/udp/sendreceive/udp_receiver_npcap.cpp
-   src/io/udp/sendreceive/udp_receiver_npcap.h
-)
-endif()
-
-# io/udp/sendreceive
-set(ecal_io_udp_sendreceive_src
-    src/io/udp/sendreceive/udp_receiver.cpp
-    src/io/udp/sendreceive/udp_receiver.h
-    src/io/udp/sendreceive/udp_receiver_asio.cpp
-    src/io/udp/sendreceive/udp_receiver_asio.h
-    src/io/udp/sendreceive/udp_sender.cpp
-    src/io/udp/sendreceive/udp_sender.h
-    ${ecal_io_udp_sendreceive_src_npcap}
-)
-
-# io/udp/sendreceive/linux
-if(UNIX)
-  set(ecal_io_udp_sendreceive_linux_src
-      src/io/udp/sendreceive/linux/socket_os.h
-)
-endif()
-
-# io/udp/sendreceive/win32
-if (WIN32)
-  set(ecal_io_udp_sendreceive_win_src
-      src/io/udp/sendreceive/win32/socket_os.h
-)
-endif()
-
 # io/udp
 set(ecal_io_udp_src
     src/io/udp/ecal_udp_configurations.cpp
     src/io/udp/ecal_udp_configurations.h
+    src/io/udp/ecal_udp_receiver_attr.h
     src/io/udp/ecal_udp_sample_receiver.cpp
     src/io/udp/ecal_udp_sample_receiver.h
     src/io/udp/ecal_udp_sample_sender.cpp
     src/io/udp/ecal_udp_sample_sender.h
+    src/io/udp/ecal_udp_sender_attr.h
     src/io/udp/ecal_udp_topic2mcast.h
 )
 
@@ -540,8 +497,6 @@ set(ecal_sources
     ${ecal_io_shm_src}
     ${ecal_io_shm_linux_src}
     ${ecal_io_shm_win_src}
-    ${ecal_io_udp_fragmentation_src}
-    ${ecal_io_udp_sendreceive_src}
     ${ecal_io_udp_src}
     ${ecal_io_udp_sendreceive_linux_src}
     ${ecal_io_udp_sendreceive_win_src}
@@ -663,7 +618,7 @@ endif()
 if(ECAL_CORE_NPCAP_SUPPORT)
   target_link_libraries(${PROJECT_NAME}
     PRIVATE
-      udpcap::udpcap
+      ecaludp::ecaludp
   )
 endif()
 
