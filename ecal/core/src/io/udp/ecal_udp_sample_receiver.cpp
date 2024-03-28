@@ -46,7 +46,7 @@ namespace eCAL
         m_socket->open(listen_endpoint.protocol(), ec);
         if (ec)
         {
-          std::cerr << "CUDPReceiverAsio: Unable to open socket: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to open socket: " << ec.message() << std::endl;
           return;
         }
       }
@@ -57,7 +57,7 @@ namespace eCAL
         m_socket->set_option(asio::ip::udp::socket::reuse_address(true), ec);
         if (ec)
         {
-          std::cerr << "CUDPReceiverAsio: Unable to set reuse-address option: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to set reuse-address option: " << ec.message() << std::endl;
         }
       }
 
@@ -67,7 +67,7 @@ namespace eCAL
         m_socket->bind(listen_endpoint, ec);
         if (ec)
         {
-          std::cerr << "CUDPReceiverAsio: Unable to bind socket to " << listen_endpoint.address().to_string() << ":" << listen_endpoint.port() << ": " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to bind socket to " << listen_endpoint.address().to_string() << ":" << listen_endpoint.port() << ": " << ec.message() << std::endl;
           return;
         }
       }
@@ -79,7 +79,7 @@ namespace eCAL
         m_socket->set_option(loopback, ec);
         if (ec)
         {
-          std::cerr << "CUDPReceiverAsio: Unable to enable loopback: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to enable loopback: " << ec.message() << std::endl;
         }
       }
 
@@ -92,15 +92,15 @@ namespace eCAL
         m_socket->set_option(recbufsize, ec);
         if (ec)
         {
-          std::cerr << "CUDPReceiverAsio: Unable to set receive buffer size: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to set receive buffer size: " << ec.message() << std::endl;
         }
       }
 
       // join multicast group
       AddMultiCastGroup(attr_.address.c_str());
 
-      // start io_context
-      m_work = std::make_shared<asio::io_context::work>(*m_io_context);
+      // run the io context
+      m_io_thread = std::thread([this] { m_io_context->run(); });
 
       // start receiving
       Receive();
@@ -108,7 +108,10 @@ namespace eCAL
 
     CSampleReceiver::~CSampleReceiver()
     {
+      // stop io context
       m_work.reset();
+      if (m_io_thread.joinable())
+        m_io_thread.join();
     }
 
     bool CSampleReceiver::AddMultiCastGroup(const char* ipaddr_)

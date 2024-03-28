@@ -28,6 +28,7 @@
 #include <ecaludp/socket.h>
 
 #include <functional>
+#include <thread>
 
 namespace eCAL
 {
@@ -50,12 +51,13 @@ namespace eCAL
 
       HasSampleCallbackT                      m_has_sample_callback;
       ApplySampleCallbackT                    m_apply_sample_callback;
+      bool                                    m_broadcast;
 
       std::shared_ptr<asio::io_context>       m_io_context;
       std::shared_ptr<asio::io_context::work> m_work;
       std::shared_ptr<ecaludp::Socket>        m_socket;
       asio::ip::udp::endpoint                 m_sender_endpoint;
-      bool                                    m_broadcast;
+      std::thread                             m_io_thread;
     };
   }
 }

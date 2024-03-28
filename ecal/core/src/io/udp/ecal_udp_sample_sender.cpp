@@ -36,8 +36,16 @@ namespace eCAL
       m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
     {
       m_io_context = std::make_shared<asio::io_context>();
-      m_work = std::make_shared<asio::io_context::work>(*m_io_context);
+      m_work       = std::make_shared<asio::io_context::work>(*m_io_context);
       m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
+
+      // open the socket
+      {
+        asio::error_code ec;
+        m_socket->open(asio::ip::udp::v4(), ec);
+        if (ec)
+          std::cout << "Error opening socket: " << ec.message() << std::endl;
+      }
 
       if (attr_.broadcast)
       {
@@ -77,13 +85,16 @@ namespace eCAL
           std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << std::endl;
       }
 
-      // start io_context
-      m_work = std::make_shared<asio::io_context::work>(*m_io_context);
+      // run the io context
+      m_io_thread = std::thread([this] { m_io_context->run(); });
     }
 
     CSampleSender::~CSampleSender()
     {
+      // stop io context
       m_work.reset();
+      if (m_io_thread.joinable())
+        m_io_thread.join();
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
@@ -98,7 +109,7 @@ namespace eCAL
       // s1 Bytes sample name
       // s2 Bytes serialized sample
       // ------------------------------------------------
-      unsigned short s1 = sample_name_.size();
+      unsigned short s1 = static_cast<unsigned short>(sample_name_.size());
       size_t         s2 = serialized_sample_.size();
       asio::const_buffer sample_name_size_asio_buffer(&s1, 2);
       asio::const_buffer sample_name_asio_buffer(sample_name_.data(), s1);
