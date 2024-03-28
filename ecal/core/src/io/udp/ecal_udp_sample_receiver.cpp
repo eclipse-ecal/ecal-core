@@ -110,8 +110,8 @@ namespace eCAL
     {
       // stop io context
       m_work.reset();
-      if (m_io_thread.joinable())
-        m_io_thread.join();
+      //if (m_io_thread.joinable())
+      //  m_io_thread.join();
     }
 
     bool CSampleReceiver::AddMultiCastGroup(const char* ipaddr_)
