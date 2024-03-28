@@ -23,18 +23,12 @@
 
 #pragma once
 
-#include "io/udp/sendreceive/udp_receiver.h"
-#include "io/udp/fragmentation/rcv_fragments.h"
-#include "util/ecal_thread.h"
+#include "io/udp/ecal_udp_receiver_attr.h"
 
-#include <chrono>
-#include <cstddef>
-#include <cstdint>
+#include <ecaludp/socket.h>
+
 #include <functional>
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include <thread>
 
 namespace eCAL
 {
@@ -52,34 +46,18 @@ namespace eCAL
       bool AddMultiCastGroup(const char* ipaddr_);
       bool RemMultiCastGroup(const char* ipaddr_);
 
-    protected:
-      void ReceiveThread();
-      void Process(const char* sample_buffer_, size_t sample_buffer_len_);
+    private:
+      void Receive();
 
       HasSampleCallbackT                      m_has_sample_callback;
       ApplySampleCallbackT                    m_apply_sample_callback;
+      bool                                    m_broadcast;
 
-      IO::UDP::CUDPReceiver                   m_udp_receiver;
-      std::shared_ptr<eCAL::CCallbackThread>  m_udp_receiver_thread;
-
-      std::vector<char>                       m_msg_buffer;
-
-      std::chrono::steady_clock::time_point   m_cleanup_start;
-
-      class CSampleDefragmentation : public IO::UDP::CMsgDefragmentation
-      {
-      public:
-        explicit CSampleDefragmentation(CSampleReceiver* sample_receiver_);
-        ~CSampleDefragmentation() override;
-
-        int OnMessageCompleted(std::vector<char>&& msg_buffer_) override;
-
-      protected:
-        CSampleReceiver* m_sample_receiver;
-      };
-
-      using SampleDefragmentationMapT = std::unordered_map<int32_t, std::shared_ptr<CSampleDefragmentation>>;
-      SampleDefragmentationMapT m_defrag_sample_map;
+      std::shared_ptr<asio::io_context>       m_io_context;
+      std::shared_ptr<asio::io_context::work> m_work;
+      std::shared_ptr<ecaludp::Socket>        m_socket;
+      asio::ip::udp::endpoint                 m_sender_endpoint;
+      std::thread                             m_io_thread;
     };
   }
 }
