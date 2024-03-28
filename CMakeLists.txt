@@ -73,26 +73,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/ecal/ecal-core-options.cmake)
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # third party library options (do not change)
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-option(ECAL_THIRDPARTY_BUILD_ASIO                        "Build asio with eCAL"                                                                                  ON)
-option(ECAL_THIRDPARTY_BUILD_CMAKEFUNCTIONS              "Build CMakeFunctions with eCAL"                                                                        ON)
-
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_GTEST       "Build gtest with eCAL"               ON   "ECAL_CORE_BUILD_TESTS"                                     OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_TCP_PUBSUB  "Build tcp_pubsub library with eCAL"  ON   "ECAL_CORE_TRANSPORT_TCP"                                   OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_SIMPLEINI   "Build simpleini with eCAL"           ON   "ECAL_CORE_CONFIG_INIFILE"                                  OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_TCLAP       "Build tclap library with eCAL"       ON   "ECAL_CORE_COMMAND_LINE"                                    OFF)
-
-if(WIN32)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_PROTOBUF  "Build protobuf with eCAL"           OFF   "NOT ECAL_CORE_BUILD_SAMPLES_PROTOBUF; NOT ECAL_CORE_BUILD_TESTS_PROTOBUF"  ON)
-else()
-option(ECAL_CORE_NPCAP_SUPPORT                         "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"                                      OFF)
-option(ECAL_THIRDPARTY_BUILD_PROTOBUF                  "Build protobuf with eCAL"                                                                             OFF)
-endif()
-
-option(ECAL_THIRDPARTY_BUILD_ECALUDP                     "Build the builtin ecaludp library from the submodule"                                                  ON)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_UDPCAP      "Build udpcap library with eCAL"      ON   "ECAL_CORE_NPCAP_SUPPORT"                                   OFF)
-cmake_dependent_option(ECAL_THIRDPARTY_BUILD_RECYCLE     "Build steinwurf::recylce with eCAL"  ON   "ECAL_THIRDPARTY_BUILD_ECALUDP OR ECAL_THIRDPARTY_BUILD_TCP_PUBSUB OR ECAL_CORE_SERVICE" OFF)
-
-
 if(NOT ECAL_CORE_REGISTRATION)
   if(ECAL_CORE_TRANSPORT_TCP)
     message(STATUS "Switching ECAL_CORE_TRANSPORT_TCP to OFF because registration (ECAL_CORE_REGISTRATION) is not activated")
@@ -136,35 +116,6 @@ if(MSVC)
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
   endif()
-endif()
-
-# This is a list of subprojects, that might be build with eCAL
-# according to how CMake options are set
-set(possible_subprojects
-  asio
-  CMakeFunctions
-  GTest
-  Protobuf
-  recycle
-  simpleini
-  tclap
-  tcp_pubsub
-  udpcap
-  ecaludp
-)
-
-# if a package does need to be build, include the cmake file with build instructions
-foreach (dep IN LISTS possible_subprojects)
-  string(TOUPPER ${dep} dep_upper)
-  string(TOLOWER ${dep} dep_lower)
-  if (ECAL_THIRDPARTY_BUILD_${dep_upper})
-    include(thirdparty/${dep_lower}/build-${dep_lower}.cmake)
-  endif ()
-endforeach ()
-
-if(MSVC)
-  message(STATUS "reset thirdparty warnings for windows platform ..")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_OLD}")
 endif()
 
 find_package(CMakeFunctions REQUIRED)

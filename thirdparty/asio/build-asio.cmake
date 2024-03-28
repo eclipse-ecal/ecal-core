@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 add_library(asio INTERFACE EXCLUDE_FROM_ALL)
 target_include_directories(asio INTERFACE 
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/asio/asio/include>
