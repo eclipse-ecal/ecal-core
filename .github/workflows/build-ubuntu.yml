@@ -34,6 +34,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -56,6 +57,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -78,6 +80,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -100,6 +103,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -122,6 +126,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -144,6 +149,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -166,6 +172,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -188,6 +195,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -210,6 +218,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
@@ -232,6 +241,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
 
@@ -254,6 +264,7 @@ jobs:
         mkdir "${{ runner.workspace }}/_build"
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
+        -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="submodule_dependencies.cmake" \
         -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} \
         -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES_PROTOBUF }} \
         -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} \
