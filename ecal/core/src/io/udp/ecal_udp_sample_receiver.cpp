@@ -23,6 +23,11 @@
 
 #include "ecal_udp_sample_receiver.h"
 
+#include <array>
+#include <chrono>
+#include <iostream>
+#include <memory>
+
 namespace eCAL
 {
   namespace UDP
@@ -30,20 +35,65 @@ namespace eCAL
     CSampleReceiver::CSampleReceiver(const IO::UDP::SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_) :
       m_has_sample_callback(std::move(has_sample_callback_)), m_apply_sample_callback(std::move(apply_sample_callback_))
     {
+      m_io_context = std::make_shared<asio::io_context>();
+      m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
+
+      // start receiver thread
+      m_udp_receiver_thread = std::make_shared<eCAL::CCallbackThread>([this] { ReceiveThread(); });
+      m_udp_receiver_thread->start(std::chrono::milliseconds(0));
     }
 
     CSampleReceiver::~CSampleReceiver()
     {
+      // stop receiver thread
+      m_udp_receiver_thread->stop();
     }
 
     bool CSampleReceiver::AddMultiCastGroup(const char* ipaddr_)
     {
-      return false;
+      asio::error_code ec;
+      m_socket->set_option(asio::ip::multicast::join_group(asio::ip::make_address(ipaddr_)), ec);
+      if (ec)
+      {
+        std::cerr << "CSampleReceiver: Unable to join multicast group: " << ec.message() << std::endl;
+        return false;
+      }
+
+      return true;
     }
 
     bool CSampleReceiver::RemMultiCastGroup(const char* ipaddr_)
     {
-      return false;
+      asio::error_code ec;
+      m_socket->set_option(asio::ip::multicast::leave_group(asio::ip::make_address(ipaddr_)), ec);
+      if (ec)
+      {
+        std::cerr << "CSampleReceiver: Unable to leave multicast group: " << ec.message() << std::endl;
+        return false;
+      }
+
+      return true;
+    }
+
+    // do we need this extra thread ?
+    void CSampleReceiver::ReceiveThread()
+    {
+      m_socket->async_receive_from(m_sender_endpoint
+        , [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, asio::error_code ec)
+        {
+          if (ec)
+          {
+            std::cout << "CSampleSender: Error receiving: " << ec.message() << std::endl;
+            return;
+          }
+
+          // apply sample
+          if(m_apply_sample_callback) m_apply_sample_callback(static_cast<const char*>(buffer->data()), buffer->size());
+
+          // log it
+          //std::string received_string(static_cast<const char*>(buffer->data()), buffer->size());
+          //std::cout << "Received " << buffer->size() << " bytes from " << m_sender_endpoint.address().to_string() << ":" << m_sender_endpoint.port() << ": " << received_string << std::endl;
+        });
     }
   }
 }

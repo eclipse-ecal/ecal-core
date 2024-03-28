@@ -23,15 +23,17 @@
 
 #include "ecal_udp_sample_sender.h"
 
+#include <array>
 #include <chrono>
 #include <iostream>
+#include <memory>
 
 namespace eCAL
 {
   namespace UDP
   {
     CSampleSender::CSampleSender(const IO::UDP::SSenderAttr& attr_) :
-      m_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
+      m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
     {
       m_io_context = std::make_shared<asio::io_context>();
       m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
@@ -81,7 +83,7 @@ namespace eCAL
       
       asio::const_buffer serialized_asio_buffer(serialized_sample_.data(), serialized_sample_.size());
       m_socket->async_send_to({ serialized_asio_buffer }
-        , m_endpoint
+        , m_destination_endpoint
         , [serialized_asio_buffer](asio::error_code ec)
         {
           if (ec)
