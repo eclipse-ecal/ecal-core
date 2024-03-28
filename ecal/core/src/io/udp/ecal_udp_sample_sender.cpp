@@ -36,6 +36,7 @@ namespace eCAL
       m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
     {
       m_io_context = std::make_shared<asio::io_context>();
+      m_work = std::make_shared<asio::io_context::work>(*m_io_context);
       m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
 
       if (attr_.broadcast)
@@ -75,23 +76,61 @@ namespace eCAL
         if (ec)
           std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << std::endl;
       }
+
+      // start io_context
+      m_work = std::make_shared<asio::io_context::work>(*m_io_context);
+    }
+
+    CSampleSender::~CSampleSender()
+    {
+      m_work.reset();
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
     {
-      const asio::socket_base::message_flags flags(0);
-      
-      asio::const_buffer serialized_asio_buffer(serialized_sample_.data(), serialized_sample_.size());
-      m_socket->async_send_to({ serialized_asio_buffer }
+      // ------------------------------------------------
+      // emulate old protocol
+      // 
+      // s1 = size of the sample name
+      // s2 = size of the serialized sample payload
+      // 
+      //  2 Bytes sample name size (unsigned short)
+      // s1 Bytes sample name
+      // s2 Bytes serialized sample
+      // ------------------------------------------------
+      unsigned short s1 = sample_name_.size();
+      size_t         s2 = serialized_sample_.size();
+      asio::const_buffer sample_name_size_asio_buffer(&s1, 2);
+      asio::const_buffer sample_name_asio_buffer(sample_name_.data(), s1);
+      asio::const_buffer serialized_sample_asio_buffer(serialized_sample_.data(), s2);
+
+      std::mutex              send_mtx;
+      std::condition_variable send_cond;
+      bool                    send_finished(false);
+
+      m_socket->async_send_to({ sample_name_size_asio_buffer, sample_name_asio_buffer, serialized_sample_asio_buffer }
         , m_destination_endpoint
-        , [serialized_asio_buffer](asio::error_code ec)
+        , [&send_mtx, &send_cond, &send_finished](asio::error_code ec)
         {
           if (ec)
           {
             std::cout << "CSampleSender: Error sending: " << ec.message() << std::endl;
-            return;
           }
+
+          // notify waiting main thread
+          {
+            std::lock_guard<std::mutex> lock(send_mtx);
+            send_finished = true;
+            send_cond.notify_all();
+          }
+
         });
+
+      // wait for completion handler of async_send_to
+      {
+        std::unique_lock<std::mutex> lock(send_mtx);
+        send_cond.wait(lock, [&send_finished]()->bool {return send_finished; });
+      }
 
       return 0;
     }

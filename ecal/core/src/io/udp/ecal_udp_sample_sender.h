@@ -38,12 +38,15 @@ namespace eCAL
     {
     public:
       explicit CSampleSender(const IO::UDP::SSenderAttr& attr_);
+      virtual ~CSampleSender();
+
       size_t Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_);
 
     private:
-      std::shared_ptr<asio::io_context> m_io_context;
-      std::shared_ptr<ecaludp::Socket>  m_socket;
-      asio::ip::udp::endpoint           m_destination_endpoint;
+      std::shared_ptr<asio::io_context>       m_io_context;
+      std::shared_ptr<asio::io_context::work> m_work;
+      std::shared_ptr<ecaludp::Socket>        m_socket;
+      asio::ip::udp::endpoint                 m_destination_endpoint;
     };
   }
 }

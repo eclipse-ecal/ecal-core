@@ -24,7 +24,6 @@
 #pragma once
 
 #include "io/udp/ecal_udp_receiver_attr.h"
-#include "util/ecal_thread.h"
 
 #include <ecaludp/socket.h>
 
@@ -47,16 +46,16 @@ namespace eCAL
       bool RemMultiCastGroup(const char* ipaddr_);
 
     private:
-      void ReceiveThread();
+      void Receive();
 
       HasSampleCallbackT                      m_has_sample_callback;
       ApplySampleCallbackT                    m_apply_sample_callback;
 
-      std::shared_ptr<eCAL::CCallbackThread>  m_udp_receiver_thread;
-
       std::shared_ptr<asio::io_context>       m_io_context;
+      std::shared_ptr<asio::io_context::work> m_work;
       std::shared_ptr<ecaludp::Socket>        m_socket;
       asio::ip::udp::endpoint                 m_sender_endpoint;
+      bool                                    m_broadcast;
     };
   }
 }
