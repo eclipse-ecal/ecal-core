@@ -93,8 +93,8 @@ namespace eCAL
     {
       // stop io context
       m_work.reset();
-      //if (m_io_thread.joinable())
-      //  m_io_thread.join();
+      if (m_io_thread.joinable())
+        m_io_thread.join();
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
