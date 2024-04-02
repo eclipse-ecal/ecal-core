@@ -615,12 +615,10 @@ if(ECAL_CORE_TRANSPORT_TCP)
   )
 endif()
 
-if(ECAL_CORE_NPCAP_SUPPORT)
-  target_link_libraries(${PROJECT_NAME}
-    PRIVATE
-      ecaludp::ecaludp
-  )
-endif()
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    ecaludp::ecaludp
+)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE 

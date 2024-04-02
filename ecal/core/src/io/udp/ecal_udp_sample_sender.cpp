@@ -33,7 +33,7 @@ namespace eCAL
   namespace UDP
   {
     CSampleSender::CSampleSender(const IO::UDP::SSenderAttr& attr_) :
-      m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
+      m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port)), m_created(false)
     {
       m_io_context = std::make_shared<asio::io_context>();
       m_work       = std::make_shared<asio::io_context::work>(*m_io_context);
@@ -87,10 +87,19 @@ namespace eCAL
 
       // run the io context
       m_io_thread = std::thread([this] { m_io_context->run(); });
+
+      // mark as created
+      m_created = true;
     }
 
     CSampleSender::~CSampleSender()
     {
+      // mark as not created
+      m_created = false;
+
+      // close socket
+      m_socket->close();
+
       // stop io context
       m_work.reset();
       if (m_io_thread.joinable())
@@ -99,6 +108,8 @@ namespace eCAL
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
     {
+      if (!m_created) return 0;
+
       // ------------------------------------------------
       // emulate old protocol
       // 

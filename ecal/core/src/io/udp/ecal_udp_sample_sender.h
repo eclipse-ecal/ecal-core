@@ -27,6 +27,7 @@
 
 #include <ecaludp/socket.h>
 
+#include <atomic>
 #include <string>
 #include <thread>
 #include <vector>
@@ -49,6 +50,8 @@ namespace eCAL
       std::shared_ptr<ecaludp::Socket>        m_socket;
       asio::ip::udp::endpoint                 m_destination_endpoint;
       std::thread                             m_io_thread;
+
+      std::atomic<bool>                       m_created;
     };
   }
 }

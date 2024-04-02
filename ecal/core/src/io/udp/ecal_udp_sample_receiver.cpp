@@ -108,6 +108,9 @@ namespace eCAL
 
     CSampleReceiver::~CSampleReceiver()
     {
+      // cancel async socket operations
+      m_socket->cancel();
+
       // stop io context
       m_work.reset();
       if (m_io_thread.joinable())
@@ -149,6 +152,13 @@ namespace eCAL
       m_socket->async_receive_from(m_sender_endpoint,
         [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, asio::error_code ec)
         {
+          // triggered by m_socket->cancel in destructor
+          if (ec == asio::error::operation_aborted)
+          {
+            m_socket->close();
+            return;
+          }
+
           if (ec)
           {
             std::cout << "CSampleReceiver: Error receiving: " << ec.message() << std::endl;
