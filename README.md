@@ -1,9 +1,7 @@
 
-# The eCAL Cop (core only project)
+# The eCAL core only project
 
 [![License](https://img.shields.io/github/license/continental/ecal.svg?style=flat)](LICENSE.txt)
-
-<img src="https://github.com/eclipse-ecal/ecal-core/assets/49162693/c978a0f8-b9f1-4461-8dee-870e134b47bd" width="400">
 
 The **e**nhanced **C**ommunication **A**bstraction **L**ayer (eCAL) is a middleware that enables scalable, high performance interprocess communication on a single computer node or between different nodes in a computer network. 
 
@@ -11,20 +9,16 @@ The goal of the ecal core only project is to create a modular core with clearly 
 
 Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
 
-## Differences to Eclipse-eCAL
+## Differences to Eclipse-eCAL core functionality
   - C/C++ language support only
-  - internal communication protocol based on nanopb instead of google::protobuf
-  - innerprocess communication layer removed (handled by shared memory transport layer too)
-
-The core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
 
 ## How to build
 
 ### Clone the repository and its submodules
 
 ```bash
-git clone https://github.com/ecal-io/ecal-cop.git
-cd ecal-cop
+git clone https://github.com/eclipse-ecal/ecal-core.git
+cd ecal-core
 git submodule init
 git submodule update
 ```
@@ -34,7 +28,7 @@ git submodule update
 ```bash
 mkdir _build
 cd _build
-cmake .. -A x64
+cmake .. -A x64 -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="submodule_dependencies.cmake"
 cmake --build .
 ```
 

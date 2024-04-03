@@ -81,9 +81,9 @@
 #include <libutil.h>
 #endif
 
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-#include <udpcap/npcap_helpers.h>
-#endif // ECAL_CORE_NPCAP_SUPPORT
+//#ifdef ECAL_CORE_NPCAP_SUPPORT
+//#include <udpcap/npcap_helpers.h>
+//#endif // ECAL_CORE_NPCAP_SUPPORT
 
 #ifndef NDEBUG
 #define STD_COUT_DEBUG( x ) { std::stringstream ss; ss << x; std::cout << ss.str(); }
@@ -211,19 +211,19 @@ namespace eCAL
       sstream << "Layer Mode UDP MC        : " << LayerMode(Config::IsUdpMulticastRecEnabled()) << '\n';
       sstream << "Drop out-of-order msgs   : " << (Config::Experimental::GetDropOutOfOrderMessages() ? "on" : "off") << '\n';
 #endif
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-      sstream << "Npcap UDP Reciever       : " << LayerMode(Config::IsNpcapEnabled());
-      if(Config::IsNpcapEnabled() && !Udpcap::Initialize())
-      {
-        sstream << " (Init FAILED!)";
-      }
-#else  // ECAL_CORE_NPCAP_SUPPORT
-      if (Config::IsNpcapEnabled())
-      {
-        sstream << " (Npcap is enabled, but not configured via CMake!)";
-      }
-#endif // ECAL_CORE_NPCAP_SUPPORT
-      sstream << '\n';
+//#ifdef ECAL_CORE_NPCAP_SUPPORT
+//      sstream << "Npcap UDP Reciever       : " << LayerMode(Config::IsNpcapEnabled());
+//      if(Config::IsNpcapEnabled() && !Udpcap::Initialize())
+//      {
+//        sstream << " (Init FAILED!)";
+//      }
+//#else  // ECAL_CORE_NPCAP_SUPPORT
+//      if (Config::IsNpcapEnabled())
+//      {
+//        sstream << " (Npcap is enabled, but not configured via CMake!)";
+//      }
+//#endif // ECAL_CORE_NPCAP_SUPPORT
+//      sstream << '\n';
 
       // write it into std:string
       cfg_s_ = sstream.str();
