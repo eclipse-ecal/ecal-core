@@ -143,7 +143,6 @@ namespace eCAL
       std::stringstream sstream;
       sstream << "------------------------- SYSTEM ---------------------------------" << '\n';
       sstream << "Version                  : " << ECAL_VERSION << " (" << ECAL_DATE << ")" << '\n';
-      sstream << "Runtime Version          : " << eCAL::GetVersionString() << " (" << eCAL::GetVersionDateString() << ")" << '\n';
 #ifdef ECAL_OS_WINDOWS
 #ifdef _WIN64
       sstream << "Platform                 : x64" << '\n';
