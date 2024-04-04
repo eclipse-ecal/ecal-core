@@ -50,7 +50,8 @@ namespace eCAL
       m_socket->cancel();
 
       // stop io context
-      m_work.reset();
+      //m_work.reset();
+      m_io_context->stop();
       if (m_io_thread.joinable())
         m_io_thread.join();
     }
