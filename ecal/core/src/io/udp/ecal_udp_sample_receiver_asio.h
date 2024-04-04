@@ -42,6 +42,12 @@ namespace eCAL
       bool AddMultiCastGroup(const char* ipaddr_);
       bool RemMultiCastGroup(const char* ipaddr_);
 
+      // prevent copying and moving
+      CSampleReceiverAsio(const CSampleReceiverAsio&) = delete;
+      CSampleReceiverAsio& operator=(const CSampleReceiverAsio&) = delete;
+      CSampleReceiverAsio(CSampleReceiverAsio&&) = delete;
+      CSampleReceiverAsio& operator=(CSampleReceiverAsio&&) = delete;
+
     private:
       void InitializeSocket(const SReceiverAttr& attr_);
       void Receive();
