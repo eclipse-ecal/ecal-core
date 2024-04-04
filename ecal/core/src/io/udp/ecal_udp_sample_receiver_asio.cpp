@@ -84,7 +84,7 @@ namespace eCAL
 #endif
         {
           asio::error_code ec;
-          m_socket->set_option(asio::ip::multicast::join_group(asio::ip::make_address(ipaddr_)), ec);
+          m_socket->set_option(asio::ip::multicast::join_group(asio::ip::make_address(ipaddr_)), ec); // NOLINT(*-unused-return-value)
           if (ec)
           {
             std::cerr << "CUDPReceiverAsio: Unable to join multicast group: " << ec.message() << '\n';
@@ -113,7 +113,7 @@ namespace eCAL
 #endif
         {
           asio::error_code ec;
-          m_socket->set_option(asio::ip::multicast::leave_group(asio::ip::make_address(ipaddr_)), ec);
+          m_socket->set_option(asio::ip::multicast::leave_group(asio::ip::make_address(ipaddr_)), ec); // NOLINT(*-unused-return-value)
           if (ec)
           {
             std::cerr << "CUDPReceiverAsio: Unable to leave multicast group: " << ec.message() << '\n';
@@ -133,7 +133,7 @@ namespace eCAL
       const asio::ip::udp::endpoint listen_endpoint(asio::ip::udp::v4(), static_cast<unsigned short>(attr_.port));
       {
         asio::error_code ec;
-        m_socket->open(listen_endpoint.protocol(), ec);
+        m_socket->open(listen_endpoint.protocol(), ec); // NOLINT(*-unused-return-value)
         if (ec)
         {
           std::cerr << "CSampleReceiver: Unable to open socket: " << ec.message() << '\n';
@@ -144,7 +144,7 @@ namespace eCAL
       // set socket reuse
       {
         asio::error_code ec;
-        m_socket->set_option(asio::ip::udp::socket::reuse_address(true), ec);
+        m_socket->set_option(asio::ip::udp::socket::reuse_address(true), ec); // NOLINT(*-unused-return-value)
         if (ec)
         {
           std::cerr << "CSampleReceiver: Unable to set reuse-address option: " << ec.message() << '\n';
@@ -155,7 +155,7 @@ namespace eCAL
       {
         const asio::ip::multicast::enable_loopback loopback(attr_.loopback);
         asio::error_code ec;
-        m_socket->set_option(loopback, ec);
+        m_socket->set_option(loopback, ec); // NOLINT(*-unused-return-value)
         if (ec)
         {
           std::cerr << "CSampleReceiver: Unable to enable loopback: " << ec.message() << '\n';
@@ -168,7 +168,7 @@ namespace eCAL
         if (attr_.rcvbuf > 0) rcvbuf = attr_.rcvbuf;
         const asio::socket_base::receive_buffer_size recbufsize(rcvbuf);
         asio::error_code ec;
-        m_socket->set_option(recbufsize, ec);
+        m_socket->set_option(recbufsize, ec); // NOLINT(*-unused-return-value)
         if (ec)
         {
           std::cerr << "CSampleReceiver: Unable to set receive buffer size: " << ec.message() << '\n';
@@ -177,7 +177,7 @@ namespace eCAL
       // bind socket
       {
         asio::error_code ec;
-        m_socket->bind(listen_endpoint, ec);
+        m_socket->bind(listen_endpoint, ec); // NOLINT(*-unused-return-value)
         if (ec)
         {
           std::cerr << "CSampleReceiver: Unable to bind socket to " << listen_endpoint.address().to_string() << ":" << listen_endpoint.port() << ": " << ec.message() << '\n';
