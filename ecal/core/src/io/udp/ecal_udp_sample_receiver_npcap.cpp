@@ -53,9 +53,6 @@ namespace eCAL
 
     CSampleReceiverNpcap::~CSampleReceiverNpcap()
     {
-      // TODO: cancel async socket operations ??
-      //m_socket_npcap->cancel();
-
       // stop io context
       m_io_context->stop();
       if (m_io_thread.joinable())
@@ -66,7 +63,11 @@ namespace eCAL
     {
       if (!m_broadcast)
       {
-        m_socket->join_multicast_group(asio::ip::make_address_v4(ipaddr_));
+        if (!m_socket->join_multicast_group(asio::ip::make_address_v4(ipaddr_)))
+        {
+          std::cerr << "CSampleReceiverNpcap: Unable to join multicast group." << '\n';
+          return false;
+        }
       }
       return true;
     }
@@ -75,7 +76,11 @@ namespace eCAL
     {
       if (!m_broadcast)
       {
-        m_socket->leave_multicast_group(asio::ip::make_address_v4(ipaddr_));
+        if (!m_socket->leave_multicast_group(asio::ip::make_address_v4(ipaddr_)))
+        {
+          std::cerr << "CUDPReceiverPcap: Unable to leave multicast group." << '\n';
+          return false;
+        }
       }
       return true;
     }
@@ -85,23 +90,29 @@ namespace eCAL
       // create socket
       m_socket = std::make_shared<ecaludp::SocketNpcap>(std::array<char, 4>{'E', 'C', 'A', 'L'});
 
-      // TDOD: open socket ??
-
-      // TODO: set socket reuse ??
-
-      // set loopback option
-      m_socket->set_multicast_loopback_enabled(attr_.loopback);
-
       // set receive buffer size (default = 1 MB)
       {
         int rcvbuf = 1024 * 1024;
         if (attr_.rcvbuf > 0) rcvbuf = attr_.rcvbuf;
-        m_socket->set_receive_buffer_size(rcvbuf);
+        if (!m_socket->set_receive_buffer_size(rcvbuf))
+        {
+          std::cerr << "CSampleReceiverNpcap: Unable to set receive buffer size." << '\n';
+        }
       }
 
       // bind socket
-      const asio::ip::udp::endpoint listen_endpoint(asio::ip::udp::v4(), static_cast<unsigned short>(attr_.port));
-      m_socket->bind(listen_endpoint);
+      const asio::ip::udp::endpoint listen_endpoint(asio::ip::udp::endpoint(asio::ip::address_v4::any(), static_cast<unsigned short>(attr_.port)));
+      if (!m_socket->bind(listen_endpoint))
+      {
+        std::cerr << "CSampleReceiverNpcap: Unable to bind socket." << '\n';
+        return;
+      }
+
+      // set loopback option
+      if (!attr_.broadcast)
+      {
+        m_socket->set_multicast_loopback_enabled(attr_.loopback);
+      }
     }
 
     void CSampleReceiverNpcap::Receive()
@@ -109,31 +120,18 @@ namespace eCAL
       m_socket->async_receive_from(m_sender_endpoint,
         [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, const ecaludp::Error& error)
         {
-          // TODO: should be triggered by m_socket->cancel in destructor but cancel() currently not existing ??
-          //if (error == asio::error::operation_aborted)
-          //{
-          //  m_socket_npcap->close();
-          //  return;
-          //}
-
-          // this means "receive operation finished succesfully" ?
-          if (error == ecaludp::Error::OK)
+          if (error != ecaludp::Error::OK)
           {
-            return;
-          }
-          else
-          {
-            // because we can not shutdown gracefully by using cancel() + close() we will ignore "SOCKET_CLOSED" error
+            // because we can not shutdown gracefully we will not log "SOCKET_CLOSED" error
             if (error != ecaludp::Error::SOCKET_CLOSED)
             {
-              std::cout << "CSampleReceiverNpcap: Error receiving: " << error.ToString() << '\n';
-              return;
+              std::cerr << "CSampleReceiverNpcap: Error receiving: " << error.ToString() << '\n';
             }
+            return;
           }
 
           // extract data from the buffer
           const char* receive_buffer = static_cast<const char*>(buffer->data());
-          bool processed = true;
 
           // read sample_name size
           unsigned short sample_name_size = 0;
@@ -142,8 +140,7 @@ namespace eCAL
           // check for damaged data
           if (sample_name_size > buffer->size())
           {
-            std::cout << "CSampleReceiverNpcap: Received damaged data. Wrong sample name size." << '\n';
-            processed = false;
+            std::cerr << "CSampleReceiverNpcap: Received damaged data. Wrong sample name size." << '\n';
           }
           else
           {
@@ -156,8 +153,7 @@ namespace eCAL
             // check for damaged data
             if (payload_offset > buffer->size())
             {
-              std::cout << "CSampleReceiverNpcap: Received damaged data. Wrong payload buffer offset." << '\n';
-              processed = false;
+              std::cerr << "CSampleReceiverNpcap: Received damaged data. Wrong payload buffer offset." << '\n';
             }
             else if (m_has_sample_callback(sample_name)) // if we are interested in the sample payload
             {
@@ -171,10 +167,7 @@ namespace eCAL
           }
 
           // recursively call Receive() to continue listening for data
-          if (processed)
-          {
-            this->Receive();
-          }
+          this->Receive();
         });
     }
   }

@@ -72,7 +72,7 @@ namespace eCAL
       if (!m_broadcast)
       {
 #ifdef __linux__
-        // TODO: How to implement this ? native_handle() not provided
+        // TODO: NPCAP - How to implement this ? native_handle() not provided
         //if (eCAL::UDP::IsUdpMulticastJoinAllIfEnabled())
         //{
         //  if (!IO::UDP::set_socket_mcast_group_option(m_socket->native_handle(), ipaddr_, MCAST_JOIN_GROUP))
@@ -101,7 +101,7 @@ namespace eCAL
       {
         // Leave multicast group
 #ifdef __linux__
-        // TODO: How to implement this ? native_handle() not provided
+        // TODO: NPCAP - How to implement this ? native_handle() not provided
         //if (eCAL::UDP::IsUdpMulticastJoinAllIfEnabled())
         //{
         //  if (!IO::UDP::set_socket_mcast_group_option(m_socket->native_handle(), ipaddr_, MCAST_LEAVE_GROUP))
@@ -200,7 +200,7 @@ namespace eCAL
 
           if (ec)
           {
-            std::cout << "CSampleReceiverAsio: Error receiving: " << ec.message() << '\n';
+            std::cerr << "CSampleReceiverAsio: Error receiving: " << ec.message() << '\n';
             return;
           }
 
@@ -215,7 +215,7 @@ namespace eCAL
           // check for damaged data
           if (sample_name_size > buffer->size())
           {
-            std::cout << "CSampleReceiverAsio: Received damaged data. Wrong sample name size." << '\n';
+            std::cerr << "CSampleReceiverAsio: Received damaged data. Wrong sample name size." << '\n';
             processed = false;
           }
           else
@@ -229,7 +229,7 @@ namespace eCAL
             // check for damaged data
             if (payload_offset > buffer->size())
             {
-              std::cout << "CSampleReceiverAsio: Received damaged data. Wrong payload buffer offset." << '\n';
+              std::cerr << "CSampleReceiverAsio: Received damaged data. Wrong payload buffer offset." << '\n';
               processed = false;
             }
             else if (m_has_sample_callback(sample_name)) // if we are interested in the sample payload

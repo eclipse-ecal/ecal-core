@@ -81,6 +81,7 @@
 #include <libutil.h>
 #endif
 
+// TODO: NPCAP - reactivate this
 //#ifdef ECAL_CORE_NPCAP_SUPPORT
 //#include <udpcap/npcap_helpers.h>
 //#endif // ECAL_CORE_NPCAP_SUPPORT
@@ -211,6 +212,7 @@ namespace eCAL
       sstream << "Layer Mode UDP MC        : " << LayerMode(Config::IsUdpMulticastRecEnabled()) << '\n';
       sstream << "Drop out-of-order msgs   : " << (Config::Experimental::GetDropOutOfOrderMessages() ? "on" : "off") << '\n';
 #endif
+// TODO: NPCAP - reactivate this
 //#ifdef ECAL_CORE_NPCAP_SUPPORT
 //      sstream << "Npcap UDP Reciever       : " << LayerMode(Config::IsNpcapEnabled());
 //      if(Config::IsNpcapEnabled() && !Udpcap::Initialize())
