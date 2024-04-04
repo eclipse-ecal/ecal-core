@@ -18,39 +18,28 @@
 */
 
 /**
- * @brief  UDP sample receiver to receive messages of type eCAL::Sample
+ * @brief  UDP receiver attributes
 **/
 
 #pragma once
 
-#include "io/udp/ecal_udp_receiver_attr.h"
-#include "ecal_udp_sample_receiver_asio.h"
-
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-#include "ecal_udp_sample_receiver_npcap.h"
-#endif
-
-#include <memory>
+#include <functional>
 #include <string>
 
 namespace eCAL
 {
   namespace UDP
   {
-    class CSampleReceiver
+    struct SReceiverAttr
     {
-    public:
-      CSampleReceiver(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
-
-      bool AddMultiCastGroup(const char* ipaddr_);
-      bool RemMultiCastGroup(const char* ipaddr_);
-
-    private:
-      std::shared_ptr<CSampleReceiverAsio>  m_receiver_asio;
-
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-      std::shared_ptr<CSampleReceiverNpcap> m_receiver_npcap;
-#endif
+      std::string address;
+      int         port      = 0;
+      bool        broadcast = false;
+      bool        loopback  = true;
+      int         rcvbuf    = 1024 * 1024;
     };
+
+    using HasSampleCallbackT   = std::function<bool(const std::string& sample_name_)>;
+    using ApplySampleCallbackT = std::function<void(const char* serialized_sample_data_, size_t serialized_sample_size_)>;
   }
 }

@@ -24,33 +24,38 @@
 #pragma once
 
 #include "io/udp/ecal_udp_receiver_attr.h"
-#include "ecal_udp_sample_receiver_asio.h"
 
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-#include "ecal_udp_sample_receiver_npcap.h"
-#endif
-
+#include <ecaludp/socket.h>
 #include <memory>
-#include <string>
+#include <thread>
 
 namespace eCAL
 {
   namespace UDP
   {
-    class CSampleReceiver
+    class CSampleReceiverAsio
     {
     public:
-      CSampleReceiver(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
+      CSampleReceiverAsio(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
+      virtual ~CSampleReceiverAsio();
 
       bool AddMultiCastGroup(const char* ipaddr_);
       bool RemMultiCastGroup(const char* ipaddr_);
 
     private:
-      std::shared_ptr<CSampleReceiverAsio>  m_receiver_asio;
+      void InitializeSocket(const SReceiverAttr& attr_);
+      void Receive();
 
-#ifdef ECAL_CORE_NPCAP_SUPPORT
-      std::shared_ptr<CSampleReceiverNpcap> m_receiver_npcap;
-#endif
+      HasSampleCallbackT                      m_has_sample_callback;
+      ApplySampleCallbackT                    m_apply_sample_callback;
+      bool                                    m_broadcast = false;
+
+      std::shared_ptr<asio::io_context>       m_io_context;
+      std::shared_ptr<asio::io_context::work> m_work;
+      std::shared_ptr<ecaludp::Socket>        m_socket;
+
+      asio::ip::udp::endpoint                 m_sender_endpoint;
+      std::thread                             m_io_thread;
     };
   }
 }
