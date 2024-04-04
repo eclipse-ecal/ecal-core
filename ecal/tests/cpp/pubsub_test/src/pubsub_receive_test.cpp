@@ -178,10 +178,9 @@ TEST(core_cpp_pubsub, SporadicEmptyReceives)
   // start publishing thread
   std::atomic<bool> pub_stop(false);
   std::thread pub_t([&pub, &pub_stop]() {
-    std::string abc{ "abc" };
+    const std::string abc{ "abc" };
     while (!pub_stop)
     {
-
       pub.Send(abc);
       std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
@@ -193,7 +192,7 @@ TEST(core_cpp_pubsub, SporadicEmptyReceives)
     while (!sub_stop)
     {
       // we define a maximum timeout of 10 sec to not get locked forever here in worst case
-      bool got_data = sub.Receive(received, nullptr, 10*1000);
+      const bool got_data = sub.Receive(received, nullptr, 10*1000);
       if (got_data && received.empty())
       {
         FAIL() << "received empty string";

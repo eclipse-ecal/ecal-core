@@ -119,11 +119,11 @@ namespace eCAL
       // s1 Bytes sample name
       // s2 Bytes serialized sample
       // ------------------------------------------------
-      unsigned short s1 = static_cast<unsigned short>(sample_name_.size());
-      size_t         s2 = serialized_sample_.size();
-      asio::const_buffer sample_name_size_asio_buffer(&s1, 2);
-      asio::const_buffer sample_name_asio_buffer(sample_name_.data(), s1);
-      asio::const_buffer serialized_sample_asio_buffer(serialized_sample_.data(), s2);
+      const unsigned short s1 = static_cast<unsigned short>(sample_name_.size());
+      const size_t         s2 = serialized_sample_.size();
+      const asio::const_buffer sample_name_size_asio_buffer(&s1, 2);
+      const asio::const_buffer sample_name_asio_buffer(sample_name_.data(), s1);
+      const asio::const_buffer serialized_sample_asio_buffer(serialized_sample_.data(), s2);
 
       std::mutex              send_mtx;
       std::condition_variable send_cond;
@@ -147,7 +147,7 @@ namespace eCAL
 
           // notify waiting main thread
           {
-            std::lock_guard<std::mutex> lock(send_mtx);
+            const std::lock_guard<std::mutex> lock(send_mtx);
             send_finished = true;
             send_cond.notify_all();
           }
