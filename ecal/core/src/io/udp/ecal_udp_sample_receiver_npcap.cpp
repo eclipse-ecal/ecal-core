@@ -53,7 +53,7 @@ namespace eCAL
 
     CSampleReceiverNpcap::~CSampleReceiverNpcap()
     {
-      // cancel async socket operations ??
+      // TODO: cancel async socket operations ??
       //m_socket_npcap->cancel();
 
       // stop io context
