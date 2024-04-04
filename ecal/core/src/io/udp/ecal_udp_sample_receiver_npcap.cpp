@@ -85,9 +85,9 @@ namespace eCAL
       // create socket
       m_socket = std::make_shared<ecaludp::SocketNpcap>(std::array<char, 4>{'E', 'C', 'A', 'L'});
 
-      // open socket ??
+      // TDOD: open socket ??
 
-      // set socket reuse ??
+      // TODO: set socket reuse ??
 
       // set loopback option
       m_socket->set_multicast_loopback_enabled(attr_.loopback);
@@ -109,7 +109,7 @@ namespace eCAL
       m_socket->async_receive_from(m_sender_endpoint,
         [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, const ecaludp::Error& error)
         {
-          // should be triggered by m_socket->cancel in destructor but cancel() currently not existing ??
+          // TODO: should be triggered by m_socket->cancel in destructor but cancel() currently not existing ??
           //if (error == asio::error::operation_aborted)
           //{
           //  m_socket_npcap->close();
