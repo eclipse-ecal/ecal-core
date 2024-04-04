@@ -175,29 +175,30 @@ TEST(core_cpp_pubsub, SporadicEmptyReceives)
   // let's match them
   eCAL::Process::SleepMS(2 * CMN_REGISTRATION_REFRESH);
 
-  // first start subscribing thread
-  std::atomic<bool> sub_stop(false);
-  std::thread sub_t([&]() {
-    std::string received;
-    while (!sub_stop)
-    {
-      bool got_data = sub.Receive(received, nullptr, 1000);
-      if (got_data && received.empty())
-      {
-        FAIL() << "received empty string";
-      }
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-    });
-
-  // now start publishing thread
+  // start publishing thread
   std::atomic<bool> pub_stop(false);
   std::thread pub_t([&pub, &pub_stop]() {
     std::string abc{ "abc" };
     while (!pub_stop)
     {
+
       pub.Send(abc);
       std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    });
+
+  std::atomic<bool> sub_stop(false);
+  std::thread sub_t([&]() {
+    std::string received;
+    while (!sub_stop)
+    {
+      // we define a maximum timeout of 10 sec to not get locked forever here in worst case
+      bool got_data = sub.Receive(received, nullptr, 10*1000);
+      if (got_data && received.empty())
+      {
+        FAIL() << "received empty string";
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     });
 
