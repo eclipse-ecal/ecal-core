@@ -37,7 +37,7 @@ namespace eCAL
     {
     public:
 
-      CSampleReceiverNpcap(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_);
+      CSampleReceiverNpcap(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
       virtual ~CSampleReceiverNpcap();
 
       bool AddMultiCastGroup(const char* ipaddr_);
@@ -45,8 +45,6 @@ namespace eCAL
 
     private:
       void InitializeSocket(const SReceiverAttr& attr_);
-      void FinalizeSocket();
-
       void Receive();
 
       HasSampleCallbackT                      m_has_sample_callback;

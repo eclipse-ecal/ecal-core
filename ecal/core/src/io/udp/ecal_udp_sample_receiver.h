@@ -40,7 +40,7 @@ namespace eCAL
     class CSampleReceiver
     {
     public:
-      CSampleReceiver(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_);
+      CSampleReceiver(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
 
       bool AddMultiCastGroup(const char* ipaddr_);
       bool RemMultiCastGroup(const char* ipaddr_);

@@ -22,6 +22,11 @@
 **/
 
 #include "ecal_udp_sample_receiver_asio.h"
+#include "io/udp/ecal_udp_configurations.h"
+
+#ifdef __linux__
+#include "linux/socket_os.h"
+#endif
 
 #include <array>
 #include <iostream>
@@ -30,14 +35,15 @@ namespace eCAL
 {
   namespace UDP
   {
-    CSampleReceiverAsio::CSampleReceiverAsio(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_) :
-      m_has_sample_callback(std::move(has_sample_callback_)), m_apply_sample_callback(std::move(apply_sample_callback_)),
+    CSampleReceiverAsio::CSampleReceiverAsio(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_) :
+      m_has_sample_callback(has_sample_callback_), m_apply_sample_callback(apply_sample_callback_),
       m_broadcast(attr_.broadcast)
     {
       // initialize io context
       m_io_context = std::make_shared<asio::io_context>();
       m_work       = std::make_shared<asio::io_context::work>(*m_io_context);
 
+      // create the socket and set all socket options
       InitializeSocket(attr_);
 
       // join multicast group
@@ -52,7 +58,8 @@ namespace eCAL
 
     CSampleReceiverAsio::~CSampleReceiverAsio()
     {
-      FinalizeSocket();
+      // cancel async socket operations
+      m_socket->cancel();
 
       // stop io context
       m_work.reset();
@@ -64,30 +71,55 @@ namespace eCAL
     {
       if (!m_broadcast)
       {
-        asio::error_code ec;
-        m_socket->set_option(asio::ip::multicast::join_group(asio::ip::make_address(ipaddr_)), ec);
-        if (ec)
+#ifdef __linux__
+        if (eCAL::UDP::IsUdpMulticastJoinAllIfEnabled())
         {
-          std::cerr << "CSampleReceiver: Unable to join multicast group: " << ec.message() << std::endl;
-          return false;
+          if (!IO::UDP::set_socket_mcast_group_option(m_socket->native_handle(), ipaddr_, MCAST_JOIN_GROUP))
+          {
+            return(false);
+          }
+        }
+        else
+#endif
+        {
+          asio::error_code ec;
+          m_socket->set_option(asio::ip::multicast::join_group(asio::ip::make_address(ipaddr_)), ec);
+          if (ec)
+          {
+            std::cerr << "CUDPReceiverAsio: Unable to join multicast group: " << ec.message() << '\n';
+            return(false);
+          }
         }
       }
-      return true;
+      return(true);
     }
 
     bool CSampleReceiverAsio::RemMultiCastGroup(const char* ipaddr_)
     {
       if (!m_broadcast)
       {
-        asio::error_code ec;
-        m_socket->set_option(asio::ip::multicast::leave_group(asio::ip::make_address(ipaddr_)), ec);
-        if (ec)
+        // Leave multicast group
+#ifdef __linux__
+        if (eCAL::UDP::IsUdpMulticastJoinAllIfEnabled())
         {
-          std::cerr << "CSampleReceiver: Unable to leave multicast group: " << ec.message() << std::endl;
-          return false;
+          if (!IO::UDP::set_socket_mcast_group_option(m_socket->native_handle(), ipaddr_, MCAST_LEAVE_GROUP))
+          {
+            return(false);
+          }
+        }
+        else
+#endif
+        {
+          asio::error_code ec;
+          m_socket->set_option(asio::ip::multicast::leave_group(asio::ip::make_address(ipaddr_)), ec);
+          if (ec)
+          {
+            std::cerr << "CUDPReceiverAsio: Unable to leave multicast group: " << ec.message() << '\n';
+            return(false);
+          }
         }
       }
-      return true;
+      return(true);
     }
 
     void CSampleReceiverAsio::InitializeSocket(const SReceiverAttr& attr_)
@@ -102,7 +134,7 @@ namespace eCAL
         m_socket->open(listen_endpoint.protocol(), ec);
         if (ec)
         {
-          std::cerr << "CSampleReceiver: Unable to open socket: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to open socket: " << ec.message() << '\n';
           return;
         }
       }
@@ -113,7 +145,7 @@ namespace eCAL
         m_socket->set_option(asio::ip::udp::socket::reuse_address(true), ec);
         if (ec)
         {
-          std::cerr << "CSampleReceiver: Unable to set reuse-address option: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to set reuse-address option: " << ec.message() << '\n';
         }
       }
 
@@ -124,7 +156,7 @@ namespace eCAL
         m_socket->set_option(loopback, ec);
         if (ec)
         {
-          std::cerr << "CSampleReceiver: Unable to enable loopback: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to enable loopback: " << ec.message() << '\n';
         }
       }
 
@@ -137,7 +169,7 @@ namespace eCAL
         m_socket->set_option(recbufsize, ec);
         if (ec)
         {
-          std::cerr << "CSampleReceiver: Unable to set receive buffer size: " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to set receive buffer size: " << ec.message() << '\n';
         }
       }
       // bind socket
@@ -146,16 +178,10 @@ namespace eCAL
         m_socket->bind(listen_endpoint, ec);
         if (ec)
         {
-          std::cerr << "CSampleReceiver: Unable to bind socket to " << listen_endpoint.address().to_string() << ":" << listen_endpoint.port() << ": " << ec.message() << std::endl;
+          std::cerr << "CSampleReceiver: Unable to bind socket to " << listen_endpoint.address().to_string() << ":" << listen_endpoint.port() << ": " << ec.message() << '\n';
           return;
         }
       }
-    }
-
-    void CSampleReceiverAsio::FinalizeSocket()
-    {
-      // cancel async socket operations
-      m_socket->cancel();
     }
 
     void CSampleReceiverAsio::Receive()
@@ -172,12 +198,12 @@ namespace eCAL
 
           if (ec)
           {
-            std::cout << "CSampleReceiver: Error receiving: " << ec.message() << std::endl;
+            std::cout << "CSampleReceiverAsio: Error receiving: " << ec.message() << '\n';
             return;
           }
 
           // extract data from the buffer
-          auto receive_buffer = static_cast<const char*>(buffer->data());
+          const char* receive_buffer = static_cast<const char*>(buffer->data());
           bool processed = true;
 
           // read sample_name size
@@ -187,7 +213,7 @@ namespace eCAL
           // check for damaged data
           if (sample_name_size > buffer->size())
           {
-            std::cout << "CSampleReceiver: Received damaged data. Wrong sample name size." << std::endl;
+            std::cout << "CSampleReceiverAsio: Received damaged data. Wrong sample name size." << '\n';
             processed = false;
           }
           else
@@ -201,13 +227,13 @@ namespace eCAL
             // check for damaged data
             if (payload_offset > buffer->size())
             {
-              std::cout << "CSampleSender: Received damaged data. Wrong payload buffer offset." << std::endl;
+              std::cout << "CSampleReceiverAsio: Received damaged data. Wrong payload buffer offset." << '\n';
               processed = false;
             }
             else if (m_has_sample_callback(sample_name)) // if we are interested in the sample payload
             {
               // extract payload and its size
-              auto payload_buffer = receive_buffer + payload_offset;
+              const char* payload_buffer = receive_buffer + payload_offset;
               auto payload_buffer_size = buffer->size() - payload_offset;
 
               // apply the sample payload

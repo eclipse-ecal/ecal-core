@@ -24,7 +24,6 @@
 #include "ecal_udp_sample_sender.h"
 
 #include <array>
-#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -33,18 +32,40 @@ namespace eCAL
   namespace UDP
   {
     CSampleSender::CSampleSender(const SSenderAttr& attr_) :
-      m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port)), m_created(false)
+      m_destination_endpoint(asio::ip::make_address(attr_.address), static_cast<unsigned short>(attr_.port))
     {
       m_io_context = std::make_shared<asio::io_context>();
       m_work       = std::make_shared<asio::io_context::work>(*m_io_context);
-      m_socket     = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
 
-      // open the socket
+      // create the socket and set all socket options
+      InitializeSocket(attr_);
+
+      // run the io context
+      m_io_thread = std::thread([this] { m_io_context->run(); });
+    }
+
+    CSampleSender::~CSampleSender()
+    {
+      // cancel async socket operations
+      m_socket->cancel();
+
+      // stop io context
+      m_work.reset();
+      if (m_io_thread.joinable())
+        m_io_thread.join();
+    }
+
+    void CSampleSender::InitializeSocket(const SSenderAttr& attr_)
+    {
+      // create socket
+      m_socket = std::make_shared<ecaludp::Socket>(*m_io_context, std::array<char, 4>{'E', 'C', 'A', 'L'});
+
+      // open socket
       {
         asio::error_code ec;
         m_socket->open(asio::ip::udp::v4(), ec);
         if (ec)
-          std::cout << "Error opening socket: " << ec.message() << std::endl;
+          std::cout << "CSampleSender: Error opening socket: " << ec.message() << '\n';
       }
 
       if (attr_.broadcast)
@@ -54,7 +75,7 @@ namespace eCAL
         asio::error_code ec;
         m_socket->set_option(ttl, ec);
         if (ec)
-          std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << std::endl;
+          std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << '\n';
       }
       else
       {
@@ -64,7 +85,7 @@ namespace eCAL
           asio::error_code ec;
           m_socket->set_option(ttl, ec);
           if (ec)
-            std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << std::endl;
+            std::cerr << "CSampleSender: Setting TTL failed: " << ec.message() << '\n';
         }
 
         // set loopback option
@@ -73,7 +94,7 @@ namespace eCAL
           asio::error_code ec;
           m_socket->set_option(loopback, ec);
           if (ec)
-            std::cerr << "CSampleSender: Error setting loopback option: " << ec.message() << std::endl;
+            std::cerr << "CSampleSender: Error setting loopback option: " << ec.message() << '\n';
         }
       }
 
@@ -82,34 +103,12 @@ namespace eCAL
         asio::error_code ec;
         m_socket->set_option(asio::socket_base::broadcast(true), ec);
         if (ec)
-          std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << std::endl;
+          std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << '\n';
       }
-
-      // run the io context
-      m_io_thread = std::thread([this] { m_io_context->run(); });
-
-      // mark as created
-      m_created = true;
-    }
-
-    CSampleSender::~CSampleSender()
-    {
-      // mark as not created
-      m_created = false;
-
-      // close socket
-      m_socket->close();
-
-      // stop io context
-      m_work.reset();
-      if (m_io_thread.joinable())
-        m_io_thread.join();
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
     {
-      if (!m_created) return 0;
-
       // ------------------------------------------------
       // emulate old protocol
       // 
@@ -132,11 +131,18 @@ namespace eCAL
 
       m_socket->async_send_to({ sample_name_size_asio_buffer, sample_name_asio_buffer, serialized_sample_asio_buffer }
         , m_destination_endpoint
-        , [&send_mtx, &send_cond, &send_finished](asio::error_code ec)
+        , [this, &send_mtx, &send_cond, &send_finished](asio::error_code ec)
         {
+          // triggered by m_socket->cancel in destructor
+          if (ec == asio::error::operation_aborted)
+          {
+            m_socket->close();
+            return;
+          }
+
           if (ec)
           {
-            std::cout << "CSampleSender: Error sending: " << ec.message() << std::endl;
+            std::cout << "CSampleSender: Error sending: " << ec.message() << '\n';
           }
 
           // notify waiting main thread
@@ -154,7 +160,8 @@ namespace eCAL
         send_cond.wait(lock, [&send_finished]()->bool {return send_finished; });
       }
 
-      return 0;
+      // we return the size of the serialized sample data as "success"
+      return s2;
     }
   }
 }

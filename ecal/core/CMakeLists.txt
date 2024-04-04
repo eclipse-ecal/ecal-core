@@ -160,6 +160,13 @@ set(ecal_io_udp_src
     ${ecal_io_udp_src_npcap}
 )
 
+# io/udp/sendreceive/linux
+if(UNIX)
+  set(ecal_io_udp_linux_src
+      src/io/udp/linux/socket_os.h
+)
+endif()
+
 ######################################
 # logging
 ######################################
@@ -509,8 +516,7 @@ set(ecal_sources
     ${ecal_io_shm_linux_src}
     ${ecal_io_shm_win_src}
     ${ecal_io_udp_src}
-    ${ecal_io_udp_sendreceive_linux_src}
-    ${ecal_io_udp_sendreceive_win_src}
+    ${ecal_io_udp_linux_src}
     ${ecal_logging_src}
     ${ecal_monitoring_src}
     ${ecal_pub_src}

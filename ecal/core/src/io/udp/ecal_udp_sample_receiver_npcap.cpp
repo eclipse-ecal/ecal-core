@@ -30,14 +30,15 @@ namespace eCAL
 {
   namespace UDP
   {
-    CSampleReceiverNpcap::CSampleReceiverNpcap(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_) :
-      m_has_sample_callback(std::move(has_sample_callback_)), m_apply_sample_callback(std::move(apply_sample_callback_)),
+    CSampleReceiverNpcap::CSampleReceiverNpcap(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_) :
+      m_has_sample_callback(has_sample_callback_), m_apply_sample_callback(apply_sample_callback_),
       m_broadcast(attr_.broadcast)
     {
       // initialize io context
       m_io_context = std::make_shared<asio::io_context>();
       m_work       = std::make_shared<asio::io_context::work>(*m_io_context);
 
+      // create the socket and set all socket options
       InitializeSocket(attr_);
 
       // join multicast group
@@ -52,7 +53,8 @@ namespace eCAL
 
     CSampleReceiverNpcap::~CSampleReceiverNpcap()
     {
-      FinalizeSocket();
+      // cancel async socket operations ??
+      //m_socket_npcap->cancel();
 
       // stop io context
       m_work.reset();
@@ -94,7 +96,6 @@ namespace eCAL
       {
         int rcvbuf = 1024 * 1024;
         if (attr_.rcvbuf > 0) rcvbuf = attr_.rcvbuf;
-        const asio::socket_base::receive_buffer_size recbufsize(rcvbuf);
         m_socket->set_receive_buffer_size(rcvbuf);
       }
 
@@ -103,16 +104,10 @@ namespace eCAL
       m_socket->bind(listen_endpoint);
     }
 
-    void CSampleReceiverNpcap::FinalizeSocket()
-    {
-      // cancel async socket operations ??
-      //m_socket_npcap->cancel();
-    }
-
     void CSampleReceiverNpcap::Receive()
     {
       m_socket->async_receive_from(m_sender_endpoint,
-        [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, ecaludp::Error& error)
+        [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, const ecaludp::Error& error)
         {
           // should be triggered by m_socket->cancel in destructor but cancel() currently not existing ??
           //if (error == asio::error::operation_aborted)
@@ -131,13 +126,13 @@ namespace eCAL
             // because we can not shutdown gracefully by using cancel() + close() we will ignore "SOCKET_CLOSED" error
             if (error != ecaludp::Error::SOCKET_CLOSED)
             {
-              std::cout << "CSampleReceiver: Error receiving: " << error.ToString() << std::endl;
+              std::cout << "CSampleReceiverNpcap: Error receiving: " << error.ToString() << '\n';
               return;
             }
           }
 
           // extract data from the buffer
-          auto receive_buffer = static_cast<const char*>(buffer->data());
+          const char* receive_buffer = static_cast<const char*>(buffer->data());
           bool processed = true;
 
           // read sample_name size
@@ -147,7 +142,7 @@ namespace eCAL
           // check for damaged data
           if (sample_name_size > buffer->size())
           {
-            std::cout << "CSampleReceiver: Received damaged data. Wrong sample name size." << std::endl;
+            std::cout << "CSampleReceiverNpcap: Received damaged data. Wrong sample name size." << '\n';
             processed = false;
           }
           else
@@ -161,13 +156,13 @@ namespace eCAL
             // check for damaged data
             if (payload_offset > buffer->size())
             {
-              std::cout << "CSampleSender: Received damaged data. Wrong payload buffer offset." << std::endl;
+              std::cout << "CSampleReceiverNpcap: Received damaged data. Wrong payload buffer offset." << '\n';
               processed = false;
             }
             else if (m_has_sample_callback(sample_name)) // if we are interested in the sample payload
             {
               // extract payload and its size
-              auto payload_buffer = receive_buffer + payload_offset;
+              const char* payload_buffer = receive_buffer + payload_offset;
               auto payload_buffer_size = buffer->size() - payload_offset;
 
               // apply the sample payload

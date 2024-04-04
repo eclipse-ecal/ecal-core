@@ -36,7 +36,7 @@ namespace eCAL
     class CSampleReceiverAsio
     {
     public:
-      CSampleReceiverAsio(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_);
+      CSampleReceiverAsio(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_);
       virtual ~CSampleReceiverAsio();
 
       bool AddMultiCastGroup(const char* ipaddr_);
@@ -44,8 +44,6 @@ namespace eCAL
 
     private:
       void InitializeSocket(const SReceiverAttr& attr_);
-      void FinalizeSocket();
-
       void Receive();
 
       HasSampleCallbackT                      m_has_sample_callback;

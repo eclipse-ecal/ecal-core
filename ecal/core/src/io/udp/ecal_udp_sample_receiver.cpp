@@ -28,7 +28,7 @@ namespace eCAL
 {
   namespace UDP
   {
-    CSampleReceiver::CSampleReceiver(const SReceiverAttr& attr_, HasSampleCallbackT has_sample_callback_, ApplySampleCallbackT apply_sample_callback_)
+    CSampleReceiver::CSampleReceiver(const SReceiverAttr& attr_, const HasSampleCallbackT& has_sample_callback_, const ApplySampleCallbackT& apply_sample_callback_)
     {
 #ifdef ECAL_CORE_NPCAP_SUPPORT
       if (eCAL::UDP::IsNpcapEnabled())
