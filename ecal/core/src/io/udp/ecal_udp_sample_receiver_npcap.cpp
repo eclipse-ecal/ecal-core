@@ -120,7 +120,7 @@ namespace eCAL
       m_socket->async_receive_from(m_sender_endpoint,
         [this](const std::shared_ptr<ecaludp::OwningBuffer>& buffer, const ecaludp::Error& error)
         {
-          if (error != ecaludp::Error::OK)
+          if (error)
           {
             // because we can not shutdown gracefully we will not log "SOCKET_CLOSED" error
             if (error != ecaludp::Error::SOCKET_CLOSED)
