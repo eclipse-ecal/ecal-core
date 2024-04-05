@@ -63,7 +63,7 @@ namespace eCAL
       // open socket
       {
         asio::error_code ec;
-        m_socket->open(asio::ip::udp::v4(), ec);
+        m_socket->open(m_destination_endpoint.protocol(), ec);
         if (ec)
           std::cout << "CSampleSender: Error opening socket: " << ec.message() << '\n';
       }
@@ -119,10 +119,10 @@ namespace eCAL
       // s1 Bytes sample name
       // s2 Bytes serialized sample
       // ------------------------------------------------
-      const unsigned short s1 = static_cast<unsigned short>(sample_name_.size());
+      const unsigned short s1 = static_cast<unsigned short>(sample_name_.size()) + 1 /*'\0'*/;
       const size_t         s2 = serialized_sample_.size();
       const asio::const_buffer sample_name_size_asio_buffer(&s1, 2);
-      const asio::const_buffer sample_name_asio_buffer(sample_name_.data(), s1);
+      const asio::const_buffer sample_name_asio_buffer(sample_name_.c_str(), s1); // we need to use c_str() here to guarantee  trailling \'0'
       const asio::const_buffer serialized_sample_asio_buffer(serialized_sample_.data(), s2);
 
       std::mutex              send_mtx;
