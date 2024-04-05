@@ -1,4 +1,4 @@
-/* ========================= eCAL LICENSE =================================
+﻿/* ========================= eCAL LICENSE =================================
  *
  * Copyright (C) 2016 - 2019 Continental Corporation
  *
@@ -105,6 +105,10 @@ namespace eCAL
         if (ec)
           std::cerr << "CSampleSender: Setting broadcast mode failed: " << ec.message() << '\n';
       }
+
+      // set limit for the data length (maximum size is imposed by the underlying IPv4 protocol)
+      // 64*1024 - 20 /* IP header */ - 8 /* UDP header */ - 1 /* don't ask */
+      m_socket->set_max_udp_datagram_size(64 * 1024 - 8 - 20 - 1);
     }
 
     size_t CSampleSender::Send(const std::string& sample_name_, const std::vector<char>& serialized_sample_)
@@ -112,7 +116,7 @@ namespace eCAL
       // ------------------------------------------------
       // emulate old protocol
       // 
-      // s1 = size of the sample name
+      // s1 = size of the sample name (inlcuding zero termination)
       // s2 = size of the serialized sample payload
       // 
       //  2 Bytes sample name size (unsigned short)
