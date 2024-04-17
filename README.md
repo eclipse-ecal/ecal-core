@@ -1,9 +1,7 @@
 
-# The eCAL Cop (core only project)
+# The eCAL core only project
 
 [![License](https://img.shields.io/github/license/continental/ecal.svg?style=flat)](LICENSE.txt)
-
-<img src="https://github.com/eclipse-ecal/ecal-core/assets/49162693/c978a0f8-b9f1-4461-8dee-870e134b47bd" width="400">
 
 The **e**nhanced **C**ommunication **A**bstraction **L**ayer (eCAL) is a middleware that enables scalable, high performance interprocess communication on a single computer node or between different nodes in a computer network. 
 
@@ -13,18 +11,14 @@ Visit the eCAL Documentation at 🌐 https://ecal.io for more information.
 
 ## Differences to Eclipse-eCAL
   - C/C++ language support only
-  - internal communication protocol based on nanopb instead of google::protobuf
-  - innerprocess communication layer removed (handled by shared memory transport layer too)
-
-The core is fully "wire compatible" to eclipse-ecal on all transport layers (shared memory, udp multicast, tcp) as well as on the discovery (registration, monitoring) layer.
 
 ## How to build
 
 ### Clone the repository and its submodules
 
 ```bash
-git clone https://github.com/ecal-io/ecal-cop.git
-cd ecal-cop
+git clone https://github.com/eclipse-ecal/ecal-core.git
+cd ecal-core
 git submodule init
 git submodule update
 ```
@@ -34,7 +28,7 @@ git submodule update
 ```bash
 mkdir _build
 cd _build
-cmake .. -A x64
+cmake .. -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=submodule_dependencies.cmake
 cmake --build .
 ```
 
@@ -42,22 +36,19 @@ cmake --build .
 
 This section provides documentation for the CMake options used in configuring the eCAL library. These options allow you to customize the build and enable or disable specific features. Please adapt the options according to your project requirements.
 
+#### Available dependencies
+
+##### `ECAL_CORE_HAS_PROTOBUF`
+- This option determines whether the Google protobuf library is available or not. If enabled, it includes the compilation of protobuf based samples and unit tests for eCAL.
+
 #### Additional Builds
 
 ##### `ECAL_CORE_BUILD_SAMPLES`
 - This option controls whether the eCAL samples should be built. If not needed, you can disable this option to reduce build time.
 
-##### `ECAL_CORE_BUILD_SAMPLES_PROTOBUF`
-- This option controls whether the eCAL protobuf samples should be built. If not needed, you can disable this option to reduce build time.
-- Requires google::protobuf serialization library.
-
 ##### `ECAL_CORE_BUILD_TESTS`
 - This option determines whether the eCAL Google Tests should be built. If enabled, it includes the compilation of unit tests for eCAL. Disabling this option will skip the build of tests if they are not required in your development environment.
 - Requires gtest library.
-
-##### `ECAL_CORE_BUILD_TESTS_PROTOBUF`
-- This option determines whether the eCAL Google Tests using protobuf serialization should be built.
-- Requires gtest library and google::protobuf serialization library.
 
 #### Core Internal Feature Configuration
 
