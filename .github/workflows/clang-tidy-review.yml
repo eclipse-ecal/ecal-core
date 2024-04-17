@@ -38,12 +38,11 @@ jobs:
           cmake_command: |
             cmake . -B _build \
                     -G Ninja \
-                    -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="submodule_dependencies.cmake" \
+                    -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=submodule_dependencies.cmake \
                     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+                    -DECAL_CORE_HAS_PROTOBUF=ON \
                     -DECAL_CORE_BUILD_SAMPLES=ON \
-                    -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=ON \
                     -DECAL_CORE_BUILD_TESTS=ON \
-                    -DECAL_CORE_BUILD_TESTS_PROTOBUF=ON \
                     -DECAL_CORE_CONFIG_INIFILE=ON \
                     -DECAL_CORE_COMMAND_LINE=ON \
                     -DECAL_CORE_REGISTRATION=ON \
@@ -57,7 +56,7 @@ jobs:
                     -DECAL_CORE_TRANSPORT_TCP=ON \
                     -DECAL_CORE_TRANSPORT_SHM=ON \
                     -DECAL_CORE_NPCAP_SUPPORT=OFF \
-                    -DBUILD_SHARED_LIBS=ON \
+                    -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
                     -DCMAKE_BUILD_TYPE=Release \
                     -DCMAKE_INSTALL_SYSCONFDIR=/etc \
                     -DCMAKE_INSTALL_PREFIX=/usr \

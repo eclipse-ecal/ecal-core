@@ -17,10 +17,9 @@ jobs:
           ########################################
           - name: "default"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
@@ -40,10 +39,9 @@ jobs:
           ########################################
           - name: "full"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
@@ -57,16 +55,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "pubsub"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -80,16 +77,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "pubsub_proto"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -103,16 +99,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "pubsub_udp_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "OFF"
@@ -126,16 +121,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "pubsub_tcp_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -149,16 +143,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "ON"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "pubsub_shm_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -172,16 +165,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "ON"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "client_server"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -195,16 +187,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "client_server_proto"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -218,16 +209,15 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
           ########################################
           - name: "monitoring_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -241,7 +231,7 @@ jobs:
             ECAL_CORE_TRANSPORT_TCP: "OFF"
             ECAL_CORE_TRANSPORT_SHM: "OFF"
             ECAL_CORE_NPCAP_SUPPORT: "OFF"
-            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"            
+            ECAL_THIRDPARTY_BUILD_PROTOBUF: "OFF"
             BUILD_SHARED_LIBS: "OFF"
             CMAKE_BUILD_TYPE: "Release"
 
@@ -264,11 +254,10 @@ jobs:
         mkdir "${{ runner.workspace }}/_build"
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
-        -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="submodule_dependencies.cmake" \
+        -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=submodule_dependencies.cmake \
+        -DECAL_CORE_HAS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_HAS_PROTOBUF }} \
         -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} \
-        -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES_PROTOBUF }} \
         -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} \
-        -DECAL_CORE_BUILD_TESTS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS_PROTOBUF }} \
         -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} \
         -DECAL_CORE_COMMAND_LINE=${{ matrix.build_configuration.ECAL_CORE_COMMAND_LINE }} \
         -DECAL_CORE_REGISTRATION=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION }} \
@@ -282,6 +271,7 @@ jobs:
         -DECAL_CORE_TRANSPORT_TCP=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_TCP }} \
         -DECAL_CORE_TRANSPORT_SHM=${{ matrix.build_configuration.ECAL_CORE_TRANSPORT_SHM }} \
         -DECAL_CORE_NPCAP_SUPPORT=${{ matrix.build_configuration.ECAL_CORE_NPCAP_SUPPORT }} \
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=${{ matrix.build_configuration.ECAL_THIRDPARTY_BUILD_PROTOBUF }} \
         -DBUILD_SHARED_LIBS=${{ matrix.build_configuration.BUILD_SHARED_LIBS }} \
         -DCMAKE_BUILD_TYPE=${{ matrix.build_configuration.CMAKE_BUILD_TYPE }} \
         -DCMAKE_INSTALL_SYSCONFDIR=/etc \
