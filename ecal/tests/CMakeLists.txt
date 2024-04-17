@@ -36,7 +36,7 @@ add_subdirectory(cpp/expmap_test)
 add_subdirectory(cpp/serialization_test)
 add_subdirectory(cpp/topic2mcast_test)
 
-if(ECAL_CORE_REGISTRATION)
+if(ECAL_CORE_REGISTRATION AND ECAL_CORE_PUBLISHER)
   add_subdirectory(cpp/util_test)
 endif()
 
@@ -45,17 +45,17 @@ if(ECAL_CORE_REGISTRATION_SHM OR ECAL_CORE_TRANSPORT_SHM)
 endif()
 
 if(ECAL_CORE_REGISTRATION AND ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
-  if(ECAL_CORE_TRANSPORT_SHM OR ECAL_CORE_TRANSPORT_UDP) # this test is running for shm and udp layer only, needs to be fixed for tcp
+  if(ECAL_CORE_TRANSPORT_SHM OR ECAL_CORE_TRANSPORT_UDP) # pubsub tests are running for shm and udp layer only, needs to be fixed for tcp
     add_subdirectory(cpp/pubsub_test)
-  endif()
-  if(ECAL_CORE_BUILD_TESTS_PROTOBUF)
-    add_subdirectory(cpp/pubsub_proto_test)
+    if(ECAL_CORE_HAS_PROTOBUF)
+      add_subdirectory(cpp/pubsub_proto_test)
+    endif()
   endif()
 endif()
 
 if(ECAL_CORE_SERVICE)
   add_subdirectory(cpp/clientserver_test)
-  if(ECAL_CORE_BUILD_TESTS_PROTOBUF)
+  if(ECAL_CORE_HAS_PROTOBUF)
     add_subdirectory(cpp/clientserver_proto_test)
   endif()
 endif()

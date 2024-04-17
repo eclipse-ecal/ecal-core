@@ -17,10 +17,9 @@ jobs:
           ########################################
           - name: "default"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
@@ -39,10 +38,9 @@ jobs:
           ########################################
           - name: "full"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
@@ -61,10 +59,9 @@ jobs:
           ########################################
           - name: "pubsub"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -83,10 +80,9 @@ jobs:
           ########################################
           - name: "pubsub_proto"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -105,10 +101,9 @@ jobs:
           ########################################
           - name: "pubsub_udp_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "OFF"
@@ -127,10 +122,9 @@ jobs:
           ########################################
           - name: "pubsub_tcp_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -149,10 +143,9 @@ jobs:
           ########################################
           - name: "pubsub_shm_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -171,10 +164,9 @@ jobs:
           ########################################
           - name: "client_server"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "OFF"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -193,10 +185,9 @@ jobs:
           ########################################
           - name: "client_server_proto"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -215,10 +206,9 @@ jobs:
           ########################################
           - name: "monitoring_only"
           ########################################
+            ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
-            ECAL_CORE_BUILD_SAMPLES_PROTOBUF: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_BUILD_TESTS_PROTOBUF: "ON"
             ECAL_CORE_CONFIG_INIFILE: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
@@ -247,11 +237,10 @@ jobs:
         mkdir "${{ runner.workspace }}\_build\"
         cd "${{ runner.workspace }}/_build"
         cmake %GITHUB_WORKSPACE% -A x64 ^
-        -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES="submodule_dependencies.cmake" ^
+        -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=submodule_dependencies.cmake ^
+        -DECAL_CORE_HAS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_HAS_PROTOBUF }} ^
         -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} ^
-        -DECAL_CORE_BUILD_SAMPLES_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES_PROTOBUF }} ^
         -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} ^
-        -DECAL_CORE_BUILD_TESTS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS_PROTOBUF }} ^
         -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} ^
         -DECAL_CORE_COMMAND_LINE=${{ matrix.build_configuration.ECAL_CORE_COMMAND_LINE }} ^
         -DECAL_CORE_REGISTRATION=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION }} ^
