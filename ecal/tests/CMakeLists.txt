@@ -45,9 +45,11 @@ if(ECAL_CORE_REGISTRATION_SHM OR ECAL_CORE_TRANSPORT_SHM)
 endif()
 
 if(ECAL_CORE_REGISTRATION AND ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
-  if(ECAL_CORE_TRANSPORT_SHM OR ECAL_CORE_TRANSPORT_UDP) # this tests are running for shm and udp layer only, needs to be fixed for tcp
+  if(ECAL_CORE_TRANSPORT_SHM OR ECAL_CORE_TRANSPORT_UDP) # pubsub tests are running for shm and udp layer only, needs to be fixed for tcp
     add_subdirectory(cpp/pubsub_test)
-    add_subdirectory(cpp/pubsub_proto_test)
+    if(ECAL_CORE_HAS_PROTOBUF)
+      add_subdirectory(cpp/pubsub_proto_test)
+    endif()
   endif()
 endif()
 
