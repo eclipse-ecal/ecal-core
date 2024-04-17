@@ -238,7 +238,7 @@ jobs:
         cd "${{ runner.workspace }}/_build"
         cmake %GITHUB_WORKSPACE% -A x64 ^
         -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=submodule_dependencies.cmake ^
-        -DECAL_CORE_BUILD_TESTS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS_PROTOBUF }} ^
+        -DECAL_CORE_HAS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_HAS_PROTOBUF }} ^
         -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} ^
         -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} ^
         -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} ^
