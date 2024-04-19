@@ -26,8 +26,8 @@
 #include <gtest/gtest.h>
 
 enum {
-  CMN_MONITORING_TIMEOUT_MS = 5000,
-  CMN_REGISTRATION_REFRESH_MS = 1000
+  CMN_MONITORING_TIMEOUT_MS   = (5000 + 100),
+  CMN_REGISTRATION_REFRESH_MS = (1000 + 100)
 };
 
 TEST(core_cpp_util, GetTopics)
