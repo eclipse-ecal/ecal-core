@@ -20,7 +20,7 @@
 #include <ecaltime.h>
 #include <chrono>
 #include <thread>
-#include <cstring>
+#include <string.h>
 
 ECALTIME_API int etime_initialize(void)
 {
