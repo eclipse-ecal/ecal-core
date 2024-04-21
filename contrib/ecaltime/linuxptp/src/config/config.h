@@ -21,11 +21,10 @@
 
 #include <SimpleIni.h>
 
-#include <ecal/ecal_util.h>
 #include <iostream>
-#include <string>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <ecal/ecal_util.h>
 
 namespace LinuxPtpConfig {
 
