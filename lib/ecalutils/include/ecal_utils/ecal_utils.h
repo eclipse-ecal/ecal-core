@@ -306,7 +306,7 @@ namespace EcalUtils
           std::string var_name = input.substr(n + 1, m - n - 1);
           bool expanded = false;
           char* tmp = getenv(var_name.c_str());
-          if (tmp != nullptr)
+          if (tmp != NULL)
           {
             output += tmp;
             expanded = true;

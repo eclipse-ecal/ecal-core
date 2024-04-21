@@ -17,14 +17,7 @@
  * ========================= eCAL LICENSE =================================
 */
 
-#include "ecal_utils/string.h"
-#include <algorithm>
-#include <cctype>
-#include <cstdint>
 #include <ecal_utils/filesystem.h>
-#include <map>
-#include <string>
-#include <vector>
 
 #ifdef _WIN32
   #define WIN32_LEAN_AND_MEAN
@@ -58,7 +51,7 @@
 #endif  // _WIN32
 
 #include <sys/stat.h> // stat
-#include <cerrno>     // errno, ENOENT, EEXIST
+#include <errno.h>    // errno, ENOENT, EEXIST
 
 #include <list>
 #include <regex>
