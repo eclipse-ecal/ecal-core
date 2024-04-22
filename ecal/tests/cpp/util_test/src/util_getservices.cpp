@@ -18,7 +18,6 @@
 */
 
 #include <ecal/ecal.h>
-#include <ecal/ecal_types.h>
 
 #include <gtest/gtest.h>
 
@@ -47,7 +46,7 @@ TEST(core_cpp_util, ServiceExpiration)
     EXPECT_EQ(service_info_map.size(), 1);
 
     // check service/method names
-    std::vector<eCAL::Util::SServiceMethod> service_method_names;
+    std::set<eCAL::Util::SServiceMethod> service_method_names;
     eCAL::Util::GetServiceMethodNames(service_method_names);
     EXPECT_EQ(service_method_names.size(), 1);
     for (const auto& name : service_method_names)

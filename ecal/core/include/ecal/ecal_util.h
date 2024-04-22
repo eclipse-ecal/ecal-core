@@ -32,7 +32,6 @@
 #include <string>
 #include <tuple>
 #include <utility>
-#include <vector>
 
 namespace eCAL
 {
@@ -186,23 +185,23 @@ namespace eCAL
      *
      * @return MultiMap containing the quality datatype information and the topic id's.
     **/
-    ECAL_API QualityTopicInfoMultiMap GetPublisher();
+    ECAL_API QualityTopicInfoMultiMap GetPublishers();
 
     /**
-     * @brief Get data type information with quality and topic id for this publisher.
+     * @brief Get data type information with quality and topic id for this publishers.
      *
      * @param topic_name_  Topic name.
      *
      * @return Set containing the quality datatype information for this publisher.
     **/
-    ECAL_API std::set<SQualityTopicInfo> GetPublisher(const std::string& topic_name_);
+    ECAL_API std::set<SQualityTopicInfo> GetPublishers(const std::string& topic_name_);
 
     /**
-     * @brief Get complete snapshot of data type information with quality and topic id for all known subscriber.
+     * @brief Get complete snapshot of data type information with quality and topic id for all known subscribers.
      *
      * @return MultiMap containing the quality datatype information and the topic id's.
     **/
-    ECAL_API QualityTopicInfoMultiMap GetSubscriber();
+    ECAL_API QualityTopicInfoMultiMap GetSubscribers();
 
     /**
      * @brief Get data type information with quality and topic id for this subscriber.
@@ -211,7 +210,7 @@ namespace eCAL
      *
      * @return Set containing the quality datatype information for this subscriber.
     **/
-    ECAL_API std::set<SQualityTopicInfo> GetSubscriber(const std::string& topic_name_);
+    ECAL_API std::set<SQualityTopicInfo> GetSubscribers(const std::string& topic_name_);
 
     /**
      * @brief Get highest quality data type information out of a set of quality data type information.
@@ -264,9 +263,9 @@ namespace eCAL
     /**
      * @brief Get all topic names.
      *
-     * @param topic_names_ Vector to store the topic names.
+     * @param topic_names_ Set to store the topic names.
     **/
-    ECAL_API void GetTopicNames(std::vector<std::string>& topic_names_);
+    ECAL_API void GetTopicNames(std::set<std::string>& topic_names_);
 
     /**
      * @brief Gets description of the specified topic.
@@ -297,9 +296,9 @@ namespace eCAL
     /**
      * @brief Get all service/method names.
      *
-     * @param service_method_names_ Vector to store the service/method names (Vector { (ServiceName, MethodName) }).
+     * @param service_method_names_ Set to store the service/method names (Set { (ServiceName, MethodName) }).
     **/
-    ECAL_API void GetServiceMethodNames(std::vector<SServiceMethod>& service_method_names_);
+    ECAL_API void GetServiceMethodNames(std::set<SServiceMethod>& service_method_names_);
 
     /**
      * @brief Gets service method request and response type names.
@@ -344,9 +343,9 @@ namespace eCAL
     /**
      * @brief Get all client/method names.
      *
-     * @param client_method_names_ Vector to store the client/method names (Vector { (ClientName, MethodName) }).
+     * @param client_method_names_ Set to store the client/method names (Set { (ClientName, MethodName) }).
     **/
-    ECAL_API void GetClientMethodNames(std::vector<SServiceMethod>& client_method_names_);
+    ECAL_API void GetClientMethodNames(std::set<SServiceMethod>& client_method_names_);
 
     /**
      * @brief Gets client method request and response type names.

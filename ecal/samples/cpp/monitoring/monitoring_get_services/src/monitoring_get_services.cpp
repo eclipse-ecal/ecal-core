@@ -23,7 +23,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <vector>
+#include <set>
 
 int main(int argc, char **argv)
 {
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
     // GetServiceMethodNames
     {
-      std::vector<eCAL::Util::SServiceMethod> service_method_names;
+      std::set<eCAL::Util::SServiceMethod> service_method_names;
 
       start_time = std::chrono::steady_clock::now();
       for (run = 0; run < runs; ++run)

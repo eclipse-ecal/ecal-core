@@ -298,7 +298,7 @@ namespace eCAL
     }
 #endif // ECAL_CORE_MONITORING
 
-    QualityTopicInfoMultiMap GetPublisher()
+    QualityTopicInfoMultiMap GetPublishers()
     {
       QualityTopicInfoMultiMap multi_map;
       if (g_descgate() == nullptr) return multi_map;
@@ -312,12 +312,12 @@ namespace eCAL
       return multi_map;
     }
 
-    std::set<SQualityTopicInfo> GetPublisher(const std::string& topic_name_)
+    std::set<SQualityTopicInfo> GetPublishers(const std::string& topic_name_)
     {
-      return ::GetQualityTopicInfoSet(topic_name_, GetPublisher());
+      return ::GetQualityTopicInfoSet(topic_name_, GetPublishers());
     }
 
-    QualityTopicInfoMultiMap GetSubscriber()
+    QualityTopicInfoMultiMap GetSubscribers()
     {
       QualityTopicInfoMultiMap multi_map;
       if (g_descgate() == nullptr) return multi_map;
@@ -331,9 +331,9 @@ namespace eCAL
       return multi_map;
     }
 
-    std::set<SQualityTopicInfo> GetSubscriber(const std::string& topic_name_)
+    std::set<SQualityTopicInfo> GetSubscribers(const std::string& topic_name_)
     {
-      return ::GetQualityTopicInfoSet(topic_name_, GetSubscriber());
+      return ::GetQualityTopicInfoSet(topic_name_, GetSubscribers());
     }
 
     SDataTypeInformation GetHighestQualityDataTypeInformation(const std::set<SQualityTopicInfo>& quality_topic_info_set_)
@@ -423,33 +423,29 @@ namespace eCAL
       quality_topic_info_map_ = ReduceQualityTopicIdMap(pub_sub_map);
     }
 
-    void GetTopicNames(std::vector<std::string>& topic_names_)
+    void GetTopicNames(std::set<std::string>& topic_names_)
     {
       topic_names_.clear();
 
       // get publisher & subscriber multi maps
-      auto pub_multi_map = GetPublisher();
-      auto sub_multi_map = GetSubscriber();
+      auto pub_multi_map = GetPublishers();
+      auto sub_multi_map = GetSubscribers();
 
       // filter out unique topic names into a set
-      std::set<std::string> set;
       for (const auto& publisher : pub_multi_map)
       {
-        set.insert(publisher.first);
+        topic_names_.insert(publisher.first);
       }
       for (const auto& subscriber : sub_multi_map)
       {
-        set.insert(subscriber.first);
+        topic_names_.insert(subscriber.first);
       }
-
-      // transform set into target vector
-      topic_names_ = std::vector<std::string>(set.begin(), set.end());
     }
 
     bool GetTopicDataTypeInformation(const std::string& topic_name_, SDataTypeInformation& data_type_info_)
     {
-      auto       info_set     = GetPublisher(topic_name_);
-      const auto sub_info_set = GetSubscriber(topic_name_);
+      auto       info_set     = GetPublishers(topic_name_);
+      const auto sub_info_set = GetSubscribers(topic_name_);
 
       info_set.insert(sub_info_set.begin(), sub_info_set.end());
       data_type_info_ = GetHighestQualityDataTypeInformation(info_set);
@@ -480,7 +476,7 @@ namespace eCAL
       quality_service_info_map_ = ReduceQualityServiceIdMap(g_descgate()->GetServices());
     }
 
-    void GetServiceMethodNames(std::vector<SServiceMethod>& service_method_names_)
+    void GetServiceMethodNames(std::set<SServiceMethod>& service_method_names_)
     {
       service_method_names_.clear();
 
@@ -488,14 +484,10 @@ namespace eCAL
       auto multi_map = GetServices();
 
       // filter out unique service names into a set
-      std::set<SServiceMethod> set;
       for (const auto& service : multi_map)
       {
-        set.insert(service.first);
+        service_method_names_.insert(service.first);
       }
-
-      // transform set into target vector
-      service_method_names_ = std::vector<SServiceMethod>(set.begin(), set.end());
     }
 
     bool GetServiceTypeNames(const std::string& service_name_, const std::string& method_name_, std::string& req_type_, std::string& resp_type_)
@@ -543,7 +535,7 @@ namespace eCAL
       quality_client_info_map_ = ReduceQualityServiceIdMap(g_descgate()->GetClients());
     }
 
-    void GetClientMethodNames(std::vector<SServiceMethod>& client_method_names_)
+    void GetClientMethodNames(std::set<SServiceMethod>& client_method_names_)
     {
       client_method_names_.clear();
 
@@ -551,14 +543,10 @@ namespace eCAL
       auto multi_map = GetClients();
 
       // filter out unique service names into a set
-      std::set<SServiceMethod> set;
       for (const auto& service : multi_map)
       {
-        set.insert(service.first);
+        client_method_names_.insert(service.first);
       }
-
-      // transform set into target vector
-      client_method_names_ = std::vector<SServiceMethod>(set.begin(), set.end());
     }
 
     bool GetClientTypeNames(const std::string& client_name_, const std::string& method_name_, std::string& req_type_, std::string& resp_type_)
