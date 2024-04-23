@@ -100,13 +100,14 @@ namespace eCAL
        * @brief  Constructor.
        *
        * @param topic_name_  Unique topic name.
+       * @param config_      Optional configuration parameters.
       **/
 
       // call the function via its class because it's a virtual function that is called in constructor/destructor,-
       // where the vtable is not created yet, or it's destructed.
       // Probably we can handle the Message publishers differently. One message publisher class and then one class for payloads and getting type
       // descriptor information.
-      explicit CPublisher(const std::string& topic_name_, const Config& config_ = {}) : eCAL::CPublisher(topic_name_, CPublisher::GetDataTypeInformation(), config_)
+      explicit CPublisher(const std::string& topic_name_, const eCAL::CPublisher::Config& config_ = {}) : eCAL::CPublisher(topic_name_, CPublisher::GetDataTypeInformation(), config_)
       {
       }
 
@@ -143,7 +144,7 @@ namespace eCAL
        *
        * @return  True if it succeeds, false if it fails.
       **/
-      bool Create(const std::string& topic_name_, const Config& config_ = {})
+      bool Create(const std::string& topic_name_, const eCAL::CPublisher::Config& config_ = {})
       {
         return(eCAL::CPublisher::Create(topic_name_, GetDataTypeInformation(), config_));
       }

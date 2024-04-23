@@ -153,22 +153,14 @@ namespace eCAL
     m_writer.tcp.Destroy();
 #endif
 
-    // reset defaults
-    m_id        = 0;
-    m_clock     = 0;
-    m_connected = false;
-
-    // reset configuration
-    Configure({});
-
-    // reset subscriber maps
+    // clear subscriber maps
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
       m_loc_sub_map.clear();
       m_ext_sub_map.clear();
     }
 
-    // reset event callback map
+    // clear event callback map
     {
       const std::lock_guard<std::mutex> lock(m_event_callback_map_sync);
       m_event_callback_map.clear();
