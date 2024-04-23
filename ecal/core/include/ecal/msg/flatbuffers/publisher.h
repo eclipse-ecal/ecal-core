@@ -51,8 +51,9 @@ namespace eCAL
        * @brief  Constructor.
        *
        * @param topic_name_  Unique topic name.
+       * @param config_      Optional configuration parameters.
       **/
-      CPublisher(const std::string& topic_name_) : CMsgPublisher<T>(topic_name_, GetDataTypeInformation())
+      CPublisher(const std::string& topic_name_, const Config& config_ = {}) : CMsgPublisher<T>(topic_name_, GetDataTypeInformation(), config_)
       {
       }
 
@@ -80,12 +81,13 @@ namespace eCAL
        * @brief  Creates this object.
        *
        * @param topic_name_  Unique topic name.
+       * @param config_      Optional configuration parameters.
        *
        * @return  True if it succeeds, false if it fails.
       **/
-      bool Create(const std::string& topic_name_)
+      bool Create(const std::string& topic_name_, const Config& config_ = {})
       {
-        return(CMsgPublisher<T>::Create(topic_name_, GetDataTypeInformation()));
+        return(CMsgPublisher<T>::Create(topic_name_, GetDataTypeInformation(), config_));
       }
 
     private:

@@ -106,7 +106,7 @@ namespace eCAL
       // where the vtable is not created yet, or it's destructed.
       // Probably we can handle the Message publishers differently. One message publisher class and then one class for payloads and getting type
       // descriptor information.
-      explicit CPublisher(const std::string& topic_name_) : eCAL::CPublisher(topic_name_, CPublisher::GetDataTypeInformation())
+      explicit CPublisher(const std::string& topic_name_, const Config& config_ = {}) : eCAL::CPublisher(topic_name_, CPublisher::GetDataTypeInformation(), config_)
       {
       }
 
@@ -139,12 +139,13 @@ namespace eCAL
        * @brief  Creates this object.
        *
        * @param topic_name_  Unique topic name.
+       * @param config_      Optional configuration parameters.
        *
        * @return  True if it succeeds, false if it fails.
       **/
-      bool Create(const std::string& topic_name_)
+      bool Create(const std::string& topic_name_, const Config& config_ = {})
       {
-        return(eCAL::CPublisher::Create(topic_name_, GetDataTypeInformation()));
+        return(eCAL::CPublisher::Create(topic_name_, GetDataTypeInformation(), config_));
       }
 
       /**

@@ -61,8 +61,9 @@ namespace eCAL
      *
      * @param topic_name_  Unique topic name.
      * @param topic_info_  Struct that contains information of the datatype (name, encoding, description) of the topic.
+     * @param config_      Optional configuration parameters.
     **/
-    CMsgPublisher(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_) : CPublisher(topic_name_, topic_info_)
+    CMsgPublisher(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_, const Config& config_ = {}) : CPublisher(topic_name_, topic_info_, config_)
     {
     }
 
@@ -71,8 +72,9 @@ namespace eCAL
      *         If no datatype information about the topic is available, this constructor can be used.
      *
      * @param topic_name_  Unique topic name.
+     * @param config_      Optional configuration parameters.
     **/
-    explicit CMsgPublisher(const std::string& topic_name_) : CMsgPublisher(topic_name_, GetDataTypeInformation())
+    explicit CMsgPublisher(const std::string& topic_name_, const Config& config_ = {}) : CMsgPublisher(topic_name_, GetDataTypeInformation(), config_)
     {
     }
 
@@ -103,12 +105,13 @@ namespace eCAL
      *
      * @param topic_name_   Unique topic name.
      * @param topic_info_   Associated datatype description.
+     * @param config_       Optional configuration parameters.
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_)
+    bool Create(const std::string& topic_name_, const struct SDataTypeInformation& topic_info_, const Config& config_ = {})
     {
-      return(CPublisher::Create(topic_name_, topic_info_));
+      return(CPublisher::Create(topic_name_, topic_info_, config_));
     }
 
     /**
