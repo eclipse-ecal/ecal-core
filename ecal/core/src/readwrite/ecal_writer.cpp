@@ -73,6 +73,8 @@ namespace eCAL
     m_host_group_name(Process::GetHostGroupName()),
     m_pid(Process::GetProcessID()),
     m_pname(Process::GetProcessName()),
+    m_topic_name(topic_name_),
+    m_topic_info(topic_info_),
     m_topic_size(0),
     m_buffering_shm(PUB_MEMFILE_BUF_COUNT),
     m_zero_copy(PUB_MEMFILE_ZERO_COPY),
@@ -87,16 +89,6 @@ namespace eCAL
     m_share_tdesc(true),
     m_created(false)
   {
-    // set defaults
-    m_topic_name        = topic_name_;
-    m_topic_id.clear();
-    m_topic_info        = topic_info_;
-    m_id                = 0;
-    m_clock             = 0;
-    m_connected         = false;
-    m_ext_subscribed    = false;
-    m_created           = false;
-
     // configure
     Configure(config_);
 

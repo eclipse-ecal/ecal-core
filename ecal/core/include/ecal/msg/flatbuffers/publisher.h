@@ -98,10 +98,10 @@ namespace eCAL
       **/
       SDataTypeInformation GetDataTypeInformation() const override
       {
-        SDataTypeInformation topic_info;
-        topic_info.encoding = "flatb";
+        SDataTypeInformation data_type_info;
+        data_type_info.encoding = "flatb";
         // empty type, empty descriptor
-        return topic_info;
+        return data_type_info;
       }
       
       /**

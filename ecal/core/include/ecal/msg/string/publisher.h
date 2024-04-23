@@ -105,11 +105,11 @@ namespace eCAL
       **/
       SDataTypeInformation GetDataTypeInformation() const override
       {
-        SDataTypeInformation topic_info;
-        topic_info.encoding = "base";
-        topic_info.name     = "std::string";
+        SDataTypeInformation data_type_info;
+        data_type_info.encoding = "base";
+        data_type_info.name     = "std::string";
         // empty descriptor
-        return topic_info;
+        return data_type_info;
       }
       
       /**
@@ -117,7 +117,7 @@ namespace eCAL
        *
        * @param msg_  The message object.
        *
-       * @return  String site.
+       * @return  String size.
       **/
       size_t GetSize(const T& msg_) const override
       {
@@ -144,7 +144,7 @@ namespace eCAL
       }
     };
     /** @example minimal_snd.cpp
-     * This is an example how to use eCAL::CPublisher to send a std::string with eCAL. To receive the strings, see @ref minimal_rec.cpp .
+     * This is an example how to use eCAL::string::CPublisher to send a std::string with eCAL. To receive the strings, see @ref minimal_rec.cpp .
     **/
   }
 }

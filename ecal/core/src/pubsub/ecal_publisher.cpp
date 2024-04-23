@@ -35,7 +35,9 @@
 
 namespace eCAL
 {
-  CPublisher::Config::Config()
+  CPublisher::Config::Config() :
+    share_topic_type(eCAL::Config::IsTopicTypeSharingEnabled()),
+    share_topic_description(eCAL::Config::IsTopicDescriptionSharingEnabled())
   {
     // shm config
     shm.send_mode              = eCAL::Config::GetPublisherShmMode();
@@ -48,10 +50,6 @@ namespace eCAL
 
     // tcp config
     tcp.send_mode              = eCAL::Config::GetPublisherTcpMode();
-
-    // allow to share topic type/description
-    share_topic_type           = eCAL::Config::IsTopicTypeSharingEnabled();
-    share_topic_description    = eCAL::Config::IsTopicDescriptionSharingEnabled();
   }
 
   CPublisher::CPublisher() :

@@ -172,12 +172,12 @@ namespace eCAL
       **/
       struct SDataTypeInformation GetDataTypeInformation() const
       {
-        struct SDataTypeInformation topic_info;
+        struct SDataTypeInformation data_type_info;
         static T msg{};
-        topic_info.encoding   = "proto";
-        topic_info.name       = msg.GetTypeName();
-        topic_info.descriptor = protobuf::GetProtoMessageDescription(msg);
-        return topic_info;
+        data_type_info.encoding   = "proto";
+        data_type_info.name       = msg.GetTypeName();
+        data_type_info.descriptor = protobuf::GetProtoMessageDescription(msg);
+        return data_type_info;
       }
 
     };

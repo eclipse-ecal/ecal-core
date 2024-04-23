@@ -174,11 +174,11 @@ namespace eCAL
       **/
       SDataTypeInformation GetDataTypeInformation() const
       {
-        SDataTypeInformation topic_info;
-        topic_info.encoding   = eCAL::capnproto::EncodingAsString();
-        topic_info.name       = eCAL::capnproto::TypeAsString<message_type>();
-        topic_info.descriptor = eCAL::capnproto::SchemaAsString<message_type>();
-        return topic_info;
+        SDataTypeInformation data_type_info;
+        data_type_info.encoding   = eCAL::capnproto::EncodingAsString();
+        data_type_info.name       = eCAL::capnproto::TypeAsString<message_type>();
+        data_type_info.descriptor = eCAL::capnproto::SchemaAsString<message_type>();
+        return data_type_info;
       }
 
       std::unique_ptr<capnp::MallocMessageBuilder>    builder;

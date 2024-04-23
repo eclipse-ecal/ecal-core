@@ -112,11 +112,11 @@ namespace eCAL
     /**
      * @brief Constructor.
      *
-     * @param topic_name_   Unique topic name.
-     * @param topic_info_   Topic information (encoding, type, descriptor)
-     * @param config_       Optional configuration parameters.
+     * @param topic_name_      Unique topic name.
+     * @param data_type_info_  Topic data type information (encoding, type, descriptor).
+     * @param config_          Optional configuration parameters.
     **/
-    ECAL_API CPublisher(const std::string& topic_name_, const SDataTypeInformation& topic_info_, const Config& config_ = {});
+    ECAL_API CPublisher(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Config& config_ = {});
 
     /**
      * @brief Constructor.
@@ -154,13 +154,13 @@ namespace eCAL
     /**
      * @brief Creates this object.
      *
-     * @param topic_name_   Unique topic name.
-     * @param topic_info_   Topic information (encoding, type, descriptor)
-     * @param config_       Optional configuration parameters.
+     * @param topic_name_      Unique topic name.
+     * @param data_type_info_  Topic data type information (encoding, type, descriptor).
+     * @param config_          Optional configuration parameters.
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& topic_info_, const Config& config_ = {});
+    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Config& config_ = {});
 
     /**
      * @brief Creates this object.
@@ -181,11 +181,11 @@ namespace eCAL
     /**
      * @brief Setup topic information.
      *
-     * @param topic_info_  Topic information attributes.
+     * @param data_type_info_  Topic data type information attributes.
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool SetDataTypeInformation(const SDataTypeInformation& topic_info_);
+    ECAL_API bool SetDataTypeInformation(const SDataTypeInformation& data_type_info_);
 
     /**
      * @brief Sets publisher attribute. 

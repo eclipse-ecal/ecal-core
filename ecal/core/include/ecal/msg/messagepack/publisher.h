@@ -101,10 +101,10 @@ namespace eCAL
       **/
       SDataTypeInformation GetDataTypeInformation() const override
       {
-        SDataTypeInformation topic_info;
-        topic_info.encoding = "mpack";
+        SDataTypeInformation data_type_info;
+        data_type_info.encoding = "mpack";
         // empty descriptor, empty descriptor
-        return topic_info;
+        return data_type_info;
       }
 
       /**
