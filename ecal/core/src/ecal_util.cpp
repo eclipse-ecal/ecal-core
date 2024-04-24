@@ -332,14 +332,12 @@ namespace eCAL
 
     QualityServiceInfoMultimap GetServices()
     {
-      QualityServiceInfoMultimap multi_map;
       if (g_descgate() == nullptr) return QualityServiceInfoMultimap();
       return g_descgate()->GetServices();
     }
 
     QualityServiceInfoMultimap GetClients()
     {
-      QualityServiceInfoMultimap multi_map;
       if (g_descgate() == nullptr) return QualityServiceInfoMultimap();
       return g_descgate()->GetClients();
     }
