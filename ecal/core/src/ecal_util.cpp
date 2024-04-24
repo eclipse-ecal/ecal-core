@@ -130,10 +130,10 @@ namespace
       const auto& source_key   = source_pair.first;
       const auto& source_value = source_pair.second;
 
-      eCAL::Util::SServiceMethod key;
-      key.service_name = source_key.service_name;
-      key.method_name  = source_key.method_name;
-      auto target_it = target_map.find(key);
+      eCAL::Util::SServiceMethod target_key;
+      target_key.service_name = source_key.service_name;
+      target_key.method_name  = source_key.method_name;
+      auto target_it = target_map.find(target_key);
       if (target_it != target_map.end())
       {
         // key exists in target map
@@ -147,10 +147,7 @@ namespace
       else
       {
         // key does not exist in target map, insert source pair
-        eCAL::Util::SServiceMethod key;
-        key.service_name = source_key.service_name;
-        key.method_name  = source_key.method_name;
-        target_map.insert(std::make_pair(key, source_pair.second));
+        target_map.insert(std::make_pair(target_key, source_pair.second));
       }
     }
 
