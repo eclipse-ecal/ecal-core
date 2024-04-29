@@ -23,7 +23,7 @@
 
 #include <ecal/ecal_log.h>
 
-#include "ecal_writer_udp_mc.h"
+#include "ecal_writer_udp.h"
 #include "io/udp/ecal_udp_configurations.h"
 #include "serialization/ecal_serialize_sample_payload.h"
 
