@@ -21,7 +21,6 @@
  * @brief  udp data writer
 **/
 
-#include <ecal/ecal_config.h>
 #include <ecal/ecal_log.h>
 
 #include "ecal_writer_udp_mc.h"
@@ -32,7 +31,8 @@
 
 namespace eCAL
 {
-  CDataWriterUdpMC::CDataWriterUdpMC(const std::string& host_name_, const std::string& topic_name_, const std::string& topic_id_)
+  CDataWriterUdpMC::CDataWriterUdpMC(const std::string& host_name_, const std::string& topic_name_, const std::string& topic_id_, const CPublisher::UDPConfig& udp_config_) :
+    m_config(udp_config_)
   {
     m_host_name   = host_name_;
     m_topic_name  = topic_name_;
@@ -44,7 +44,7 @@ namespace eCAL
     attr.port      = UDP::GetPayloadPort();
     attr.ttl       = UDP::GetMulticastTtl();
     attr.broadcast = UDP::IsBroadcast();
-    attr.sndbuf    = Config::GetUdpMulticastSndBufSizeBytes();
+    attr.sndbuf    = m_config.sndbuf_size_bytes;
 
     // create udp/sample sender with activated loop-back
     attr.loopback = true;
