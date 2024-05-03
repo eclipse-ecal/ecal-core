@@ -35,7 +35,7 @@ namespace eCAL
     TLayer::eSendMode  send_mode               = TLayer::smode_auto;  //!< shm layer send mode (default auto)
     bool               zero_copy_mode          = false;               //!< enable zero copy shared memory transport mode
     int                acknowledge_timeout_ms  = 0;                   /*!< force connected subscribers to send acknowledge event after processing the message
-                                                                            the publisher send call is blocked on this event with this timeout (0 == no handshake) */
+                                                                             the publisher send call is blocked on this event with this timeout (0 == no handshake) */
     size_t             memfile_min_size_bytes  = 4096;                //!< default memory file size for new publisher
     size_t             memfile_reserve_percent = 50;                  //!< dynamic file size reserve before recreating memory file if topic size changes
     size_t             memfile_buffer_count    = 1;                   //!< maximum number of used buffers (needs to be greater than 1, default = 1)
@@ -49,7 +49,7 @@ namespace eCAL
 
   struct ECAL_API TCPPubConfig
   {
-    TLayer::eSendMode  send_mode               = TLayer::smode_off;   //!<  tcp layer send mode (default off)
+    TLayer::eSendMode  send_mode               = TLayer::smode_off;   //!< tcp layer send mode (default off)
   };
 
   struct ECAL_API PubConfig
@@ -60,7 +60,7 @@ namespace eCAL
     UDPPubConfig udp;
     TCPPubConfig tcp;
 
-    bool share_topic_type        = true;
-    bool share_topic_description = true;
+    bool share_topic_type                      = true;                //!< share topic type via registration
+    bool share_topic_description               = true;                //!< share topic description via registration
   };
 }
