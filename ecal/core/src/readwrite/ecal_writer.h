@@ -29,7 +29,6 @@
 #include <ecal/ecal_callback.h>
 #include <ecal/ecal_payload_writer.h>
 #include <ecal/ecal_publisher_config.h>
-#include <ecal/ecal_tlayer.h>
 #include <ecal/ecal_types.h>
 #include <tuple>
 
@@ -128,14 +127,13 @@ namespace eCAL
     void Connect(const std::string& tid_, const SDataTypeInformation& tinfo_);
     void Disconnect();
 
-    void SetUseUdpMC(TLayer::eSendMode mode_);
-    void SetUseShm(TLayer::eSendMode mode_);
-    void SetUseTcp(TLayer::eSendMode mode_);
+    void ActivateUdpLayer(bool state_);
+    void ActivateShmLayer(bool state_);
+    void ActivateTcpLayer(bool state_);
 
-    bool CheckWriterModes();
     size_t PrepareWrite(long long id_, size_t len_);
     bool IsInternalSubscribedOnly();
-    void LogSendMode(TLayer::eSendMode smode_, const std::string& base_msg_);
+    void LogLayerState(bool state_, const std::string& base_msg_);
 
     int32_t GetFrequency();
 
@@ -177,9 +175,8 @@ namespace eCAL
     {
       struct SWriterMode
       {
-        TLayer::eSendMode requested = TLayer::smode_off;
-        bool              activated = false;
-        bool              confirmed = false;
+        bool activated = false;
+        bool confirmed = false;
       };
 
       SWriterMode                          udp_mode;

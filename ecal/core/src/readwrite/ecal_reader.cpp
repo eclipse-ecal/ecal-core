@@ -76,7 +76,7 @@ namespace eCAL
                  m_ext_published(false),
                  m_share_ttype(true),
                  m_share_tdesc(true),
-                 m_use_udp_mc_confirmed(false),
+                 m_use_udp_confirmed(false),
                  m_use_shm_confirmed(false),
                  m_use_tcp_confirmed(false),
                  m_created(false)
@@ -162,12 +162,12 @@ namespace eCAL
     Unregister();
 
     // reset defaults
-    m_clock                   = 0;
-    m_message_drops           = 0;
+    m_clock             = 0;
+    m_message_drops     = 0;
 
-    m_use_udp_mc_confirmed    = false;
-    m_use_shm_confirmed       = false;
-    m_use_tcp_confirmed       = false;
+    m_use_udp_confirmed = false;
+    m_use_shm_confirmed = false;
+    m_use_tcp_confirmed = false;
 
     return(true);
   }
@@ -263,9 +263,9 @@ namespace eCAL
     // udp multicast layer
     {
       Registration::TLayer udp_tlayer;
-      udp_tlayer.type      = tl_ecal_udp_mc;
+      udp_tlayer.type      = tl_ecal_udp;
       udp_tlayer.version   = 1;
-      udp_tlayer.confirmed = m_use_udp_mc_confirmed;
+      udp_tlayer.confirmed = m_use_udp_confirmed;
       ecal_reg_sample_topic.tlayer.push_back(udp_tlayer);
     }
 #endif
@@ -425,9 +425,9 @@ namespace eCAL
     if (!m_created) return(0);
 
     // store receive layer
-    m_use_udp_mc_confirmed |= layer_ == tl_ecal_udp_mc;
-    m_use_shm_confirmed    |= layer_ == tl_ecal_shm;
-    m_use_tcp_confirmed    |= layer_ == tl_ecal_tcp;
+    m_use_udp_confirmed |= layer_ == tl_ecal_udp;
+    m_use_shm_confirmed |= layer_ == tl_ecal_shm;
+    m_use_tcp_confirmed |= layer_ == tl_ecal_tcp;
 
     // number of hash values to track for duplicates
     constexpr int hash_queue_size(64);

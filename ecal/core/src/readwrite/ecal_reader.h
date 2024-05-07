@@ -92,8 +92,8 @@ namespace eCAL
       return(m_loc_pub_map.size() + m_ext_pub_map.size());
     }
 
-    std::string          GetTopicName()        const { return(m_topic_name); }
-    std::string          GetTopicID()          const { return(m_topic_id); }
+    std::string          GetTopicName()           const { return(m_topic_name); }
+    std::string          GetTopicID()             const { return(m_topic_id); }
     SDataTypeInformation GetDataTypeInformation() const { return(m_topic_info); }
 
     void RefreshRegistration();
@@ -162,7 +162,7 @@ namespace eCAL
     bool                                      m_share_ttype;
     bool                                      m_share_tdesc;
 
-    bool                                      m_use_udp_mc_confirmed;
+    bool                                      m_use_udp_confirmed;
     bool                                      m_use_shm_confirmed;
     bool                                      m_use_tcp_confirmed;
 
