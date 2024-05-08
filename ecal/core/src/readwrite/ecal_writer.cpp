@@ -759,13 +759,13 @@ namespace eCAL
     if (!m_created) return;
 
     // log state
-    LogLayerState(state_, m_topic_name + "::CDataWriter::Create::UDP_SENDMODE::");
+    LogLayerState(state_, "CDataWriter::ActivateUdpLayer::UDP_SENDMODE");
 
     if (state_)
     {
       m_writer.udp = std::make_unique<CDataWriterUdpMC>(m_host_name, m_topic_name, m_topic_id, m_config.udp);
 #ifndef NDEBUG
-      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::Create::UDP_WRITER");
+      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::ActivateUdpLayer::UDP_WRITER");
 #endif
     }
     else
@@ -784,14 +784,14 @@ namespace eCAL
     if (!m_created) return;
 
     // log state
-    LogLayerState(state_, m_topic_name + "::CDataWriter::Create::SHM_SENDMODE::");
+    LogLayerState(state_, "CDataWriter::ActivateShmLayer::SHM_SENDMODE");
 
     if (state_)
     {
       m_writer.shm = std::make_unique<CDataWriterSHM>(m_host_name, m_topic_name, m_topic_id, m_config.shm);
       m_writer.shm->SetBufferCount(m_config.shm.memfile_buffer_count);
 #ifndef NDEBUG
-      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::Create::SHM_WRITER");
+      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::ActivateShmLayer::SHM_WRITER");
 #endif
     }
     else
@@ -810,13 +810,13 @@ namespace eCAL
     if (!m_created) return;
 
     // log state
-    LogLayerState(state_, m_topic_name + "::CDataWriter::Create::TCP_SENDMODE::");
+    LogLayerState(state_, "CDataWriter::ActivateTcpLayer::TCP_SENDMODE");
 
     if (state_)
     {
       m_writer.tcp = std::make_unique<CDataWriterTCP>(m_host_name, m_topic_name, m_topic_id, m_config.tcp);
 #ifndef NDEBUG
-      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::Create::TCP_WRITER - SUCCESS");
+      Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::ActivateTcpLayer::TCP_WRITER - SUCCESS");
 #endif
     }
     else
@@ -868,11 +868,11 @@ namespace eCAL
 #ifndef NDEBUG
     if (state_)
     {
-      Logging::Log(log_level_debug4, base_msg_ + "ON");
+      Logging::Log(log_level_debug4, m_topic_name + "::" + base_msg_ + "::ON");
     }
     else
     {
-      Logging::Log(log_level_debug4, base_msg_ + "OFF");
+      Logging::Log(log_level_debug4, m_topic_name + "::" + base_msg_ + "::OFF");
     }
 #else
     (void)state_;
