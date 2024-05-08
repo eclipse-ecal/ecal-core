@@ -80,8 +80,6 @@ namespace eCAL
     m_id(0),
     m_clock(0),
     m_frequency_calculator(0.0f),
-    m_loc_subscribed(false),
-    m_ext_subscribed(false),
     m_created(false)
   {
     // shm config
@@ -104,8 +102,7 @@ namespace eCAL
 
     // set registration expiration
     const std::chrono::milliseconds registration_timeout(Config::GetRegistrationTimeoutMs());
-    m_loc_sub_map.set_expiration(registration_timeout);
-    m_ext_sub_map.set_expiration(registration_timeout);
+    m_sub_map.set_expiration(registration_timeout);
 
     // mark as created
     m_created = true;
@@ -153,8 +150,7 @@ namespace eCAL
     // clear subscriber maps
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_loc_sub_map.clear();
-      m_ext_sub_map.clear();
+      m_sub_map.clear();
     }
 
     // clear event callback map
@@ -460,106 +456,55 @@ namespace eCAL
     else         return 0;
   }
 
-  void CDataWriter::ApplyLocSubscription(const SLocalSubscriptionInfo& local_info_, const SDataTypeInformation& tinfo_, const std::string& reader_par_)
+  void CDataWriter::ApplySubscription(const SSubscriptionInfo& subscription_info_, const SDataTypeInformation& data_type_info_, const std::string& reader_par_)
   {
-    Connect(local_info_.topic_id, tinfo_);
+    Connect(subscription_info_.topic_id, data_type_info_);
 
-    // add key to local subscriber map
+    // add key to subscriber map
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_loc_sub_map[local_info_] = true;
+      m_sub_map[subscription_info_] = data_type_info_;
     }
 
-    m_loc_subscribed = true;
-
-    // add a new local subscription
+    // add a new subscription
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_writer.udp) m_writer.udp->AddLocConnection(local_info_.process_id, local_info_.topic_id, reader_par_);
+    if (m_writer.udp) m_writer.udp->ApplySubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id, reader_par_);
 #endif
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_writer.shm) m_writer.shm->AddLocConnection(local_info_.process_id, local_info_.topic_id, reader_par_);
+    if (m_writer.shm) m_writer.shm->ApplySubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id, reader_par_);
 #endif
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_writer.tcp) m_writer.tcp->AddLocConnection(local_info_.process_id, local_info_.topic_id, reader_par_);
+    if (m_writer.tcp) m_writer.tcp->ApplySubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id, reader_par_);
 #endif
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug3, m_topic_name + "::CDataWriter::ApplyLocSubscription");
+    Logging::Log(log_level_debug3, m_topic_name + "::CDataWriter::ApplySubscription");
 #endif
   }
 
-  void CDataWriter::RemoveLocSubscription(const SLocalSubscriptionInfo& local_info_)
+  void CDataWriter::RemoveSubscription(const SSubscriptionInfo& subscription_info_)
   {
-    // remove key from local subscriber map
+    // remove key from subscriber map
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_loc_sub_map.erase(local_info_);
+      m_sub_map.erase(subscription_info_);
     }
 
-    // remove a local subscription
+    // remove subscription
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_writer.udp) m_writer.udp->RemLocConnection(local_info_.process_id, local_info_.topic_id);
+    if (m_writer.udp) m_writer.udp->RemoveSubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id);
 #endif
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_writer.shm) m_writer.shm->RemLocConnection(local_info_.process_id, local_info_.topic_id);
+    if (m_writer.shm) m_writer.shm->RemoveSubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id);
 #endif
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_writer.tcp) m_writer.tcp->RemLocConnection(local_info_.process_id, local_info_.topic_id);
+    if (m_writer.tcp) m_writer.tcp->RemoveSubscription(subscription_info_.host_name, subscription_info_.process_id, subscription_info_.topic_id);
 #endif
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug3, m_topic_name + "::CDataWriter::RemoveLocSubscription");
-#endif
-  }
-
-  void CDataWriter::ApplyExtSubscription(const SExternalSubscriptionInfo& external_info_, const SDataTypeInformation& tinfo_, const std::string& reader_par_)
-  {
-    Connect(external_info_.topic_id, tinfo_);
-
-    // add key to external subscriber map
-    {
-      const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_ext_sub_map[external_info_] = true;
-    }
-
-    m_ext_subscribed = true;
-
-    // add a new external subscription
-#if ECAL_CORE_TRANSPORT_UDP
-    if (m_writer.udp) m_writer.udp->AddExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id, reader_par_);
-#endif
-#if ECAL_CORE_TRANSPORT_SHM
-    if (m_writer.shm) m_writer.shm->AddExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id, reader_par_);
-#endif
-#if ECAL_CORE_TRANSPORT_TCP
-    if (m_writer.tcp) m_writer.tcp->AddExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id, reader_par_);
-#endif
-
-#ifndef NDEBUG
-    // log it
-    Logging::Log(log_level_debug3, m_topic_name + "::CDataWriter::ApplyExtSubscription");
-#endif
-  }
-
-  void CDataWriter::RemoveExtSubscription(const SExternalSubscriptionInfo& external_info_)
-  {
-    // remove key from external subscriber map
-    {
-      const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_ext_sub_map.erase(external_info_);
-    }
-
-    // remove external subscription
-#if ECAL_CORE_TRANSPORT_UDP
-    if (m_writer.udp) m_writer.udp->RemExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id);
-#endif
-#if ECAL_CORE_TRANSPORT_SHM
-    if (m_writer.shm) m_writer.shm->RemExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id);
-#endif
-#if ECAL_CORE_TRANSPORT_TCP
-    if (m_writer.tcp) m_writer.tcp->RemExtConnection(external_info_.host_name, external_info_.process_id, external_info_.topic_id);
+    Logging::Log(log_level_debug3, m_topic_name + "::CDataWriter::RemoveSubscription");
 #endif
   }
 
@@ -573,16 +518,12 @@ namespace eCAL
     // check connection timeouts
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      m_loc_sub_map.remove_deprecated();
-      m_ext_sub_map.remove_deprecated();
+      m_sub_map.remove_deprecated();
 
-      m_loc_subscribed = !m_loc_sub_map.empty();
-      m_ext_subscribed = !m_ext_sub_map.empty();
-    }
-
-    if (!m_loc_subscribed && !m_ext_subscribed)
-    {
-      Disconnect();
+      if (m_sub_map.empty())
+      {
+        Disconnect();
+      }
     }
   }
 
@@ -611,8 +552,6 @@ namespace eCAL
     out << indent_ << "m_clock:                  " << m_clock << '\n';
     out << indent_ << "frequency [mHz]:          " << GetFrequency() << '\n';
     out << indent_ << "m_created:                " << m_created << '\n';
-    out << indent_ << "m_loc_subscribed:         " << m_loc_subscribed << '\n';
-    out << indent_ << "m_ext_subscribed:         " << m_ext_subscribed << '\n';
     out << std::endl;
 
     return(out.str());
@@ -699,8 +638,14 @@ namespace eCAL
     size_t ext_connections(0);
     {
       const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-      loc_connections = m_loc_sub_map.size();
-      ext_connections = m_ext_sub_map.size();
+      for (const auto& sub : m_sub_map)
+      {
+        if (sub.first.host_name == m_host_name)
+        {
+          loc_connections++;
+        }
+      }
+      ext_connections = m_sub_map.size() - loc_connections;
     }
     ecal_reg_sample_topic.connections_loc = static_cast<int32_t>(loc_connections);
     ecal_reg_sample_topic.connections_ext = static_cast<int32_t>(ext_connections);
@@ -904,10 +849,10 @@ namespace eCAL
 
   bool CDataWriter::IsInternalSubscribedOnly()
   {
-    const std::string process_id = Process::GetProcessIDAsString();
+    const int32_t process_id = static_cast<int32_t>(Process::GetProcessID());
     bool is_internal_only(true);
     const std::lock_guard<std::mutex> lock(m_sub_map_sync);
-    for (auto sub : m_loc_sub_map)
+    for (auto sub : m_sub_map)
     {
       if (sub.first.process_id != process_id)
       {
