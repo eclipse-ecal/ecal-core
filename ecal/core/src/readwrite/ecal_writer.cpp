@@ -244,9 +244,9 @@ namespace eCAL
     const size_t payload_buf_size(payload_.GetSize());
 
     // are we allowed to perform zero copy writing?
-    const bool allow_zero_copy(false);
+    bool allow_zero_copy(false);
 #if ECAL_CORE_TRANSPORT_SHM
-    allow_zero_copy = m_config.shm.zero_copy_mode // zero copy mode activated by user
+    allow_zero_copy = m_config.shm.zero_copy_mode; // zero copy mode activated by user
 #endif
 #if ECAL_CORE_TRANSPORT_UDP
     // udp is active -> no zero copy
