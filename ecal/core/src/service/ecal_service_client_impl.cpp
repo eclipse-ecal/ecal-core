@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -751,7 +751,12 @@ namespace eCAL
         const auto port_to_use = (protocol_version == 0 ? iter.tcp_port_v0 : iter.tcp_port_v1);
 
         // Create the client and add it to the map
-        const auto new_client_session = client_manager->create_client(static_cast<uint8_t>(protocol_version), iter.hname, port_to_use, event_callback);
+        const std::vector<std::pair<std::string, uint16_t>> endpoint_list
+                  {
+                    {iter.hname, port_to_use},
+                    {iter.hname + ".local", port_to_use},   // TODO: Make this configurable from the ecal.ini
+                  };
+        const auto new_client_session = client_manager->create_client(static_cast<uint8_t>(protocol_version), endpoint_list, event_callback);
         if (new_client_session)
           m_client_map[iter.key] = new_client_session;
       }
