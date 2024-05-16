@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,8 @@ message ConnnectionPar                          // connection parameter for read
 
 enum eTLayerType                                // transport layer
 {
-  reserved 2, 3, 42;
+  // Reserved fields in enums are not supported in protobuf 3.0
+  // reserved 2, 3, 42;
 
   tl_none                             =   0;    // undefined
   tl_ecal_udp_mc                      =   1;    // ecal udp multicast

@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,14 @@
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include <asio.hpp>
+
+#ifdef WIN32
+  #include <Winsock2.h>
+#else
+  #include <netinet/in.h>
+#endif
 
 namespace eCAL
 {

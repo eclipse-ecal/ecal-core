@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE ===== ============================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,14 @@
 #include "server_session_impl_base.h"
 #include <atomic>
 #include <cstddef>
-#include <ecal/service/logger.h>
-#include <ecal/service/server_session_types.h>
-
-#include <ecal/service/state.h>
 #include <memory>
 #include <string>
+
+#include <asio.hpp>
+
+#include <ecal/service/logger.h>
+#include <ecal/service/server_session_types.h>
+#include <ecal/service/state.h>
 
 namespace eCAL
 {
@@ -75,6 +77,11 @@ namespace eCAL
       ///////////////////////////////////////////////
     public:
       void start() override;
+
+    private:
+      void handle_start();
+
+    public:
       void stop()  override;
 
       eCAL::service::State get_state() const override;

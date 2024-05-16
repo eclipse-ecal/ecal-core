@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,16 @@
 #include <functional>
 
 #include <mutex>
-#include <sstream>
 
 #ifdef _MSC_VER
-  #pragma warning(push)
-  #pragma warning(disable: 4834)
+#pragma warning(push)
+#pragma warning(disable : 4834)
 #endif
 
 #include <asio.hpp>
-#include <utility>
 
 #ifdef _MSC_VER
-  #pragma warning(pop)
+#pragma warning(pop)
 #endif
 
 #include <ecal/service/server_session_types.h>

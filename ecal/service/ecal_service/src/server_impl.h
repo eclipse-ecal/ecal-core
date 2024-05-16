@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@
 
 #pragma once
 
-#include <atomic>
 #include <cstdint>
-#include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -32,7 +30,6 @@
 #pragma warning(disable: 4834)
 #endif
 #include <asio.hpp>
-#include <utility>
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
