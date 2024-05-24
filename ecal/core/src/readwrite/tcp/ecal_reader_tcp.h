@@ -30,6 +30,9 @@
 
 #include "serialization/ecal_struct_sample_payload.h"
 
+#include <mutex>
+#include <unordered_map>
+
 namespace eCAL
 {
   ////////////////
