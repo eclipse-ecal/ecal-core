@@ -22,7 +22,9 @@
 **/
 
 #include <ecal/ecal_config.h>
+#include <ecal/ecal_log.h>
 #include <ecal/ecal_payload_writer.h>
+#include <ecal/ecal_process.h>
 
 #include "config/ecal_config_reader_hlp.h"
 
@@ -493,7 +495,7 @@ namespace eCAL
     case tl_ecal_tcp:
       if (StartTcpLayer()) Register(true);
       break;
-    case tl_none:
+    default:
       break;
     }
 
@@ -722,8 +724,11 @@ namespace eCAL
     Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::Register");
 #endif
 
-#endif // ECAL_CORE_REGISTRATION
     return(true);
+#else  // ECAL_CORE_REGISTRATION
+(void)force_;
+return(false);
+#endif // ECAL_CORE_REGISTRATION
   }
 
   bool CDataWriter::Unregister()
@@ -752,8 +757,10 @@ namespace eCAL
     Logging::Log(log_level_debug4, m_topic_name + "::CDataWriter::UnRegister");
 #endif
 
-#endif // ECAL_CORE_REGISTRATION
     return(true);
+#else  // ECAL_CORE_REGISTRATION
+    return(false);
+#endif // ECAL_CORE_REGISTRATION
   }
 
   void CDataWriter::FireConnectEvent(const std::string& tid_, const SDataTypeInformation& tinfo_)

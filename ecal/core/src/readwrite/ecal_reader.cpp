@@ -22,6 +22,8 @@
 **/
 
 #include <ecal/ecal_config.h>
+#include <ecal/ecal_log.h>
+#include <ecal/ecal_process.h>
 
 #if ECAL_CORE_REGISTRATION
 #include "registration/ecal_registration_provider.h"
@@ -636,8 +638,11 @@ namespace eCAL
     Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::DoRegister");
 #endif
 
-#endif // ECAL_CORE_REGISTRATION
     return(true);
+#else  // ECAL_CORE_REGISTRATION
+    (void)force_;
+    return(false);
+#endif // ECAL_CORE_REGISTRATION
   }
 
   bool CDataReader::Unregister()
@@ -664,8 +669,10 @@ namespace eCAL
     Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Unregister");
 #endif
 
-#endif // ECAL_CORE_REGISTRATION
     return(true);
+#else  // ECAL_CORE_REGISTRATION
+    return(false);
+#endif // ECAL_CORE_REGISTRATION
   }
 
   void CDataReader::StartTransportLayer()
