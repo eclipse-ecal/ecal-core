@@ -21,14 +21,13 @@
  * @brief  tcp reader and layer
 **/
 
-#include "ecal_global_accessors.h"
-
 #include <ecal/ecal_config.h>
 
-#include "pubsub/ecal_subgate.h"
-
+#include "ecal_global_accessors.h"
 #include "ecal_reader_tcp.h"
 #include "ecal_tcp_pubsub_logger.h"
+
+#include "pubsub/ecal_subgate.h"
 
 #include "ecal_utils/portable_endian.h"
 
