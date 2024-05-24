@@ -483,7 +483,7 @@ namespace eCAL
     // determine if we need to start a transport layer
     // if a new layer gets activated, we reregister for SHM and TCP to force the exchange of connection parameter
     // without this forced registration we would need one additional registration loop for these two layers to establish the connection
-    eTLayerType layer2activate = DetermineTransportLayer2Start(pub_layers, sub_layers, m_host_name == subscription_info_.host_name);
+    const eTLayerType layer2activate = DetermineTransportLayer2Start(pub_layers, sub_layers, m_host_name == subscription_info_.host_name);
     switch (layer2activate)
     {
     case tl_ecal_udp:
@@ -957,10 +957,10 @@ return(false);
   eTLayerType CDataWriter::DetermineTransportLayer2Start(const std::vector<eTLayerType>& pub_layer_, const std::vector<eTLayerType>& sub_layer_, bool same_host_)
   {
     // determine the priority list to use
-    std::vector<eTLayerType>& priorityList = same_host_ ? m_local_layer_priority : m_remote_layer_priority;
+    const std::vector<eTLayerType>& priorityList = same_host_ ? m_local_layer_priority : m_remote_layer_priority;
 
     // find the highest priority transport layer that is available in both publisher and subscriber options
-    for (eTLayerType layer : priorityList)
+    for (const eTLayerType layer : priorityList)
     {
       if (std::find(pub_layer_.begin(), pub_layer_.end(), layer) != pub_layer_.end()
        && std::find(sub_layer_.begin(), sub_layer_.end(), layer) != sub_layer_.end())
