@@ -203,7 +203,7 @@ endif()
 # --------------------------------------------------------
 # utils (needs to get a thirdparty)
 # --------------------------------------------------------
-add_subdirectory(lib/ecalutils)
+add_subdirectory(lib/ecal_utils)
 
 # --------------------------------------------------------
 # debscripts

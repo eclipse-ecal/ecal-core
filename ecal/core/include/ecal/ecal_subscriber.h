@@ -28,7 +28,7 @@
 #include <ecal/ecal_callback.h>
 #include <ecal/ecal_deprecate.h>
 #include <ecal/ecal_os.h>
-#include <ecal/ecal_subscriber_config.h>
+#include <ecal/ecal_config.h>
 #include <ecal/ecal_types.h>
 
 #include <memory>
@@ -240,6 +240,13 @@ namespace eCAL
      * @return  true if created, false if not. 
     **/
     ECAL_API bool IsCreated() const {return(m_created);}
+
+    /**
+     * @brief Query if the subscriber is published.
+     *
+     * @return  true if published, false if not.
+    **/
+    ECAL_API bool IsPublished() const;
 
     /**
      * @brief Query the number of publishers.

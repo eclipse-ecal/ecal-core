@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@
 #include <ecal/ecal_deprecate.h>
 #include <ecal/ecal_os.h>
 #include <ecal/ecal_payload_writer.h>
-#include <ecal/ecal_publisher_config.h>
+#include <ecal/config/publisher.h>
+#include <ecal/ecal_config.h>
 #include <ecal/ecal_types.h>
 
 #include <chrono>
@@ -193,7 +194,7 @@ namespace eCAL
      *
      * @return  Number of bytes sent. 
     **/
-    ECAL_API size_t Send(const void* buf_, size_t len_, long long time_ = DEFAULT_TIME_ARGUMENT) const;
+    ECAL_API size_t Send(const void* buf_, size_t len_, long long time_ = DEFAULT_TIME_ARGUMENT);
 
     /**
      * @brief Send a message to all subscribers.
@@ -203,7 +204,7 @@ namespace eCAL
      *
      * @return  Number of bytes sent.
     **/
-    ECAL_API size_t Send(CPayloadWriter& payload_, long long time_ = DEFAULT_TIME_ARGUMENT) const;
+    ECAL_API size_t Send(CPayloadWriter& payload_, long long time_ = DEFAULT_TIME_ARGUMENT);
 
     /**
      * @brief Send a message to all subscribers.
@@ -213,7 +214,7 @@ namespace eCAL
      *
      * @return  Number of bytes sent.
     **/
-    ECAL_API size_t Send(const std::string& s_, long long time_ = DEFAULT_TIME_ARGUMENT) const;
+    ECAL_API size_t Send(const std::string& s_, long long time_ = DEFAULT_TIME_ARGUMENT);
 
     /**
      * @brief Add callback function for publisher events.
