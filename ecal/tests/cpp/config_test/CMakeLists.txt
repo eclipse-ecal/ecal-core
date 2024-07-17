@@ -44,7 +44,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE 
-    eCAL::core
+    eCAL::core 
     Threads::Threads
     tclap::tclap
 )
