@@ -52,8 +52,12 @@ namespace eCAL
     Registration::Configuration      registration{};
     TransportLayer::Configuration    transport_layer{};
     Monitoring::Configuration        monitoring{};
+#ifdef ECAL_CORE_SUBSCRIBER
     Subscriber::Configuration        subscriber{};
+#endif
+#ifdef ECAL_CORE_PUBLISHER
     Publisher::Configuration         publisher{};
+#endif
     Time::Configuration              timesync{};
     Service::Configuration           service{};
     Application::Configuration       application{};
