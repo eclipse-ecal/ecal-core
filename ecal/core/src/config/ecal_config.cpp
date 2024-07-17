@@ -111,20 +111,15 @@ namespace eCAL
     ECAL_API int               GetUdpMulticastRcvBufSizeBytes       () { return GetConfiguration().transport_layer.mc_options.recbuf; }
     ECAL_API bool              IsUdpMulticastJoinAllIfEnabled       () { return GetConfiguration().transport_layer.mc_options.join_all_interfaces; }
 
-#ifdef ECAL_CORE_SUBSCRIBER
     ECAL_API bool              IsUdpMulticastRecEnabled             () { return GetConfiguration().subscriber.udp.enable; }
     ECAL_API bool              IsShmRecEnabled                      () { return GetConfiguration().subscriber.shm.enable; }
     ECAL_API bool              IsTcpRecEnabled                      () { return GetConfiguration().subscriber.tcp.enable; }
-#endif
 
     ECAL_API bool              IsNpcapEnabled                       () { return GetConfiguration().transport_layer.mc_options.npcap_enabled; }
 
-#ifdef ECAL_CORE_PUBLISHER
     ECAL_API int               GetTcpPubReaderThreadpoolSize        () { return static_cast<int>(GetConfiguration().publisher.tcp.num_executor_reader); }
     ECAL_API int               GetTcpPubWriterThreadpoolSize        () { return static_cast<int>(GetConfiguration().publisher.tcp.num_executor_writer); }
-#endif
 
-#ifdef ECAL_CORE_SUBSCRIBER
     ECAL_API int               GetTcpSubReaderThreadpoolSize        () { return static_cast<int>(GetConfiguration().subscriber.tcp.num_executor_reader); }
     ECAL_API int               GetTcpSubWriterThreadpoolSize        () { return static_cast<int>(GetConfiguration().subscriber.tcp.num_executor_writer); }
     ECAL_API int               GetTcpSubMaxReconnectionAttemps      () { return static_cast<int>(GetConfiguration().subscriber.tcp.max_reconnections); }
@@ -133,7 +128,6 @@ namespace eCAL
     ECAL_API int               GetTcpPubsubReaderThreadpoolSize     () { return GetTcpSubReaderThreadpoolSize();  };
     ECAL_API int               GetTcpPubsubWriterThreadpoolSize     () { return GetTcpSubWriterThreadpoolSize();  };
     ECAL_API int               GetTcpPubsubMaxReconnectionAttemps   () { return GetTcpSubMaxReconnectionAttemps();};
-#endif
 
     ECAL_API std::string       GetHostGroupName                     () { return GetConfiguration().transport_layer.shm_options.host_group_name; }
     

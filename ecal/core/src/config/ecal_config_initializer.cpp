@@ -156,7 +156,6 @@ namespace eCAL
       shmMonitoringOptions.shm_monitoring_domain     = iniConfig.get(EXPERIMENTAL, "shm_monitoring_domain",     EXP_SHM_MONITORING_DOMAIN);
       shmMonitoringOptions.shm_monitoring_queue_size = iniConfig.get(EXPERIMENTAL, "shm_monitoring_queue_size", EXP_SHM_MONITORING_QUEUE_SIZE);
 
-#ifdef ECAL_CORE_SUBSCRIBER
       // subscriber options
       auto& subscriberOptions = subscriber;
       subscriberOptions.shm.enable = iniConfig.get(NETWORK, "shm_rec_enabled",    NET_SHM_REC_ENABLED) != 0;
@@ -167,9 +166,7 @@ namespace eCAL
       subscriberOptions.tcp.num_executor_writer = iniConfig.get(NETWORK, "tcp_pubsup_num_executor_writer", NET_TCP_PUBSUB_NUM_EXECUTOR_WRITER);
       
       subscriberOptions.udp.enable = iniConfig.get(NETWORK, "udp_mc_rec_enabled", NET_UDP_MC_REC_ENABLED) != 0;
-#endif
 
-#ifdef ECAL_CORE_PUBLISHER
       // publisher options
       auto& publisherOptions = publisher;
       publisherOptions.shm.enable                  = iniConfig.get(PUBLISHER, "use_shm",              static_cast<int>(PUB_USE_SHM)) != 0;
@@ -187,7 +184,6 @@ namespace eCAL
       publisherOptions.tcp.enable = iniConfig.get(PUBLISHER, "use_tcp",    static_cast<int>(PUB_USE_TCP)) != 0;
       publisherOptions.tcp.num_executor_reader = iniConfig.get(NETWORK, "tcp_pubsup_num_executor_reader", NET_TCP_PUBSUB_NUM_EXECUTOR_READER);
       publisherOptions.tcp.num_executor_writer = iniConfig.get(NETWORK, "tcp_pubsup_num_executor_writer", NET_TCP_PUBSUB_NUM_EXECUTOR_WRITER);
-#endif
 
       // timesync options
       auto& timesyncOptions = timesync;
