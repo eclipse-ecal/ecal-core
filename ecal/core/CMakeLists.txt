@@ -217,6 +217,10 @@ endif()
 ######################################
 # readwrite
 ######################################
+set(ecal_readwrite_src
+    src/readwrite/ecal_transport_layer.h
+)
+
 if(ECAL_CORE_PUBLISHER)
   set(ecal_writer_src
       src/readwrite/ecal_writer.cpp
@@ -285,15 +289,17 @@ if (ECAL_CORE_REGISTRATION)
       src/registration/ecal_registration_receiver.cpp
       src/registration/ecal_registration_receiver.h
       src/registration/ecal_registration_sender.h
-      src/registration/ecal_registration_sender_udp.cpp
-      src/registration/ecal_registration_sender_udp.h
+      src/registration/udp/ecal_registration_receiver_udp.cpp
+      src/registration/udp/ecal_registration_receiver_udp.h
+      src/registration/udp/ecal_registration_sender_udp.cpp
+      src/registration/udp/ecal_registration_sender_udp.h
   )
   if(ECAL_CORE_REGISTRATION_SHM)
     list(APPEND ecal_registration_src
-        src/registration/ecal_registration_receiver_shm.cpp
-        src/registration/ecal_registration_receiver_shm.h
-        src/registration/ecal_registration_sender_shm.cpp
-        src/registration/ecal_registration_sender_shm.h
+        src/registration/shm/ecal_registration_receiver_shm.cpp
+        src/registration/shm/ecal_registration_receiver_shm.h
+        src/registration/shm/ecal_registration_sender_shm.cpp
+        src/registration/shm/ecal_registration_sender_shm.h
         src/registration/shm/ecal_memfile_broadcast.cpp
         src/registration/shm/ecal_memfile_broadcast.h
         src/registration/shm/ecal_memfile_broadcast_reader.cpp
@@ -535,6 +541,7 @@ set(ecal_sources
     ${ecal_monitoring_src}
     ${ecal_pub_src}
     ${ecal_sub_src}
+    ${ecal_readwrite_src}
     ${ecal_writer_src}
     ${ecal_reader_src}
     ${ecal_registration_src}
