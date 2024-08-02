@@ -256,8 +256,6 @@ jobs:
         -DECAL_CORE_NPCAP_SUPPORT=${{ matrix.build_configuration.ECAL_CORE_NPCAP_SUPPORT }} ^
         -DBUILD_SHARED_LIBS=${{ matrix.build_configuration.BUILD_SHARED_LIBS }} ^
         -DCMAKE_BUILD_TYPE=${{ matrix.build_configuration.CMAKE_BUILD_TYPE }}
-        mkdir "%ALLUSERSPROFILE%\eCAL"
-        copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.yaml" "%ALLUSERSPROFILE%\eCAL"
       shell: cmd
 
     - name: Build Release
