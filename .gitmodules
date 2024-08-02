@@ -25,3 +25,6 @@
 [submodule "thirdparty/ecaludp/ecaludp"]
 	path = thirdparty/ecaludp/ecaludp
 	url = https://github.com/eclipse-ecal/ecaludp.git
+[submodule "thirdparty/yaml-cpp/yaml-cpp"]
+	path = thirdparty/yaml-cpp/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
