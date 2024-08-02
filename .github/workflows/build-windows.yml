@@ -257,7 +257,7 @@ jobs:
         -DBUILD_SHARED_LIBS=${{ matrix.build_configuration.BUILD_SHARED_LIBS }} ^
         -DCMAKE_BUILD_TYPE=${{ matrix.build_configuration.CMAKE_BUILD_TYPE }}
         mkdir "%ALLUSERSPROFILE%\eCAL"
-        copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.ini" "%ALLUSERSPROFILE%\eCAL"
+        copy "%GITHUB_WORKSPACE%\ecal\core\cfg\ecal.yaml" "%ALLUSERSPROFILE%\eCAL"
       shell: cmd
 
     - name: Build Release
