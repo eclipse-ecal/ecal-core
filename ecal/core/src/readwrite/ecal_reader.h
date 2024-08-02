@@ -100,8 +100,7 @@ namespace eCAL
 
     void ApplyLayerParameter(const SPublicationInfo& publication_info_, eTLayerType type_, const Registration::ConnectionPar& parameter_);
 
-    void RefreshRegistration();
-
+    Registration::Sample GetRegistration();
     bool IsCreated() const { return(m_created); }
 
     bool IsPublished() const
@@ -120,14 +119,19 @@ namespace eCAL
     std::string          GetTopicID()             const { return(m_topic_id); }
     SDataTypeInformation GetDataTypeInformation() const { return(m_topic_info); }
 
-    static void InitializeLayers();
+    void InitializeLayers();
     size_t ApplySample(const std::string& tid_, const char* payload_, size_t size_, long long id_, long long clock_, long long time_, size_t hash_, eTLayerType layer_);
 
     std::string Dump(const std::string& indent_ = "");
 
   protected:
-    bool Register(bool force_);
-    bool Unregister();
+    void Register();
+    void Unregister();
+
+    void CheckConnections();
+
+    Registration::Sample GetRegistrationSample();
+    Registration::Sample GetUnregistrationSample();
 
     void StartTransportLayer();
     void StopTransportLayer();

@@ -23,11 +23,6 @@ recycle:
   url = https://github.com/steinwurf/recycle.git
   version = 7.0.0
 
-simpleini:
-  path = thirdparty/simpleini/simpleini
-  url = https://github.com/brofield/simpleini.git
-  version = v4.20
-
 tclap:
   path = thirdparty/tclap/tclap
   url = https://github.com/xguerin/tclap.git
@@ -42,3 +37,8 @@ udpcap:
   path = thirdparty/udpcap/udpcap
   url = https://github.com/eclipse-ecal/udpcap
   version = 1.0.2
+
+yaml-cpp:
+  path = thirdparty/yaml-cpp/yaml-cpp
+  url = https://github.com/jbeder/yaml-cpp
+  version = 0.8.0

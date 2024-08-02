@@ -20,7 +20,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_CONFIGURATION: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -42,7 +42,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "ON"
+            ECAL_CORE_CONFIGURATION: "ON"
             ECAL_CORE_COMMAND_LINE: "ON"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -64,7 +64,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -86,7 +86,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -108,7 +108,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "OFF"
             ECAL_CORE_REGISTRATION_SHM: "OFF"
@@ -130,7 +130,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "OFF"
@@ -152,7 +152,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "OFF"
@@ -174,7 +174,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "OFF"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -196,7 +196,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "ON"
@@ -218,7 +218,7 @@ jobs:
             ECAL_CORE_HAS_PROTOBUF: "ON"
             ECAL_CORE_BUILD_SAMPLES: "ON"
             ECAL_CORE_BUILD_TESTS: "ON"
-            ECAL_CORE_CONFIG_INIFILE: "OFF"
+            ECAL_CORE_CONFIGURATION: "OFF"
             ECAL_CORE_COMMAND_LINE: "OFF"
             ECAL_CORE_REGISTRATION: "ON"
             ECAL_CORE_REGISTRATION_SHM: "OFF"
@@ -254,7 +254,7 @@ jobs:
         -DECAL_CORE_HAS_PROTOBUF=${{ matrix.build_configuration.ECAL_CORE_HAS_PROTOBUF }} \
         -DECAL_CORE_BUILD_SAMPLES=${{ matrix.build_configuration.ECAL_CORE_BUILD_SAMPLES }} \
         -DECAL_CORE_BUILD_TESTS=${{ matrix.build_configuration.ECAL_CORE_BUILD_TESTS }} \
-        -DECAL_CORE_CONFIG_INIFILE=${{ matrix.build_configuration.ECAL_CORE_CONFIG_INIFILE }} \
+        -DECAL_CORE_CONFIGURATION=${{ matrix.build_configuration.ECAL_CORE_CONFIGURATION }} \
         -DECAL_CORE_COMMAND_LINE=${{ matrix.build_configuration.ECAL_CORE_COMMAND_LINE }} \
         -DECAL_CORE_REGISTRATION=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION }} \
         -DECAL_CORE_REGISTRATION_SHM=${{ matrix.build_configuration.ECAL_CORE_REGISTRATION_SHM }} \

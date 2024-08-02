@@ -94,13 +94,11 @@ namespace eCAL
     m_pub_map.set_expiration(registration_timeout);
 
     // start transport layers
+    InitializeLayers();
     StartTransportLayer();
 
     // mark as created
     m_created = true;
-
-    // register
-    Register(false);
   }
 
   CDataReader::~CDataReader()
@@ -256,9 +254,6 @@ namespace eCAL
 
   bool CDataReader::SetAttribute(const std::string& attr_name_, const std::string& attr_value_)
   {
-    auto current_val = m_attr.find(attr_name_);
-
-    const bool force = current_val == m_attr.end() || current_val->second != attr_value_;
     m_attr[attr_name_] = attr_value_;
 
 #ifndef NDEBUG
@@ -266,25 +261,17 @@ namespace eCAL
     Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::SetAttribute");
 #endif
 
-    // register it
-    Register(force);
-
     return(true);
   }
 
   bool CDataReader::ClearAttribute(const std::string& attr_name_)
   {
-    auto force = m_attr.find(attr_name_) != m_attr.end();
-
     m_attr.erase(attr_name_);
 
 #ifndef NDEBUG
     // log it
     Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::ClearAttribute");
 #endif
-
-    // register it
-    Register(force);
 
     return(true);
   }
@@ -351,33 +338,11 @@ namespace eCAL
     }
   }
 
-  void CDataReader::RefreshRegistration()
-  {
-    if (!m_created) return;
-
-    // ensure that registration is not called within zero nanoseconds
-    // normally it will be called from registration logic every second
-
-    // register without send
-    Register(false);
-
-    // check connection timeouts
-    {
-      const std::lock_guard<std::mutex> lock(m_pub_map_mtx);
-      m_pub_map.erase_expired();
-
-      if (m_pub_map.empty())
-      {
-        FireDisconnectEvent();
-      }
-    }
-  }
-
   void CDataReader::InitializeLayers()
   {
     // initialize udp layer
 #if ECAL_CORE_TRANSPORT_UDP
-    if (Config::IsUdpMulticastRecEnabled())
+    if (m_config.layer.udp.enable)
     {
       CUDPReaderLayer::Get()->Initialize();
     }
@@ -385,7 +350,7 @@ namespace eCAL
 
     // initialize shm layer
 #if ECAL_CORE_TRANSPORT_SHM
-    if (Config::IsShmRecEnabled())
+    if (m_config.layer.shm.enable)
     {
       CSHMReaderLayer::Get()->Initialize();
     }
@@ -393,7 +358,7 @@ namespace eCAL
 
     // initialize tcp layer
 #if ECAL_CORE_TRANSPORT_TCP
-    if (Config::IsTcpRecEnabled())
+    if (m_config.layer.tcp.enable)
     {
       CTCPReaderLayer::Get()->Initialize();
     }
@@ -410,13 +375,13 @@ namespace eCAL
     switch (layer_)
     {
     case tl_ecal_udp:
-      if (!m_config.udp.enable) return 0;
+      if (!m_config.layer.udp.enable) return 0;
       break;
     case tl_ecal_shm:
-      if (!m_config.shm.enable) return 0;
+      if (!m_config.layer.shm.enable) return 0;
       break;
     case tl_ecal_tcp:
-      if (!m_config.tcp.enable) return 0;
+      if (!m_config.layer.tcp.enable) return 0;
       break;
     default:
       break;
@@ -555,15 +520,56 @@ namespace eCAL
     return(out.str());
   }
 
-  bool CDataReader::Register(const bool force_)
+  void CDataReader::Register()
   {
 #if ECAL_CORE_REGISTRATION
-    if (!m_created)          return(false);
-    if(m_topic_name.empty()) return(false);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(GetRegistrationSample());
 
-    // create command parameter
+#ifndef NDEBUG
+    // log it
+    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Register");
+#endif
+#endif // ECAL_CORE_REGISTRATION
+  }
+
+  void CDataReader::Unregister()
+  {
+#if ECAL_CORE_REGISTRATION
+    if (g_registration_provider() != nullptr) g_registration_provider()->UnregisterSample(GetUnregistrationSample());
+
+#ifndef NDEBUG
+    // log it
+    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Unregister");
+#endif
+#endif // ECAL_CORE_REGISTRATION
+  }
+
+  void CDataReader::CheckConnections()
+  {
+    const std::lock_guard<std::mutex> lock(m_pub_map_mtx);
+    m_pub_map.erase_expired();
+
+    if (m_pub_map.empty())
+    {
+      FireDisconnectEvent();
+    }
+  }
+
+  Registration::Sample CDataReader::GetRegistration()
+  {
+    // check connection timeouts
+    CheckConnections();
+
+    // return registration
+    return GetRegistrationSample();
+  }
+    
+  Registration::Sample CDataReader::GetRegistrationSample()
+  {
+    // create registration sample
     Registration::Sample ecal_reg_sample;
     ecal_reg_sample.cmd_type = bct_reg_subscriber;
+
     auto& ecal_reg_sample_topic = ecal_reg_sample.topic;
     ecal_reg_sample_topic.hname  = m_host_name;
     ecal_reg_sample_topic.hgname = m_host_group_name;
@@ -632,28 +638,15 @@ namespace eCAL
     ecal_reg_sample_topic.connections_loc = 0;
     ecal_reg_sample_topic.connections_ext = 0;
 
-    // register subscriber
-    if(g_registration_provider() != nullptr) g_registration_provider()->ApplySample(ecal_reg_sample, force_);
-#ifndef NDEBUG
-    // log it
-    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::DoRegister");
-#endif
-
-    return(true);
-#else  // ECAL_CORE_REGISTRATION
-    (void)force_;
-    return(false);
-#endif // ECAL_CORE_REGISTRATION
+    return ecal_reg_sample;
   }
 
-  bool CDataReader::Unregister()
+  Registration::Sample CDataReader::GetUnregistrationSample()
   {
-#if ECAL_CORE_REGISTRATION
-    if (m_topic_name.empty()) return(false);
-
-    // create command parameter
+    // create unregistration sample
     Registration::Sample ecal_unreg_sample;
     ecal_unreg_sample.cmd_type = bct_unreg_subscriber;
+
     auto& ecal_reg_sample_topic = ecal_unreg_sample.topic;
     ecal_reg_sample_topic.hname  = m_host_name;
     ecal_reg_sample_topic.hgname = m_host_group_name;
@@ -663,23 +656,13 @@ namespace eCAL
     ecal_reg_sample_topic.tid    = m_topic_id;
     ecal_reg_sample_topic.uname  = Process::GetUnitName();
 
-    // unregister subscriber
-    if (g_registration_provider() != nullptr) g_registration_provider()->ApplySample(ecal_unreg_sample, false);
-#ifndef NDEBUG
-    // log it
-    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Unregister");
-#endif
-
-    return(true);
-#else  // ECAL_CORE_REGISTRATION
-    return(false);
-#endif // ECAL_CORE_REGISTRATION
+    return ecal_unreg_sample;
   }
-
+  
   void CDataReader::StartTransportLayer()
   {
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_config.udp.enable)
+    if (m_config.layer.udp.enable)
     {
       // flag enabled
       m_layers.udp.read_enabled = true;
@@ -690,7 +673,7 @@ namespace eCAL
 #endif
 
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_config.shm.enable)
+    if (m_config.layer.shm.enable)
     {
       // flag enabled
       m_layers.shm.read_enabled = true;
@@ -701,7 +684,7 @@ namespace eCAL
 #endif
 
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_config.tcp.enable)
+    if (m_config.layer.tcp.enable)
     {
       // flag enabled
       m_layers.tcp.read_enabled = true;
@@ -715,7 +698,7 @@ namespace eCAL
   void CDataReader::StopTransportLayer()
   {
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_config.udp.enable)
+    if (m_config.layer.udp.enable)
     {
       // flag disabled
       m_layers.udp.read_enabled = false;
@@ -726,7 +709,7 @@ namespace eCAL
 #endif
 
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_config.shm.enable)
+    if (m_config.layer.shm.enable)
     {
       // flag disabled
       m_layers.shm.read_enabled = false;
@@ -737,7 +720,7 @@ namespace eCAL
 #endif
 
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_config.tcp.enable)
+    if (m_config.layer.tcp.enable)
     {
       // flag disabled
       m_layers.tcp.read_enabled = false;

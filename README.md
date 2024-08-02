@@ -52,9 +52,9 @@ This section provides documentation for the CMake options used in configuring th
 
 #### Core Internal Feature Configuration
 
-##### `ECAL_CORE_CONFIG_INIFILE`
-- Enabling this option allows eCAL to be configured via an `ecal.ini` file. This file is used to set various configuration parameters for eCAL, providing flexibility in adjusting its behavior without modifying the source code.
-- Requires simpleini library.
+##### `ECAL_CORE_CONFIGURATION`
+- Enabling this option allows eCAL to be configured via an `ecal.yaml` file. This file is used to set various configuration parameters for eCAL, providing flexibility in adjusting its behavior without modifying the source code.
+- Requires yaml-cpp library.
 
 ##### `ECAL_CORE_COMMAND_LINE`
 - Enabling this option includes support for eCAL application command-line interfaces (cmd line). This allows you to interact with eCAL applications through the command line, providing additional runtime configuration options.
