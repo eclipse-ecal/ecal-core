@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,23 @@
 */
 
 /**
- * @brief  Global database class helper
+ * @brief  eCAL Sample Applier Gates
+ *
+ * This class applies incoming samples to the registration gates
 **/
 
 #pragma once
 
-#include "ecal_config_reader.h"
-#include "ecal_def_ini.h"
-#include "ecal_global_accessors.h"
+#include "serialization/ecal_struct_sample_registration.h"
 
-// macro to simplify configuration parameter access (internal use only)
-// eCALPAR(GROUP,PAR) -> eCAL::g_config()->get(GROUP_SECTION_S, GROUP_PAR_S, GROUP_PAR)
-#define eCALPAR(x,y) eCAL::g_config()->get(x##_SECTION_S, x##_##y##_S, x##_##y)
+namespace eCAL
+{
+  namespace Registration
+  {
+    class CSampleApplierGates
+    {
+    public:
+      static void ApplySample(const eCAL::Registration::Sample& sample_);
+    };
+  }
+}

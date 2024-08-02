@@ -14,6 +14,7 @@ set(ecal_submodule_dependencies
   tcp_pubsub
   udpcap
   ecaludp
+  yaml-cpp
 )
 
 set(ecal_inproject_dependencies

@@ -31,11 +31,6 @@
 #if ECAL_CORE_REGISTRATION_SHM
 #include "registration/shm/ecal_registration_receiver_shm.h"
 #endif
-#include "ecal_global_accessors.h"
-
-#include "pubsub/ecal_subgate.h"
-#include "pubsub/ecal_pubgate.h"
-#include "service/ecal_clientgate.h"
 
 #include "io/udp/ecal_udp_configurations.h"
 #include <atomic>
@@ -51,23 +46,29 @@ namespace eCAL
   //////////////////////////////////////////////////////////////////
   std::atomic<bool> CRegistrationReceiver::m_created;
 
-  CRegistrationReceiver::CRegistrationReceiver() :
-                         m_network(Config::IsNetworkEnabled()),
-                         m_loopback(false),
-                         m_callback_pub(nullptr),
-                         m_callback_sub(nullptr),
-                         m_callback_service(nullptr),
-                         m_callback_client(nullptr),
-                         m_callback_process(nullptr),
-                         m_use_registration_udp(false),
-                         m_use_registration_shm(false),
-                         m_host_group_name(Process::GetHostGroupName())
+  CRegistrationReceiver::CRegistrationReceiver()
+    : m_use_registration_udp(false)
+    , m_use_registration_shm(false)
+    , m_sample_applier(Config::IsNetworkEnabled(), false, Process::GetHostGroupName(), Process::GetProcessID())
   {
+    // Connect User registration callback and gates callback with the sample applier
+    m_sample_applier.SetCustomApplySampleCallback("gates", [](const eCAL::Registration::Sample& sample_)
+      {
+        Registration::CSampleApplierGates::ApplySample(sample_);
+      });
+    m_sample_applier.SetCustomApplySampleCallback("custom_registration", [this](const eCAL::Registration::Sample& sample_)
+      {
+        m_user_applier.ApplySample(sample_);
+      });
+
   }
 
   CRegistrationReceiver::~CRegistrationReceiver()
   {
     Stop();
+
+    m_sample_applier.RemCustomApplySampleCallback("custom_registration");
+    m_sample_applier.RemCustomApplySampleCallback("gates");
   }
 
   void CRegistrationReceiver::Start()
@@ -80,13 +81,13 @@ namespace eCAL
 
     if (m_use_registration_udp)
     {
-      m_registration_receiver_udp = std::make_unique<CRegistrationReceiverUDP>([this](const Registration::Sample& sample_) {return this->ApplySample(sample_); });
+      m_registration_receiver_udp = std::make_unique<CRegistrationReceiverUDP>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_); });
     }
 
 #if ECAL_CORE_REGISTRATION_SHM
     if (m_use_registration_shm)
     {
-      m_registration_receiver_shm = std::make_unique<CRegistrationReceiverSHM>([this](const Registration::Sample& sample_) {return this->ApplySample(sample_); });
+      m_registration_receiver_shm = std::make_unique<CRegistrationReceiverSHM>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_); });
     }
 #endif
 
@@ -110,254 +111,32 @@ namespace eCAL
     }
 #endif
 
-    // reset callbacks
-    m_callback_pub     = nullptr;
-    m_callback_sub     = nullptr;
-    m_callback_service = nullptr;
-    m_callback_client  = nullptr;
-    m_callback_process = nullptr;
-
-    // finished
     m_created          = false;
   }
 
   void CRegistrationReceiver::EnableLoopback(bool state_)
   {
-    m_loopback = state_;
-  }
-
-  bool CRegistrationReceiver::ApplySample(const Registration::Sample& sample_)
-  {
-    if (!m_created) return false;
-
-    // forward all registration samples to outside "customer" (e.g. monitoring, descgate)
-    {
-      const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
-      for (const auto& iter : m_callback_custom_apply_sample_map)
-      {
-        iter.second(sample_);
-      }
-    }
-
-    std::string reg_sample;
-    if (m_callback_pub
-      || m_callback_sub
-      || m_callback_service
-      || m_callback_client
-      || m_callback_process
-      )
-    {
-      SerializeToBuffer(sample_, reg_sample);
-    }
-
-    switch (sample_.cmd_type)
-    {
-    case bct_none:
-    case bct_set_sample:
-      break;
-    case bct_reg_process:
-    case bct_unreg_process:
-      // unregistration event not implemented currently
-      if (m_callback_process) m_callback_process(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-#if ECAL_CORE_SERVICE
-    case bct_reg_service:
-      if (g_clientgate() != nullptr) g_clientgate()->ApplyServiceRegistration(sample_);
-      if (m_callback_service) m_callback_service(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-    case bct_unreg_service:
-      // current client implementation doesn't need that information
-      if (m_callback_service) m_callback_service(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-#endif
-    case bct_reg_client:
-    case bct_unreg_client:
-      // current service implementation doesn't need that information
-      if (m_callback_client) m_callback_client(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-    case bct_reg_subscriber:
-    case bct_unreg_subscriber:
-      ApplySubscriberRegistration(sample_);
-      if (m_callback_sub) m_callback_sub(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-    case bct_reg_publisher:
-    case bct_unreg_publisher:
-      ApplyPublisherRegistration(sample_);
-      if (m_callback_pub) m_callback_pub(reg_sample.c_str(), static_cast<int>(reg_sample.size()));
-      break;
-    default:
-      Logging::Log(log_level_debug1, "CRegistrationReceiver::ApplySample : unknown sample type");
-      break;
-    }
-
-    return true;
+    m_sample_applier.EnableLoopback(state_);
   }
 
   bool CRegistrationReceiver::AddRegistrationCallback(enum eCAL_Registration_Event event_, const RegistrationCallbackT& callback_)
   {
-    if (!m_created) return false;
-    switch (event_)
-    {
-    case reg_event_publisher:
-      m_callback_pub = callback_;
-      return true;
-    case reg_event_subscriber:
-      m_callback_sub = callback_;
-      return true;
-    case reg_event_service:
-      m_callback_service = callback_;
-      return true;
-    case reg_event_client:
-      m_callback_client = callback_;
-      return true;
-    case reg_event_process:
-      m_callback_process = callback_;
-      return true;
-    default:
-      return false;
-    }
+    return m_user_applier.AddRegistrationCallback(event_, callback_);
   }
 
   bool CRegistrationReceiver::RemRegistrationCallback(enum eCAL_Registration_Event event_)
   {
-    if (!m_created) return false;
-    switch (event_)
-    {
-    case reg_event_publisher:
-      m_callback_pub = nullptr;
-      return true;
-    case reg_event_subscriber:
-      m_callback_sub = nullptr;
-      return true;
-    case reg_event_service:
-      m_callback_service = nullptr;
-      return true;
-    case reg_event_client:
-      m_callback_client = nullptr;
-      return true;
-    case reg_event_process:
-      m_callback_process = nullptr;
-      return true;
-    default:
-      return false;
-    }
-  }
-
-  void CRegistrationReceiver::ApplySubscriberRegistration(const Registration::Sample& sample_)
-  {
-#if ECAL_CORE_PUBLISHER
-    if (g_pubgate() == nullptr) return;
-
-    // process registrations from same host group
-    if (IsHostGroupMember(sample_))
-    {
-      // do not register local entities, only if loop back flag is set true
-      if (m_loopback || (sample_.topic.pid != Process::GetProcessID()))
-      {
-        switch (sample_.cmd_type)
-        {
-        case bct_reg_subscriber:
-          g_pubgate()->ApplySubRegistration(sample_);
-          break;
-        case bct_unreg_subscriber:
-          g_pubgate()->ApplySubUnregistration(sample_);
-          break;
-        default:
-          break;
-        }
-      }
-    }
-    // process external registrations
-    else
-    {
-      if (m_network)
-      {
-        switch (sample_.cmd_type)
-        {
-        case bct_reg_subscriber:
-          g_pubgate()->ApplySubRegistration(sample_);
-          break;
-        case bct_unreg_subscriber:
-          g_pubgate()->ApplySubUnregistration(sample_);
-          break;
-        default:
-          break;
-        }
-      }
-    }
-#endif
-  }
-
-  void CRegistrationReceiver::ApplyPublisherRegistration(const Registration::Sample& sample_)
-  {
-#if ECAL_CORE_SUBSCRIBER
-    if (g_subgate() == nullptr) return;
-
-    // process registrations from same host group 
-    if (IsHostGroupMember(sample_))
-    {
-      // do not register local entities, only if loop back flag is set true
-      if (m_loopback || (sample_.topic.pid != Process::GetProcessID()))
-      {
-        switch (sample_.cmd_type)
-        {
-        case bct_reg_publisher:
-          g_subgate()->ApplyPubRegistration(sample_);
-          break;
-        case bct_unreg_publisher:
-          g_subgate()->ApplyPubUnregistration(sample_);
-          break;
-        default:
-          break;
-        }
-      }
-    }
-    // process external registrations
-    else
-    {
-      if (m_network)
-      {
-        switch (sample_.cmd_type)
-        {
-        case bct_reg_publisher:
-          g_subgate()->ApplyPubRegistration(sample_);
-          break;
-        case bct_unreg_publisher:
-          g_subgate()->ApplyPubUnregistration(sample_);
-          break;
-        default:
-          break;
-        }
-      }
-    }
-#endif
-  }
-
-  bool CRegistrationReceiver::IsHostGroupMember(const Registration::Sample& sample_)
-  {
-    const std::string& sample_host_group_name = sample_.topic.hgname.empty() ? sample_.topic.hname : sample_.topic.hgname;
-
-    if (sample_host_group_name.empty() || m_host_group_name.empty()) 
-      return false;
-    if (sample_host_group_name != m_host_group_name) 
-      return false;
-
-    return true;
+    return m_user_applier.RemRegistrationCallback(event_);
   }
 
   void CRegistrationReceiver::SetCustomApplySampleCallback(const std::string& customer_, const ApplySampleCallbackT& callback_)
   {
-    const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
-    m_callback_custom_apply_sample_map[customer_] = callback_;
+    m_sample_applier.SetCustomApplySampleCallback(customer_, callback_);
   }
 
   void CRegistrationReceiver::RemCustomApplySampleCallback(const std::string& customer_)
   {
-    const std::lock_guard<std::mutex> lock(m_callback_custom_apply_sample_map_mtx);
-    auto iter = m_callback_custom_apply_sample_map.find(customer_);
-    if(iter != m_callback_custom_apply_sample_map.end())
-    {
-      m_callback_custom_apply_sample_map.erase(iter);
-    }
+    m_sample_applier.RemCustomApplySampleCallback(customer_);
   }
+
 }

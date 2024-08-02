@@ -103,7 +103,7 @@ body:
       Platform                 : x64
 
       ------------------------- CONFIGURATION --------------------------
-      Default INI              : C:\ProgramData\eCAL\ecal.ini
+      Default INI              : C:\ProgramData\eCAL\ecal.yaml
 
       ------------------------- NETWORK --------------------------------
       Host name                : MYHOST

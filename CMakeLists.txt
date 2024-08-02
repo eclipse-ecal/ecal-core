@@ -65,7 +65,7 @@ endif()
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # configurable build options
-# command line usage: cmake .. -DBUILD_SAMPLES=ON -DBUILD_ECAL_TESTS=OFF -DECAL_CORE_CONFIG_INIFILE=OFF
+# command line usage: cmake .. -DBUILD_SAMPLES=ON -DBUILD_ECAL_TESTS=OFF -DECAL_CORE_CONFIGURATION=OFF
 # ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ecal/ecal-core-options.cmake)
@@ -259,7 +259,7 @@ message(STATUS "----------------------------------------------------------------
 message(STATUS "ECAL_CORE_BUILD_SAMPLES                        : ${ECAL_CORE_BUILD_SAMPLES}")
 message(STATUS "ECAL_CORE_BUILD_TESTS                          : ${ECAL_CORE_BUILD_TESTS}")
 message(STATUS "--------------------------------------------------------------------------------")
-message(STATUS "ECAL_CORE_CONFIG_INIFILE                       : ${ECAL_CORE_CONFIG_INIFILE}")
+message(STATUS "ECAL_CORE_CONFIGURATION                        : ${ECAL_CORE_CONFIGURATION}")
 message(STATUS "ECAL_CORE_COMMAND_LINE                         : ${ECAL_CORE_COMMAND_LINE}")
 message(STATUS "ECAL_CORE_REGISTRATION                         : ${ECAL_CORE_REGISTRATION}")
 message(STATUS "ECAL_CORE_MONITORING                           : ${ECAL_CORE_MONITORING}")
@@ -279,8 +279,8 @@ message(STATUS "ECAL_THIRDPARTY_BUILD_ASIO                     : ${ECAL_THIRDPAR
 message(STATUS "ECAL_THIRDPARTY_BUILD_CMAKEFUNCTIONS           : ${ECAL_THIRDPARTY_BUILD_CMAKEFUNCTIONS}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_GTEST                    : ${ECAL_THIRDPARTY_BUILD_GTEST}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_PROTOBUF                 : ${ECAL_THIRDPARTY_BUILD_PROTOBUF}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_SIMPLEINI                : ${ECAL_THIRDPARTY_BUILD_SIMPLEINI}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_TCLAP                    : ${ECAL_THIRDPARTY_BUILD_TCLAP}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_UDPCAP                   : ${ECAL_THIRDPARTY_BUILD_UDPCAP}")
 message(STATUS "ECAL_THIRDPARTY_BUILD_ECALUDP                  : ${ECAL_THIRDPARTY_BUILD_ECALUDP}")
+message(STATUS "ECAL_THIRDPARTY_BUILD_YAML-CPP                 : ${ECAL_THIRDPARTY_BUILD_YAML-CPP}")
 message(STATUS "--------------------------------------------------------------------------------")

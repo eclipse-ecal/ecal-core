@@ -7,9 +7,6 @@
 [submodule "thirdparty/protobuf/protobuf"]
 	path = thirdparty/protobuf/protobuf
 	url = https://github.com/protocolbuffers/protobuf.git
-[submodule "thirdparty/simpleini/simpleini"]
-	path = thirdparty/simpleini/simpleini
-	url = https://github.com/brofield/simpleini.git
 [submodule "thirdparty/tclap/tclap"]
 	path = thirdparty/tclap/tclap
 	url = https://github.com/xguerin/tclap.git
