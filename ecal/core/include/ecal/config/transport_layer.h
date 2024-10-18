@@ -25,6 +25,7 @@
 #pragma once
 
 #include <ecal/types/ecal_custom_data_types.h>
+#include <ecal/ecal_os.h>
 
 namespace eCAL
 {
@@ -39,6 +40,16 @@ namespace eCAL
           Types::IpAddressV4 group { "239.0.0.1" }; //!< UDP multicast group base (Default: 239.0.0.1)
           unsigned int       ttl   { 3U };          /*!< UDP ttl value, also known as hop limit, is used in determining 
                                                          the intermediate routers being traversed towards the destination (Default: 3) */
+        };
+      }
+
+      namespace Local
+      {
+        struct Configuration
+        {
+          Types::IpAddressV4 group { "127.255.255.255" }; //!< UDP multicast group base (Default: 127.255.255.255)
+          unsigned int       ttl   { 1U };                /*!< UDP ttl value, also known as hop limit, is used in determining 
+                                                               the intermediate routers being traversed towards the destination (Default: 1) */
         };
       }
 
@@ -61,6 +72,9 @@ namespace eCAL
         bool                                     npcap_enabled       { false };   //!< Enable to receive UDP traffic with the Npcap based receiver (Default: false)
       
         Network::Configuration                   network;
+        const Local::Configuration               local;
+
+        ECAL_API Configuration& operator=(const Configuration& other);
       }; 
     }
 
@@ -70,16 +84,7 @@ namespace eCAL
       {
         size_t number_executor_reader { 4 }; //!< Reader amount of threads that shall execute workload (Default: 4)
         size_t number_executor_writer { 4 }; //!< Writer amount of threads that shall execute workload (Default: 4)
-        size_t max_reconnections      { 5 }; //!< Reconnection attemps the session will try to reconnect in (Default: 5)
-      };
-    }
-
-    namespace SHM 
-    {
-      struct Configuration
-      {
-        Types::ConstrainedInteger<4096, 4096> memfile_min_size_bytes  { 4096 }; //!< Default memory file size for new publisher (Default: 4096)
-        Types::ConstrainedInteger<50, 1, 100> memfile_reserve_percent { 50 };   //!< Dynamic file size reserve before recreating memory file if topic size changes (Default: 50)
+        int    max_reconnections      { 5 }; //!< Reconnection attemps the session will try to reconnect in (Default: 5)
       };
     }
 
@@ -87,7 +92,6 @@ namespace eCAL
     {
       UDP::Configuration udp;
       TCP::Configuration tcp;
-      SHM::Configuration shm;
     };
   }
 }

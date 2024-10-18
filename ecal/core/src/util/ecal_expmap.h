@@ -259,7 +259,7 @@ namespace eCAL
           // We do have it: 
           // Update access record by moving 
           // accessed key to back of list 
-          update_timestamp(k);
+          update_timestamp(it);
         }
 
         // Return the retrieved value 
@@ -300,18 +300,22 @@ namespace eCAL
        * This function erases all expired key-value pairs from the internal map / timestamp list.
        * The CExpirationMap class does not call this function internally, it has to be called explicitly by the user.
        */
-      void erase_expired(std::list<Key>* keys_erased_from_expired_map = nullptr) //-V826
+      std::map<Key, T> erase_expired()
       {
+        std::map<Key, T> erased_values;
         // To erase timestamps from the map, the time point of the last access is calculated, all older entries will be erased.
         // Since the list is sorted, we need to remove everything from the first element until the eviction limit.
         typename ClockType::time_point eviction_limit = get_curr_time() - _timeout;
         auto it(_access_timestamps_list.begin());
         while (it != _access_timestamps_list.end() && it->timestamp < eviction_limit)
         {
-          if (keys_erased_from_expired_map != nullptr) keys_erased_from_expired_map->push_back(it->corresponding_map_key);
+          auto erased_value = _internal_map.find(it->corresponding_map_key);
+          // for performance reason, we should be able to move from the map, however with C++17 we can use std::map::extract
+          erased_values[it->corresponding_map_key] = erased_value->second.map_value;
           _internal_map.erase(it->corresponding_map_key); // erase the element from the map 
           it = _access_timestamps_list.erase(it);         // erase the element from the list
         }
+        return erased_values;
       }
 
       // Remove specific element from the cache
@@ -337,19 +341,15 @@ namespace eCAL
     private:
 
       // Maybe pass the iterator instead of the key? or at least only get k once
-      void update_timestamp(const Key& k)
+      void update_timestamp(const typename InternalMapType::iterator& it_in_map)
       {
-        auto it_in_map = _internal_map.find(k);
-        if (it_in_map != _internal_map.end())
-        {
-          auto& it_in_list = it_in_map->second.timestamp_list_iterator;
+        auto& it_in_list = it_in_map->second.timestamp_list_iterator;
 
-          // move the element to the end of the list
-          _access_timestamps_list.splice(_access_timestamps_list.end(), _access_timestamps_list, it_in_list);
+        // move the element to the end of the list
+        _access_timestamps_list.splice(_access_timestamps_list.end(), _access_timestamps_list, it_in_list);
 
-          // update the timestamp
-          it_in_list->timestamp = get_curr_time();
-        }
+        // update the timestamp
+        it_in_list->timestamp = get_curr_time();
       }
       
       // Record a fresh key-value pair in the cache

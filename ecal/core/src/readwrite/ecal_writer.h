@@ -27,11 +27,10 @@
 #include <ecal/ecal_payload_writer.h>
 #include <ecal/ecal_config.h>
 #include <ecal/ecal_types.h>
-#include <ecal/config/publisher.h>
 
 #include "serialization/ecal_serialize_sample_registration.h"
-#include "util/ecal_expmap.h"
 #include "util/frequency_calculator.h"
+#include "config/attributes/writer_attributes.h"
 
 #if ECAL_CORE_TRANSPORT_UDP
 #include "udp/ecal_writer_udp.h"
@@ -52,7 +51,6 @@
 #include <mutex>
 #include <string>
 #include <map>
-#include <tuple>
 #include <vector>
 
 namespace eCAL
@@ -74,20 +72,9 @@ namespace eCAL
       SLayerState tcp;
     };
 
-    struct SSubscriptionInfo
-    {
-      std::string  host_name;
-      int32_t      process_id = 0;
-      std::string  topic_id;
+    using SSubscriptionInfo = Registration::SampleIdentifier;
 
-      friend bool operator<(const SSubscriptionInfo& l, const SSubscriptionInfo& r)
-      {
-        return std::tie(l.host_name, l.process_id, l.topic_id)
-          < std::tie(r.host_name, r.process_id, r.topic_id);
-      }
-    };
-
-    CDataWriter(const std::string& topic_name_, const SDataTypeInformation& topic_info_, const Publisher::Configuration& config_ = {});
+    CDataWriter(const SDataTypeInformation& topic_info_, const eCAL::eCALWriter::SAttributes& attr_);
     ~CDataWriter();
 
     bool Stop();
@@ -105,24 +92,25 @@ namespace eCAL
     void ApplySubscription(const SSubscriptionInfo& subscription_info_, const SDataTypeInformation& data_type_info_, const SLayerStates& sub_layer_states_, const std::string& reader_par_);
     void RemoveSubscription(const SSubscriptionInfo& subscription_info_);
 
-    Registration::Sample GetRegistration();
+    void GetRegistration(Registration::Sample& sample);
     void RefreshSendCounter();
 
     bool IsCreated() const { return(m_created); }
 
-    bool IsSubscribed() const 
+    bool IsSubscribed() const;
+    size_t GetSubscriberCount() const;
+
+    Registration::STopicId GetId() const
     {
-      std::lock_guard<std::mutex> const lock(m_sub_map_mtx);
-      return(!m_sub_map.empty());
+      Registration::STopicId id;
+      id.topic_name          = m_attributes.topic_name;
+      id.topic_id.entity_id  = m_topic_id;
+      id.topic_id.host_name  = m_attributes.host_name;
+      id.topic_id.process_id = m_attributes.process_id;
+      return id;
     }
 
-    size_t GetSubscriberCount() const
-    {
-      std::lock_guard<std::mutex> const lock(m_sub_map_mtx);
-      return(m_sub_map.size());
-    }
-
-    const std::string&          GetTopicName()           const { return(m_topic_name); }
+    const std::string&          GetTopicName()           const { return(m_attributes.topic_name); }
     const SDataTypeInformation& GetDataTypeInformation() const { return m_topic_info; }
 
     std::string Dump(const std::string& indent_ = "");
@@ -131,10 +119,8 @@ namespace eCAL
     void Register();
     void Unregister();
 
-    void CheckConnections();
-
-    Registration::Sample GetRegistrationSample();
-    Registration::Sample GetUnregistrationSample();
+    void GetRegistrationSample(Registration::Sample& sample);
+    void GetUnregistrationSample(Registration::Sample& sample);
 
     bool StartUdpLayer();
     bool StartShmLayer();
@@ -143,33 +129,35 @@ namespace eCAL
     void StopAllLayer();
 
     void FireConnectEvent(const std::string& tid_, const SDataTypeInformation& tinfo_);
+    void FireUpdateEvent(const std::string& tid_, const SDataTypeInformation& tinfo_);
     void FireDisconnectEvent();
+
+    size_t GetConnectionCount();
 
     size_t PrepareWrite(long long id_, size_t len_);
 
-    bool IsInternalSubscribedOnly();
     TLayer::eTransportLayer DetermineTransportLayer2Start(const std::vector<eTLayerType>& enabled_pub_layer_, const std::vector<eTLayerType>& enabled_sub_layer_, bool same_host_);
     
     int32_t GetFrequency();
 
-    std::string                            m_host_name;
-    std::string                            m_host_group_name;
-    int                                    m_pid;
-    std::string                            m_pname;
-    std::string                            m_topic_name;
     std::string                            m_topic_id;
     SDataTypeInformation                   m_topic_info;
     std::map<std::string, std::string>     m_attr;
     size_t                                 m_topic_size = 0;
-    Publisher::Configuration               m_config;
+    eCAL::eCALWriter::SAttributes          m_attributes;
 
     std::vector<char>                      m_payload_buffer;
 
-    std::atomic<bool>                      m_connected;
-
-    using SSubscriptionMapT = Util::CExpirationMap<SSubscriptionInfo, std::tuple<SDataTypeInformation, SLayerStates>>;
-    mutable std::mutex                     m_sub_map_mtx;
-    SSubscriptionMapT                      m_sub_map;
+    struct SConnection
+    {
+      SDataTypeInformation data_type_info;
+      SLayerStates         layer_states;
+      bool                 state = false;
+    };
+    using SSubscriptionMapT = std::map<SSubscriptionInfo, SConnection>;
+    mutable std::mutex                     m_connection_map_mtx;
+    SSubscriptionMapT                      m_connection_map;
+    std::atomic<size_t>                    m_connection_count{ 0 };
 
     using EventCallbackMapT = std::map<eCAL_Publisher_Event, PubEventCallbackT>;
     std::mutex                             m_event_callback_map_mtx;

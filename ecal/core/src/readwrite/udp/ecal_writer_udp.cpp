@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,38 +22,27 @@
 **/
 
 #include <ecal/ecal_log.h>
+#include <ecal/ecal_process.h>
 
 #include "ecal_writer_udp.h"
-#include "io/udp/ecal_udp_configurations.h"
 #include "serialization/ecal_serialize_sample_payload.h"
-#include "ecal/ecal_config.h"
+
+#include "config/builder/udp_attribute_builder.h"
 
 #include <cstddef>
 
 namespace eCAL
 {
-  CDataWriterUdpMC::CDataWriterUdpMC(const std::string& host_name_, const std::string& topic_name_, const std::string& topic_id_, const Publisher::Layer::UDP::Configuration& udp_config_) :
-    m_config(udp_config_)
+  CDataWriterUdpMC::CDataWriterUdpMC(const eCALWriter::UDP::SAttributes& attr_) :
+    m_attributes(attr_)
   {
-    m_host_name   = host_name_;
-    m_topic_name  = topic_name_;
-    m_topic_id    = topic_id_;
-
-    // set network attributes
-    eCAL::UDP::SSenderAttr attr;
-    attr.address   = UDP::GetTopicPayloadAddress(topic_name_);
-    attr.port      = UDP::GetPayloadPort();
-    attr.ttl       = UDP::GetMulticastTtl();
-    attr.broadcast = UDP::IsBroadcast();
-    attr.sndbuf    = UDP::GetSendBufferSize();
-
     // create udp/sample sender with activated loop-back
-    attr.loopback = true;
-    m_sample_sender_loopback = std::make_shared<UDP::CSampleSender>(attr);
+    m_attributes.loopback = true;
+    m_sample_sender_loopback = std::make_shared<UDP::CSampleSender>(eCAL::eCALWriter::UDP::ConvertToIOUDPSenderAttributes(m_attributes));
 
     // create udp/sample sender without activated loop-back
-    attr.loopback = false;
-    m_sample_sender_no_loopback = std::make_shared<UDP::CSampleSender>(attr);
+    m_attributes.loopback = false;
+    m_sample_sender_no_loopback = std::make_shared<UDP::CSampleSender>(eCAL::eCALWriter::UDP::ConvertToIOUDPSenderAttributes(m_attributes));
   }
 
   SWriterInfo CDataWriterUdpMC::GetInfo()
@@ -77,10 +66,11 @@ namespace eCAL
     Payload::Sample ecal_sample;
     ecal_sample.cmd_type = eCmdType::bct_set_sample;
 
-    auto& ecal_sample_topic = ecal_sample.topic;
-    ecal_sample_topic.hname = m_host_name;
-    ecal_sample_topic.tname = m_topic_name;
-    ecal_sample_topic.tid   = m_topic_id;
+    // fill sample info
+    auto& ecal_sample_topic_info = ecal_sample.topic_info;
+    ecal_sample_topic_info.hname = m_attributes.host_name;
+    ecal_sample_topic_info.tname = m_attributes.topic_name;
+    ecal_sample_topic_info.tid   = m_attributes.topic_id;
 
     // append content
     auto& ecal_sample_content = ecal_sample.content;
@@ -100,14 +90,14 @@ namespace eCAL
       {
         if (m_sample_sender_loopback)
         {
-          sent = m_sample_sender_loopback->Send(ecal_sample.topic.tname, m_sample_buffer);
+          sent = m_sample_sender_loopback->Send(ecal_sample.topic_info.tname, m_sample_buffer);
         }
       }
       else
       {
         if (m_sample_sender_no_loopback)
         {
-          sent = m_sample_sender_no_loopback->Send(ecal_sample.topic.tname, m_sample_buffer);
+          sent = m_sample_sender_no_loopback->Send(ecal_sample.topic_info.tname, m_sample_buffer);
         }
       }
     }

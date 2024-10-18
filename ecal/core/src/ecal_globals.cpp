@@ -33,6 +33,10 @@
 #include "service/ecal_service_singleton_manager.h"
 #endif
 
+#include "config/builder/registration_attribute_builder.h"
+#include "config/builder/monitoring_attribute_builder.h"
+#include "config/builder/logging_attribute_builder.h"
+
 namespace eCAL
 {
   CGlobals::CGlobals() : initialized(false), components(0)
@@ -43,18 +47,19 @@ namespace eCAL
     Finalize();
   }
 
-  int CGlobals::Initialize(unsigned int components_, std::vector<std::string>* config_keys_ /*= nullptr*/)
+  int CGlobals::Initialize(unsigned int components_)
   {
     // will be set if any new module was initialized
     bool new_initialization(false);
 
 #if ECAL_CORE_REGISTRATION
+    const Registration::SAttributes registration_attr = BuildRegistrationAttributes(GetRegistrationConfiguration(), GetTransportLayerConfiguration().udp, eCAL::Process::GetProcessID());
     /////////////////////
     // REGISTRATION PROVIDER
     /////////////////////
     if (registration_provider_instance == nullptr)
     {
-      registration_provider_instance = std::make_unique<CRegistrationProvider>();
+      registration_provider_instance = std::make_unique<CRegistrationProvider>(registration_attr);
       new_initialization = true;
     }
 
@@ -63,7 +68,7 @@ namespace eCAL
     /////////////////////
     if(registration_receiver_instance == nullptr) 
     {
-      registration_receiver_instance = std::make_unique<CRegistrationReceiver>();
+      registration_receiver_instance = std::make_unique<CRegistrationReceiver>(registration_attr);
       new_initialization = true;
     }
 #endif // ECAL_CORE_REGISTRATION
@@ -74,7 +79,7 @@ namespace eCAL
     if (descgate_instance == nullptr)
     {
       // create description gate with configured expiration timeout
-      descgate_instance = std::make_unique<CDescGate>(std::chrono::milliseconds(Config::GetMonitoringTimeoutMs()));
+      descgate_instance = std::make_unique<CDescGate>();
       new_initialization = true;
     }
 
@@ -174,7 +179,7 @@ namespace eCAL
     {
       if (monitoring_instance == nullptr)
       {
-        monitoring_instance = std::make_unique<CMonitoring>();
+        monitoring_instance = std::make_unique<CMonitoring>(eCAL::Monitoring::BuildMonitoringAttributes(GetMonitoringConfiguration()));
         new_initialization = true;
       }
     }
@@ -187,7 +192,7 @@ namespace eCAL
     {
       if (log_instance == nullptr)
       {
-        log_instance = std::make_unique<CLog>();
+        log_instance = std::make_unique<CLog>(eCAL::Logging::BuildLoggingAttributes(GetLoggingConfiguration(), GetRegistrationConfiguration(), GetTransportLayerConfiguration()));
         new_initialization = true;
       }
     }
@@ -344,6 +349,9 @@ namespace eCAL
 #endif
     log_instance                    = nullptr;
     initialized = false;
+
+    // reset configuration to default values
+    g_ecal_configuration = Configuration();
 
     return(0);
   }

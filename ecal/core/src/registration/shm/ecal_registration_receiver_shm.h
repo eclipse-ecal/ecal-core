@@ -29,6 +29,7 @@
 
 #include <memory>
 #include <registration/ecal_registration_types.h>
+#include "config/attributes/registration_shm_attributes.h"
 
 namespace eCAL
 {
@@ -39,7 +40,7 @@ namespace eCAL
   class CRegistrationReceiverSHM
   {
   public:
-    CRegistrationReceiverSHM(RegistrationApplySampleCallbackT apply_sample_callback);
+    CRegistrationReceiverSHM(RegistrationApplySampleCallbackT apply_sample_callback, const Registration::SHM::SAttributes& attr_);
     ~CRegistrationReceiverSHM();
 
     // default copy constructor
@@ -57,6 +58,8 @@ namespace eCAL
     std::unique_ptr<CMemoryFileBroadcast>       m_memfile_broadcast;
     std::unique_ptr<CMemoryFileBroadcastReader> m_memfile_broadcast_reader;
     std::unique_ptr<CCallbackThread>            m_memfile_broadcast_reader_thread;
+
+    eCAL::Registration::SampleList              m_sample_list;
 
     RegistrationApplySampleCallbackT m_apply_sample_callback;
   };

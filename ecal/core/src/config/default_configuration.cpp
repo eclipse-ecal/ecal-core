@@ -7,10 +7,6 @@
 
 namespace 
 {
-  std::string quoteString(const char* str_) {
-    return std::string("\"") + std::string(str_) + std::string("\"");
-  }
-
   std::string quoteString(const std::string& str_) {
     return std::string("\"") + str_ + std::string("\"");
   }
@@ -166,8 +162,6 @@ namespace eCAL
       ss << R"()"                                                                                                                   << "\n";
       ss << R"(# Monitoring configuration)"                                                                                         << "\n";
       ss << R"(monitoring:)"                                                                                                        << "\n";
-      ss << R"(  # Timeout for topic monitoring in ms (Default: 5000), increase in 1000er steps)"                                   << "\n";
-      ss << R"(  timeout: )"                                         << config_.monitoring.timeout                                  << "\n";
       ss << R"(  # Topics blacklist as regular expression (will not be monitored))"                                                 << "\n";
       ss << R"(  filter_excl: )"                                     << quoteString(config_.monitoring.filter_excl)                 << "\n";
       ss << R"(  # Topics whitelist as regular expression (will be monitored only) (Default: ""))"                                  << "\n";
@@ -220,12 +214,6 @@ namespace eCAL
       ss << R"(    # Reconnection attemps the session will try to reconnect in case of an issue)"                                   << "\n";
       ss << R"(    max_reconnections: )"                             << config_.transport_layer.tcp.max_reconnections               << "\n";
       ss << R"()"                                                                                                                   << "\n";
-      ss << R"(  shm:)"                                                                                                             << "\n";
-      ss << R"(    # Default memory file size for new publisher)"                                                                   << "\n";
-      ss << R"(    memfile_min_size_bytes: )"                        << config_.transport_layer.shm.memfile_min_size_bytes          << "\n";
-      ss << R"(    # Dynamic file size reserve before recreating memory file if topic size changes)"                                << "\n";
-      ss << R"(    memfile_reserve_percent: )"                       << config_.transport_layer.shm.memfile_reserve_percent         << "\n";
-      ss << R"()"                                                                                                                   << "\n";
       ss << R"()"                                                                                                                   << "\n";
       ss << R"(# Publisher specific base settings)"                                                                                 << "\n";
       ss << R"(publisher:)"                                                                                                         << "\n";
@@ -241,6 +229,10 @@ namespace eCAL
       ss << R"(      acknowledge_timeout_ms: )"                      << config_.publisher.layer.shm.acknowledge_timeout_ms          << "\n";
       ss << R"(      # Maximum number of used buffers (needs to be greater than 1, default = 1))"                                   << "\n";
       ss << R"(      memfile_buffer_count: )"                        << config_.publisher.layer.shm.memfile_buffer_count            << "\n";
+      ss << R"(      # Default memory file size for new publisher)"                                                                 << "\n";
+      ss << R"(      memfile_min_size_bytes: )"                      << config_.publisher.layer.shm.memfile_min_size_bytes          << "\n";
+      ss << R"(      # Dynamic file size reserve before recreating memory file if topic size changes)"                              << "\n";
+      ss << R"(      memfile_reserve_percent: )"                     << config_.publisher.layer.shm.memfile_reserve_percent         << "\n";
       ss << R"()"                                                                                                                   << "\n";
       ss << R"(    # Base configuration for UDP publisher)"                                                                         << "\n";
       ss << R"(    udp:)"                                                                                                           << "\n";

@@ -36,14 +36,17 @@
 
 #if ECAL_CORE_TRANSPORT_UDP
 #include "udp/ecal_reader_udp.h"
+#include "config/builder/udp_attribute_builder.h"
 #endif
 
 #if ECAL_CORE_TRANSPORT_SHM
 #include "shm/ecal_reader_shm.h"
+#include "config/builder/shm_attribute_builder.h"
 #endif
 
 #if ECAL_CORE_TRANSPORT_TCP
 #include "tcp/ecal_reader_tcp.h"
+#include "config/builder/tcp_attribute_builder.h"
 #endif
 
 #include <algorithm>
@@ -62,36 +65,24 @@ namespace eCAL
   ////////////////////////////////////////
   // CDataReader
   ////////////////////////////////////////
-  CDataReader::CDataReader(const std::string& topic_name_, const SDataTypeInformation& topic_info_, const Subscriber::Configuration& config_) :
-                 m_host_name(Process::GetHostName()),
-                 m_host_group_name(Process::GetHostGroupName()),
-                 m_pid(Process::GetProcessID()),
-                 m_pname(Process::GetProcessName()),
-                 m_topic_name(topic_name_),
+  CDataReader::CDataReader(const SDataTypeInformation& topic_info_, const eCAL::eCALReader::SAttributes& attr_) :
                  m_topic_info(topic_info_),
                  m_topic_size(0),
-                 m_config(config_),
-                 m_connected(false),
+                 m_attributes(attr_),
                  m_receive_time(0),
                  m_clock(0),
                  m_frequency_calculator(3.0f),
-                 m_share_ttype(Config::IsTopicTypeSharingEnabled()),
-                 m_share_tdesc(Config::IsTopicDescriptionSharingEnabled()),
                  m_created(false)
   {
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug1, m_topic_name + "::CDataReader::Constructor");
+    Logging::Log(log_level_debug1, m_attributes.topic_name + "::CDataReader::Constructor");
 #endif
 
     // build topic id
     std::stringstream counter;
     counter << std::chrono::steady_clock::now().time_since_epoch().count();
     m_topic_id = counter.str();
-
-    // set registration expiration
-    const std::chrono::milliseconds registration_timeout(Config::GetRegistrationTimeoutMs());
-    m_pub_map.set_expiration(registration_timeout);
 
     // start transport layers
     InitializeLayers();
@@ -105,7 +96,7 @@ namespace eCAL
   {
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug1, m_topic_name + "::CDataReader::Destructor");
+    Logging::Log(log_level_debug1, m_attributes.topic_name + "::CDataReader::Destructor");
 #endif
 
     Stop();
@@ -116,7 +107,7 @@ namespace eCAL
     if (!m_created) return false;
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug1, m_topic_name + "::CDataReader::Stop");
+    Logging::Log(log_level_debug1, m_attributes.topic_name + "::CDataReader::Stop");
 #endif
 
     // stop transport layers
@@ -167,7 +158,7 @@ namespace eCAL
     {
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug3, m_topic_name + "::CDataReader::Receive");
+      Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::Receive");
 #endif
       // copy content to target string
       buf_.clear();
@@ -184,7 +175,7 @@ namespace eCAL
     return(false);
   }
 
-  bool CDataReader::AddReceiveCallback(ReceiveCallbackT callback_)
+  bool CDataReader::AddReceiveCallback(ReceiveIDCallbackT callback_)
   {
     if (!m_created) return(false);
 
@@ -193,7 +184,7 @@ namespace eCAL
       const std::lock_guard<std::mutex> lock(m_receive_callback_mtx);
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::AddReceiveCallback");
+      Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::AddReceiveCallback");
 #endif
       m_receive_callback = std::move(callback_);
     }
@@ -210,7 +201,7 @@ namespace eCAL
       const std::lock_guard<std::mutex> lock(m_receive_callback_mtx);
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::RemReceiveCallback");
+      Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::RemReceiveCallback");
 #endif
       m_receive_callback = nullptr;
     }
@@ -226,7 +217,7 @@ namespace eCAL
     {
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::AddEventCallback");
+      Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::AddEventCallback");
 #endif
       const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
       m_event_callback_map[type_] = std::move(callback_);
@@ -243,7 +234,7 @@ namespace eCAL
     {
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::RemEventCallback");
+      Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::RemEventCallback");
 #endif
       const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
       m_event_callback_map[type_] = nullptr;
@@ -258,7 +249,7 @@ namespace eCAL
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::SetAttribute");
+    Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::SetAttribute");
 #endif
 
     return(true);
@@ -270,7 +261,7 @@ namespace eCAL
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug2, m_topic_name + "::CDataReader::ClearAttribute");
+    Logging::Log(log_level_debug2, m_attributes.topic_name + "::CDataReader::ClearAttribute");
 #endif
 
     return(true);
@@ -281,35 +272,98 @@ namespace eCAL
     m_id_set = id_set_;
   }
 
-  void CDataReader::ApplyPublication(const SPublicationInfo& publication_info_, const SDataTypeInformation& data_type_info_, const SLayerStates& layer_states_)
+  void CDataReader::ApplyPublication(const SPublicationInfo& publication_info_, const SDataTypeInformation& data_type_info_, const SLayerStates& pub_layer_states_)
   {
     // flag write enabled from publisher side (information not used yet)
 #if ECAL_CORE_TRANSPORT_UDP
-    m_layers.udp.write_enabled = layer_states_.udp.write_enabled;
+    m_layers.udp.write_enabled = pub_layer_states_.udp.write_enabled;
 #endif
 #if ECAL_CORE_TRANSPORT_SHM
-    m_layers.shm.write_enabled = layer_states_.shm.write_enabled;
+    m_layers.shm.write_enabled = pub_layer_states_.shm.write_enabled;
 #endif
 #if ECAL_CORE_TRANSPORT_TCP
-    m_layers.tcp.write_enabled = layer_states_.tcp.write_enabled;
+    m_layers.tcp.write_enabled = pub_layer_states_.tcp.write_enabled;
 #endif
 
-    FireConnectEvent(publication_info_.topic_id, data_type_info_);
-
-    // add key to publisher map
+    // add key to connection map, including connection state
+    bool is_new_connection     = false;
+    bool is_updated_connection = false;
     {
-      const std::lock_guard<std::mutex> lock(m_pub_map_mtx);
-      m_pub_map[publication_info_] = std::make_tuple(data_type_info_, layer_states_);
+      const std::lock_guard<std::mutex> lock(m_connection_map_mtx);
+      auto publication_info_iter = m_connection_map.find(publication_info_);
+
+      if (publication_info_iter == m_connection_map.end())
+      {
+        // add publisher to connection map, connection state false
+        m_connection_map[publication_info_] = SConnection{ data_type_info_, pub_layer_states_, false };
+      }
+      else
+      {
+        // existing connection, we got the second update now
+        auto& connection = publication_info_iter->second;
+
+        // if this connection was inactive before
+        // activate it now and flag a new connection finally
+        if (!connection.state)
+        {
+          is_new_connection = true;
+        }
+        // the connection was active, so we just update it
+        else
+        {
+          is_updated_connection = true;
+        }
+
+        // update the data type and layer states, even if the connection is not new
+        connection = SConnection{ data_type_info_, pub_layer_states_, true };
+      }
+
+      // update connection count
+      m_connection_count = GetConnectionCount();
     }
+
+    // handle these events outside the lock
+    if (is_new_connection)
+    {
+      // fire connect event
+      FireConnectEvent(publication_info_.entity_id, data_type_info_);
+    }
+    else if (is_updated_connection)
+    {
+      // fire update event
+      FireUpdateEvent(publication_info_.entity_id, data_type_info_);
+    }
+
+#ifndef NDEBUG
+    // log it
+    Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::ApplyPublication");
+#endif
   }
 
   void CDataReader::RemovePublication(const SPublicationInfo& publication_info_)
   {
-    // remove key from publisher map
+    // remove key from connection map
+    bool last_connection_gone(false);
     {
-      const std::lock_guard<std::mutex> lock(m_pub_map_mtx);
-      m_pub_map.erase(publication_info_);
+      const std::lock_guard<std::mutex> lock(m_connection_map_mtx);
+
+      m_connection_map.erase(publication_info_);
+      last_connection_gone = m_connection_map.empty();
+
+      // update connection count
+      m_connection_count = GetConnectionCount();
     }
+
+    if (last_connection_gone)
+    {
+      // fire disconnect event
+      FireDisconnectEvent();
+    }
+
+#ifndef NDEBUG
+    // log it
+    Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::RemovePublication");
+#endif
   }
 
   void CDataReader::ApplyLayerParameter(const SPublicationInfo& publication_info_, eTLayerType type_, const Registration::ConnectionPar& parameter_)
@@ -317,8 +371,8 @@ namespace eCAL
     SReaderLayerPar par;
     par.host_name  = publication_info_.host_name;
     par.process_id = publication_info_.process_id;
-    par.topic_name = m_topic_name;
-    par.topic_id   = publication_info_.topic_id;
+    par.topic_name = m_attributes.topic_name;
+    par.topic_id   = publication_info_.entity_id;
     par.parameter  = parameter_;
 
     switch (type_)
@@ -342,30 +396,30 @@ namespace eCAL
   {
     // initialize udp layer
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_config.layer.udp.enable)
+    if (m_attributes.udp.enable)
     {
-      CUDPReaderLayer::Get()->Initialize();
+      CUDPReaderLayer::Get()->Initialize(eCAL::eCALReader::BuildUDPAttributes(m_attributes));
     }
 #endif
 
     // initialize shm layer
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_config.layer.shm.enable)
+    if (m_attributes.shm.enable)
     {
-      CSHMReaderLayer::Get()->Initialize();
+      CSHMReaderLayer::Get()->Initialize(eCAL::eCALReader::BuildSHMAttributes(m_attributes));
     }
 #endif
 
     // initialize tcp layer
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_config.layer.tcp.enable)
+    if (m_attributes.tcp.enable)
     {
-      CTCPReaderLayer::Get()->Initialize();
+      CTCPReaderLayer::Get()->Initialize(eCAL::eCALReader::BuildTCPLayerAttributes(m_attributes));
     }
 #endif
   }
 
-  size_t CDataReader::ApplySample(const std::string& tid_, const char* payload_, size_t size_, long long id_, long long clock_, long long time_, size_t hash_, eTLayerType layer_)
+  size_t CDataReader::ApplySample(const Payload::TopicInfo& topic_info_, const char* payload_, size_t size_, long long id_, long long clock_, long long time_, size_t hash_, eTLayerType layer_)
   {
     // ensure thread safety
     const std::lock_guard<std::mutex> lock(m_receive_callback_mtx);
@@ -375,13 +429,13 @@ namespace eCAL
     switch (layer_)
     {
     case tl_ecal_udp:
-      if (!m_config.layer.udp.enable) return 0;
+      if (!m_attributes.udp.enable) return 0;
       break;
     case tl_ecal_shm:
-      if (!m_config.layer.shm.enable) return 0;
+      if (!m_attributes.shm.enable) return 0;
       break;
     case tl_ecal_tcp:
-      if (!m_config.layer.tcp.enable) return 0;
+      if (!m_attributes.tcp.enable) return 0;
       break;
     default:
       break;
@@ -402,7 +456,7 @@ namespace eCAL
     {
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug3, m_topic_name + "::CDataReader::AddSample discard sample because of multiple receive");
+      Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::AddSample discard sample because of multiple receive");
 #endif
       return(size_);
     }
@@ -423,7 +477,7 @@ namespace eCAL
     //  - a dropped message
     //  - an out-of-order message
     //  - a multiple sent message
-    if (!CheckMessageClock(tid_, clock_))
+    if (!CheckMessageClock(topic_info_.tid, clock_))
     {
       // we will not process that message
       return(0);
@@ -431,7 +485,7 @@ namespace eCAL
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug3, m_topic_name + "::CDataReader::AddSample");
+    Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::AddSample");
 #endif
 
     // increase read clock
@@ -458,7 +512,7 @@ namespace eCAL
       {
 #ifndef NDEBUG
         // log it
-        Logging::Log(log_level_debug3, m_topic_name + "::CDataReader::AddSample::ReceiveCallback");
+        Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::AddSample::ReceiveCallback");
 #endif
         // prepare data struct
         SReceiveCallbackData cb_data;
@@ -467,8 +521,21 @@ namespace eCAL
         cb_data.id    = id_;
         cb_data.time  = time_;
         cb_data.clock = clock_;
+
+        Registration::STopicId topic_id;
+        topic_id.topic_name          = topic_info_.tname;
+        topic_id.topic_id.host_name  = topic_info_.hname;
+        topic_id.topic_id.entity_id  = topic_info_.tid;
+        topic_id.topic_id.process_id = topic_info_.pid;
+
+        SPublicationInfo pub_info;
+        pub_info.entity_id  = topic_info_.tid;
+        pub_info.host_name  = topic_info_.hname;
+        pub_info.process_id = topic_info_.pid;
+
         // execute it
-        (m_receive_callback)(m_topic_name.c_str(), &cb_data);
+        std::lock_guard<std::mutex> lock(m_connection_map_mtx);
+        (m_receive_callback)(topic_id, m_connection_map[pub_info].data_type_info, cb_data);
         processed = true;
       }
     }
@@ -487,7 +554,7 @@ namespace eCAL
       m_read_buf_cv.notify_one();
 #ifndef NDEBUG
       // log it
-      Logging::Log(log_level_debug3, m_topic_name + "::CDataReader::AddSample::Receive::Buffered");
+      Logging::Log(log_level_debug3, m_attributes.topic_name + "::CDataReader::AddSample::Receive::Buffered");
 #endif
     }
 
@@ -502,9 +569,9 @@ namespace eCAL
     out << indent_ << "------------------------------------" << '\n';
     out << indent_ << " class CDataReader " << '\n';
     out << indent_ << "------------------------------------" << '\n';
-    out << indent_ << "m_host_name:                        " << m_host_name << '\n';
-    out << indent_ << "m_host_group_name:                  " << m_host_group_name << '\n';
-    out << indent_ << "m_topic_name:                       " << m_topic_name << '\n';
+    out << indent_ << "m_host_name:                        " << m_attributes.host_name << '\n';
+    out << indent_ << "m_host_group_name:                  " << m_attributes.host_group_name << '\n';
+    out << indent_ << "m_topic_name:                       " << m_attributes.topic_name << '\n';
     out << indent_ << "m_topic_id:                         " << m_topic_id << '\n';
     out << indent_ << "m_topic_info.encoding:              " << m_topic_info.encoding << '\n';
     out << indent_ << "m_topic_info.name:                  " << m_topic_info.name << '\n';
@@ -523,11 +590,13 @@ namespace eCAL
   void CDataReader::Register()
   {
 #if ECAL_CORE_REGISTRATION
-    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(GetRegistrationSample());
+    Registration::Sample sample;
+    GetRegistrationSample(sample);
+    if (g_registration_provider() != nullptr) g_registration_provider()->RegisterSample(sample);
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Register");
+    Logging::Log(log_level_debug4, m_attributes.topic_name + "::CDataReader::Register");
 #endif
 #endif // ECAL_CORE_REGISTRATION
   }
@@ -535,58 +604,54 @@ namespace eCAL
   void CDataReader::Unregister()
   {
 #if ECAL_CORE_REGISTRATION
-    if (g_registration_provider() != nullptr) g_registration_provider()->UnregisterSample(GetUnregistrationSample());
+    Registration::Sample sample;
+    GetUnregistrationSample(sample);
+    if (g_registration_provider() != nullptr) g_registration_provider()->UnregisterSample(sample);
 
 #ifndef NDEBUG
     // log it
-    Logging::Log(log_level_debug4, m_topic_name + "::CDataReader::Unregister");
+    Logging::Log(log_level_debug4, m_attributes.topic_name + "::CDataReader::Unregister");
 #endif
 #endif // ECAL_CORE_REGISTRATION
   }
 
-  void CDataReader::CheckConnections()
+  void CDataReader::GetRegistration(Registration::Sample& sample)
   {
-    const std::lock_guard<std::mutex> lock(m_pub_map_mtx);
-    m_pub_map.erase_expired();
-
-    if (m_pub_map.empty())
-    {
-      FireDisconnectEvent();
-    }
+    // return registration
+    return GetRegistrationSample(sample);
   }
 
-  Registration::Sample CDataReader::GetRegistration()
+  bool CDataReader::IsPublished() const
   {
-    // check connection timeouts
-    CheckConnections();
+    return m_connection_count > 0;
+  }
 
-    // return registration
-    return GetRegistrationSample();
+  size_t CDataReader::GetPublisherCount() const
+  {
+    return m_connection_count;
   }
     
-  Registration::Sample CDataReader::GetRegistrationSample()
+  void CDataReader::GetRegistrationSample(Registration::Sample& ecal_reg_sample)
   {
-    // create registration sample
-    Registration::Sample ecal_reg_sample;
     ecal_reg_sample.cmd_type = bct_reg_subscriber;
 
     auto& ecal_reg_sample_identifier = ecal_reg_sample.identifier;
-    ecal_reg_sample_identifier.process_id = m_pid;
+    ecal_reg_sample_identifier.process_id = m_attributes.process_id;
     ecal_reg_sample_identifier.entity_id  = m_topic_id;
-    ecal_reg_sample_identifier.host_name  = m_host_name;
+    ecal_reg_sample_identifier.host_name  = m_attributes.host_name;
 
     auto& ecal_reg_sample_topic = ecal_reg_sample.topic;
-    ecal_reg_sample_topic.hgname = m_host_group_name;
-    ecal_reg_sample_topic.tname  = m_topic_name;
+    ecal_reg_sample_topic.hgname = m_attributes.host_group_name;
+    ecal_reg_sample_topic.tname  = m_attributes.topic_name;
     // topic_information
     {
       auto& ecal_reg_sample_tdatatype = ecal_reg_sample_topic.tdatatype;
-      if (m_share_ttype)
+      if (m_attributes.share_topic_type)
       {
         ecal_reg_sample_tdatatype.encoding = m_topic_info.encoding;
         ecal_reg_sample_tdatatype.name     = m_topic_info.name;
       }
-      if (m_share_tdesc)
+      if (m_attributes.share_topic_description)
       {
         ecal_reg_sample_tdatatype.descriptor = m_topic_info.descriptor;
       }
@@ -630,8 +695,8 @@ namespace eCAL
     }
 #endif
 
-    ecal_reg_sample_topic.pname         = m_pname;
-    ecal_reg_sample_topic.uname         = Process::GetUnitName();
+    ecal_reg_sample_topic.pname         = m_attributes.process_name;
+    ecal_reg_sample_topic.uname         = m_attributes.unit_name;
     ecal_reg_sample_topic.dclock        = m_clock;
     ecal_reg_sample_topic.dfreq         = GetFrequency();
     ecal_reg_sample_topic.message_drops = static_cast<int32_t>(m_message_drops);
@@ -639,62 +704,56 @@ namespace eCAL
     // we do not know the number of connections ..
     ecal_reg_sample_topic.connections_loc = 0;
     ecal_reg_sample_topic.connections_ext = 0;
-
-    return ecal_reg_sample;
   }
 
-  Registration::Sample CDataReader::GetUnregistrationSample()
+  void CDataReader::GetUnregistrationSample(Registration::Sample& ecal_unreg_sample)
   {
-    // create unregistration sample
-    Registration::Sample ecal_unreg_sample;
     ecal_unreg_sample.cmd_type = bct_unreg_subscriber;
 
     auto& ecal_reg_sample_identifier = ecal_unreg_sample.identifier;
-    ecal_reg_sample_identifier.process_id = m_pid;
+    ecal_reg_sample_identifier.process_id = m_attributes.process_id;
     ecal_reg_sample_identifier.entity_id = m_topic_id;
-    ecal_reg_sample_identifier.host_name = m_host_name;
+    ecal_reg_sample_identifier.host_name = m_attributes.host_name;
 
     auto& ecal_reg_sample_topic = ecal_unreg_sample.topic;
-    ecal_reg_sample_topic.hgname = m_host_group_name;
-    ecal_reg_sample_topic.pname  = m_pname;
-    ecal_reg_sample_topic.tname  = m_topic_name;
-    ecal_reg_sample_topic.uname  = Process::GetUnitName();
-
-    return ecal_unreg_sample;
+    ecal_reg_sample_topic.hgname = m_attributes.host_group_name;
+    ecal_reg_sample_topic.pname  = m_attributes.process_name;
+    ecal_reg_sample_topic.tname  = m_attributes.topic_name;
+    ecal_reg_sample_topic.uname  = m_attributes.unit_name;
   }
   
   void CDataReader::StartTransportLayer()
   {
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_config.layer.udp.enable)
+    if (m_attributes.udp.enable)
     {
       // flag enabled
       m_layers.udp.read_enabled = true;
 
       // subscribe to layer (if supported)
-      CUDPReaderLayer::Get()->AddSubscription(m_host_name, m_topic_name, m_topic_id);
+      CUDPReaderLayer::Get()->AddSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
 
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_config.layer.shm.enable)
+    if (m_attributes.shm.enable)
     {
       // flag enabled
       m_layers.shm.read_enabled = true;
 
       // subscribe to layer (if supported)
-      CSHMReaderLayer::Get()->AddSubscription(m_host_name, m_topic_name, m_topic_id);
+      CSHMReaderLayer::Get()->AddSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
 
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_config.layer.tcp.enable)
+    if (m_attributes.tcp.enable)
     {
       // flag enabled
       m_layers.tcp.read_enabled = true;
 
       // subscribe to layer (if supported)
-      CTCPReaderLayer::Get()->AddSubscription(m_host_name, m_topic_name, m_topic_id);
+      CTCPReaderLayer::Get()->AddSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
   }
@@ -702,97 +761,97 @@ namespace eCAL
   void CDataReader::StopTransportLayer()
   {
 #if ECAL_CORE_TRANSPORT_UDP
-    if (m_config.layer.udp.enable)
+    if (m_attributes.udp.enable)
     {
       // flag disabled
       m_layers.udp.read_enabled = false;
 
       // unsubscribe from layer (if supported)
-      CUDPReaderLayer::Get()->RemSubscription(m_host_name, m_topic_name, m_topic_id);
+      CUDPReaderLayer::Get()->RemSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
 
 #if ECAL_CORE_TRANSPORT_SHM
-    if (m_config.layer.shm.enable)
+    if (m_attributes.shm.enable)
     {
       // flag disabled
       m_layers.shm.read_enabled = false;
 
       // unsubscribe from layer (if supported)
-      CSHMReaderLayer::Get()->RemSubscription(m_host_name, m_topic_name, m_topic_id);
+      CSHMReaderLayer::Get()->RemSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
 
 #if ECAL_CORE_TRANSPORT_TCP
-    if (m_config.layer.tcp.enable)
+    if (m_attributes.tcp.enable)
     {
       // flag disabled
       m_layers.tcp.read_enabled = false;
 
       // unsubscribe from layer (if supported)
-      CTCPReaderLayer::Get()->RemSubscription(m_host_name, m_topic_name, m_topic_id);
+      CTCPReaderLayer::Get()->RemSubscription(m_attributes.host_name, m_attributes.topic_name, m_topic_id);
     }
 #endif
   }
 
   void CDataReader::FireConnectEvent(const std::string& tid_, const SDataTypeInformation& tinfo_)
   {
-    SSubEventCallbackData data;
-    data.time  = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-    data.clock = 0;
-
-    if (!m_connected)
+    const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
+    auto iter = m_event_callback_map.find(sub_event_connected);
+    if (iter != m_event_callback_map.end() && iter->second)
     {
-      m_connected = true;
-
-      // fire sub_event_connected
-      {
-        const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
-        auto iter = m_event_callback_map.find(sub_event_connected);
-        if (iter != m_event_callback_map.end() && iter->second)
-        {
-          data.type      = sub_event_connected;
-          data.tid       = tid_;
-          data.tdatatype = tinfo_;
-          (iter->second)(m_topic_name.c_str(), &data);
-        }
-      }
+      SSubEventCallbackData data;
+      data.type      = sub_event_connected;
+      data.time      = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+      data.clock     = 0;
+      data.tid       = tid_;
+      data.tdatatype = tinfo_;
+      (iter->second)(m_attributes.topic_name.c_str(), &data);
     }
+  }
 
-    // fire sub_event_update_connection
+  void CDataReader::FireUpdateEvent(const std::string& tid_, const SDataTypeInformation& tinfo_)
+  {
+    const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
+    auto iter = m_event_callback_map.find(sub_event_update_connection);
+    if (iter != m_event_callback_map.end() && iter->second)
     {
-      const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
-      auto iter = m_event_callback_map.find(sub_event_update_connection);
-        if (iter != m_event_callback_map.end() && iter->second)
-      {
-        data.type      = sub_event_update_connection;
-        data.tid       = tid_;
-        data.tdatatype = tinfo_;
-        (iter->second)(m_topic_name.c_str(), &data);
-      }
+      SSubEventCallbackData data;
+      data.type      = sub_event_update_connection;
+      data.time      = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+      data.clock     = 0;
+      data.tid       = tid_;
+      data.tdatatype = tinfo_;
+      (iter->second)(m_attributes.topic_name.c_str(), &data);
     }
   }
 
   void CDataReader::FireDisconnectEvent()
   {
-    if (m_connected)
+    const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
+    auto iter = m_event_callback_map.find(sub_event_disconnected);
+    if (iter != m_event_callback_map.end() && iter->second)
     {
-      m_connected = false;
+      SSubEventCallbackData data;
+      data.type  = sub_event_disconnected;
+      data.time  = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
+      data.clock = 0;
+      (iter->second)(m_attributes.topic_name.c_str(), &data);
+    }
+  }
 
-      // fire sub_event_disconnected
+  size_t CDataReader::GetConnectionCount()
+  {
+    // no need to lock map here for now, map locked by caller
+    size_t count(0);
+    for (const auto& sub : m_connection_map)
+    {
+      if (sub.second.state)
       {
-        const std::lock_guard<std::mutex> lock(m_event_callback_map_mtx);
-        auto iter = m_event_callback_map.find(sub_event_disconnected);
-        if (iter != m_event_callback_map.end() && iter->second)
-        {
-          SSubEventCallbackData data;
-          data.type  = sub_event_disconnected;
-          data.time  = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-          data.clock = 0;
-          (iter->second)(m_topic_name.c_str(), &data);
-        }
+        count++;
       }
     }
+    return count;
   }
 
   bool CDataReader::CheckMessageClock(const std::string& tid_, long long current_clock_)
@@ -841,11 +900,11 @@ namespace eCAL
         // we log this
         std::string msg = std::to_string(counter_ - counter_last) + " Messages lost ! ";
         msg += "(Unit: \'";
-        msg += Process::GetUnitName();
+        msg += m_attributes.unit_name;
         msg += "@";
-        msg += Process::GetHostName();
+        msg += m_attributes.host_name;
         msg += "\' | Subscriber: \'";
-        msg += m_topic_name;
+        msg += m_attributes.topic_name;
         msg += "\')";
         Logging::Log(log_level_warning, msg);
 #endif
@@ -859,7 +918,7 @@ namespace eCAL
             data.type  = sub_event_dropped;
             data.time  = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
             data.clock = current_clock_;
-            (citer->second)(m_topic_name.c_str(), &data);
+            (citer->second)(m_attributes.topic_name.c_str(), &data);
           }
         }
 
@@ -899,7 +958,7 @@ namespace eCAL
 
           // but we log this
           std::string msg = "Subscriber: \'";
-          msg += m_topic_name;
+          msg += m_attributes.topic_name;
           msg += "\'";
           msg += " received a message in the wrong order";
           Logging::Log(log_level_warning, msg);

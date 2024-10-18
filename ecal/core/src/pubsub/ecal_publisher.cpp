@@ -27,6 +27,9 @@
 #include "readwrite/ecal_writer.h"
 #include "readwrite/ecal_writer_buffer_payload.h"
 
+#include "config/builder/writer_attribute_builder.h"
+#include "ecal/ecal_config.h"
+
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -91,7 +94,7 @@ namespace eCAL
     if (topic_name_.empty()) return(false);
 
     // create datawriter
-    m_datawriter = std::make_shared<CDataWriter>(topic_name_, data_type_info_, config_);
+    m_datawriter = std::make_shared<CDataWriter>(data_type_info_, BuildWriterAttributes(topic_name_, config_, GetTransportLayerConfiguration(), GetRegistrationConfiguration()));
 
     // register datawriter
     g_pubgate()->Register(topic_name_, m_datawriter);
@@ -218,6 +221,12 @@ namespace eCAL
   {
     if(m_datawriter == nullptr) return("");
     return(m_datawriter->GetTopicName());
+  }
+
+  Registration::STopicId CPublisher::GetId() const
+  {
+    if (m_datawriter == nullptr) return{};
+    return(m_datawriter->GetId());
   }
 
   SDataTypeInformation CPublisher::GetDataTypeInformation() const

@@ -53,7 +53,6 @@ TEST(core_cpp_config /*unused*/, user_config_passing /*unused*/)
   const int                 upd_snd_buff                = (5242880 + 1024);
 
   // Monitoring options
-  const unsigned int        mon_timeout                 = 6000U;
   const std::string         mon_filter_excl             = "_A.*";
   const eCAL_Logging_Filter mon_log_filter_con          = log_level_warning;
   
@@ -67,7 +66,6 @@ TEST(core_cpp_config /*unused*/, user_config_passing /*unused*/)
     custom_config.transport_layer.udp.network.group           = ip_address;
     custom_config.transport_layer.udp.send_buffer             = upd_snd_buff;
     
-    custom_config.monitoring.timeout                          = mon_timeout;
     custom_config.monitoring.filter_excl                      = mon_filter_excl;
     custom_config.logging.sinks.console.filter_log_con        = mon_log_filter_con;
 
@@ -94,9 +92,6 @@ TEST(core_cpp_config /*unused*/, user_config_passing /*unused*/)
   // Test UDP send buffer assignment, default is 5242880
   EXPECT_EQ(upd_snd_buff, eCAL::GetConfiguration().transport_layer.udp.send_buffer);
 
-  // Test monitoring timeout assignment, default is 5000U
-  EXPECT_EQ(mon_timeout, eCAL::GetConfiguration().monitoring.timeout);
-
   // Test monitoring filter exclude assignment, default is "_.*"
   EXPECT_EQ(mon_filter_excl, eCAL::GetConfiguration().monitoring.filter_excl);
 
@@ -106,7 +101,7 @@ TEST(core_cpp_config /*unused*/, user_config_passing /*unused*/)
   // Test publisher sendmode assignment, default is eCAL::TLayer::eSendMode::smode_auto
   EXPECT_EQ(pub_use_shm, eCAL::GetConfiguration().publisher.layer.shm.enable);
 
-  // Test registration option assignment, default timeout is 60000U and default refresh is 1000U
+  // Test registration option assignment, default timeout is 10000U and default refresh is 1000U
   EXPECT_EQ(registration_timeout, eCAL::GetConfiguration().registration.registration_timeout);
   EXPECT_EQ(registration_refresh, eCAL::GetConfiguration().registration.registration_refresh);
 
@@ -114,7 +109,7 @@ TEST(core_cpp_config /*unused*/, user_config_passing /*unused*/)
   EXPECT_EQ(0, eCAL::Finalize());
 }
 
-TEST(ConfigDeathTest /*unused*/, user_config_death_test /*unused*/)
+TEST(core_cpp_config /*unused*/, user_config_death_test /*unused*/)
 {
   eCAL::Configuration custom_config(0, nullptr);
 
@@ -203,7 +198,7 @@ TEST(core_cpp_config /*unused*/, config_custom_datatypes_tests /*unused*/)
   EXPECT_EQ(config1.transport_layer.udp.network.group, testValue);
 }
 
-TEST(CmdParserTest /*unused*/, config_cmd_parser_test /*unused*/)
+TEST(core_cpp_config /*unused*/, config_cmd_parser_test /*unused*/)
 {
   const std::string some_file_name = "someFileName.yml";
 
@@ -227,7 +222,7 @@ TEST(CmdParserTest /*unused*/, config_cmd_parser_test /*unused*/)
 }
 
 #ifdef ECAL_CORE_CONFIGURATION
-TEST(YamlConfigReaderTest /*unused*/, read_write_file_test /*unused*/)
+TEST(core_cpp_config /*unused*/, read_write_file_test /*unused*/)
 {
   // create a custom ini file
   std::string ini_file_name = "customIni.yml";
@@ -254,7 +249,7 @@ TEST(YamlConfigReaderTest /*unused*/, read_write_file_test /*unused*/)
   remove("myTest.yml");
 }
 
-TEST(YamlConfigReaderTest /*unused*/, parse_values_test /*unused*/)
+TEST(core_cpp_config /*unused*/, parse_values_test /*unused*/)
 {
   eCAL::Configuration config{};
   EXPECT_NO_THROW(eCAL::Config::YamlStringToConfig(ini_file_as_string_yaml, config));
@@ -278,7 +273,7 @@ TEST(YamlConfigReaderTest /*unused*/, parse_values_test /*unused*/)
   EXPECT_EQ(config.publisher.layer.shm.acknowledge_timeout_ms, 346U);
 } 
 
-TEST(YamlConfigReaderTest /*unused*/, yaml_node_merger /*unused*/)
+TEST(core_cpp_config /*unused*/, yaml_node_merger /*unused*/)
 {
   YAML::Node node_1{};
   YAML::Node node_2{};
@@ -304,7 +299,7 @@ TEST(YamlConfigReaderTest /*unused*/, yaml_node_merger /*unused*/)
   EXPECT_EQ(node_1["firstLayer2"]["secondLayer2"], node_2["firstLayer2"]["secondLayer2"]);  
 }
 
-TEST(YamlConfigReaderTest /*unused*/, yaml_to_config_merger /*unused*/)
+TEST(core_cpp_config /*unused*/, yaml_to_config_merger /*unused*/)
 {
   // create a custom ini file
   std::string ini_file_name = "customIni.yml";
