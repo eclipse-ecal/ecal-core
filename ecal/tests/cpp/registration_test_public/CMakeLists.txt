@@ -21,20 +21,16 @@ project(test_registration_public)
 find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
-if(ECAL_CORE_PUBLISHER AND ECAL_CORE_SUBSCRIBER)
-  set(registration_test_topics_src
-    src/registration_getpublisherids.cpp
-    src/registration_getsubscriberids.cpp
-    src/registration_gettopics.cpp
-  )
-endif()
+set(registration_test_topics_src
+  src/registration_getpublisherids.cpp
+  src/registration_getsubscriberids.cpp
+  src/registration_gettopics.cpp
+)
 
-if(ECAL_CORE_SERVICE)
-  set(registration_test_service_src
-    src/registration_getclients.cpp
-    src/registration_getservices.cpp
-  )
-endif()
+set(registration_test_service_src
+  src/registration_getclients.cpp
+  src/registration_getservices.cpp
+)
 
 set(registration_test_src
   ${registration_test_topics_src}

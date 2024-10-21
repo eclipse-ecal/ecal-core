@@ -55,8 +55,12 @@ namespace eCAL
   CRegistrationReceiver::CRegistrationReceiver(const Registration::SAttributes& attr_)
     : m_timeout_provider(nullptr)
     , m_timeout_provider_thread(nullptr)
+#if ECAL_CORE_TRANSPORT_UDP
     , m_registration_receiver_udp(nullptr)
-    , m_registration_receiver_shm(nullptr)   
+#endif
+#if ECAL_CORE_REGISTRATION_SHM
+    , m_registration_receiver_shm(nullptr)
+#endif
     , m_sample_applier(Registration::SampleApplier::BuildSampleApplierAttributes(attr_))
     , m_attributes(attr_)
   {
