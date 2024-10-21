@@ -32,27 +32,12 @@
 #include "io/udp/ecal_udp_configurations.h"
 #include <ecal/ecal_config.h>
 
-namespace
-{
-  using namespace eCAL;
-  UDP::SSenderAttr CreateAttributes()
-  {
-    eCAL::UDP::SSenderAttr attr;
-    attr.address = UDP::GetRegistrationAddress();
-    attr.port = UDP::GetRegistrationPort();
-    attr.ttl = UDP::GetMulticastTtl();
-    attr.broadcast = UDP::IsBroadcast();
-    attr.loopback = true;
-    attr.sndbuf = UDP::GetSendBufferSize();
-    return attr;
-  }
-
-}
+#include "registration/udp/config/builder/udp_attribute_builder.h"
 
 namespace eCAL
 {
-  CRegistrationSenderUDP::CRegistrationSenderUDP()
-    : m_reg_sample_snd(CreateAttributes())
+  CRegistrationSenderUDP::CRegistrationSenderUDP(const eCAL::Registration::UDP::SSenderAttributes& attr_)
+    : m_reg_sample_snd(Registration::UDP::ConvertToIOUDPSenderAttributes(attr_))
   {
   }
 
@@ -73,7 +58,7 @@ namespace eCAL
   bool CRegistrationSenderUDP::SendSampleList(const Registration::SampleList& sample_list)
   {
     bool return_value{ true };
-    for (const auto& sample : sample_list.samples)
+    for (const auto& sample : sample_list)
     {
       return_value &= SendSample(sample);
     }

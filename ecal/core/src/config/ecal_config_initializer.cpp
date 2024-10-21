@@ -225,14 +225,14 @@ namespace eCAL
         eCAL::Config::YamlFileToConfig(yaml_path, *this);
         ecal_yaml_file_path = yaml_path;
 #else
-        eCAL::Logging::Log(log_level_warning, "Yaml file found at \"" + yaml_path + "\" but eCAL core configuration is not enabled.");
+        std::cout << "Yaml file found at \"" << yaml_path << "\" but eCAL core configuration is not enabled." << "\n";
 #endif
       }
       else
       {
-        eCAL::Logging::Log(log_level_warning, "Specified yaml configuration path not valid:\"" + yaml_path_ + "\". Using default configuration.");
+        std::cout << "Specified yaml configuration path not valid:\"" << yaml_path_ << "\". Using default configuration." << "\n";
       }
-    };
+    }
 
     Configuration::Configuration(int argc_ , char **argv_)
     : Configuration(ConvertArgcArgvToVector(argc_, argv_))
@@ -240,7 +240,6 @@ namespace eCAL
     }
 
     Configuration::Configuration(const std::vector<std::string>& args_)
-    : Configuration()
     {
       Config::CmdParser parser(args_);
       
@@ -264,7 +263,6 @@ namespace eCAL
 
     Configuration::Configuration()
     {
-      eCAL::InitGlobals();
     }
 
     std::string Configuration::GetYamlFilePath()
@@ -275,19 +273,58 @@ namespace eCAL
     Configuration& GetConfiguration()
     {
       return g_ecal_configuration;
-    };
+    }
+
+    TransportLayer::Configuration& GetTransportLayerConfiguration()
+    {
+      return GetConfiguration().transport_layer;
+    }
+
+    Registration::Configuration& GetRegistrationConfiguration()
+    {
+      return GetConfiguration().registration;
+    }
+
+    Monitoring::Configuration& GetMonitoringConfiguration()
+    {
+      return GetConfiguration().monitoring;
+    }
+
+    Logging::Configuration& GetLoggingConfiguration()
+    {
+      return GetConfiguration().logging;
+    }
+
+    Subscriber::Configuration& GetSubscriberConfiguration()
+    {
+      return GetConfiguration().subscriber;
+    }
+
+    Publisher::Configuration& GetPublisherConfiguration()
+    {
+      return GetConfiguration().publisher;
+    }
+
+    Time::Configuration& GetTimesyncConfiguration()
+    {
+      return GetConfiguration().timesync;
+    }
+
+    Service::Configuration& GetServiceConfiguration()
+    {
+      return GetConfiguration().service;
+    }
+
+    Application::Configuration& GetApplicationConfiguration()
+    {
+      return GetConfiguration().application;
+    }
 }
 
 
 // Utils definitions from former ecal_config_reader.cpp
 namespace
 {
-  bool fileexists(const std::string& fname_)
-  {
-    const std::ifstream infile(fname_);
-    return infile.good();
-  }
-
   bool direxists(const std::string& path_)
   {
     const EcalUtils::Filesystem::FileStatus status(path_, EcalUtils::Filesystem::Current);

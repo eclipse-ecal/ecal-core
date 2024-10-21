@@ -69,6 +69,7 @@ set(ecal_config_src
     src/config/ecal_cmd_parser.cpp
     src/config/ecal_config.cpp
     src/config/ecal_config_initializer.cpp
+    src/config/transport_layer.cpp
     src/types/ecal_custom_data_types.cpp
 )
 if (ECAL_CORE_CONFIGURATION)
@@ -192,6 +193,8 @@ if(ECAL_CORE_MONITORING)
 set(ecal_monitoring_src
     src/monitoring/ecal_monitoring_def.cpp
     src/monitoring/ecal_monitoring_def.h
+    src/monitoring/ecal_monitoring_filter.cpp
+    src/monitoring/ecal_monitoring_filter.h
     src/monitoring/ecal_monitoring_impl.cpp
     src/monitoring/ecal_monitoring_impl.h
 )
@@ -286,6 +289,7 @@ if (ECAL_CORE_REGISTRATION)
   set(ecal_registration_src
       src/registration/ecal_process_registration.cpp
       src/registration/ecal_process_registration.h
+      src/registration/ecal_registration.cpp
       src/registration/ecal_registration_provider.cpp
       src/registration/ecal_registration_provider.h
       src/registration/ecal_registration_receiver.cpp
@@ -296,6 +300,8 @@ if (ECAL_CORE_REGISTRATION)
       src/registration/ecal_registration_sample_applier_gates.h      
       src/registration/ecal_registration_sample_applier_user.cpp
       src/registration/ecal_registration_sample_applier_user.h
+      src/registration/ecal_registration_timeout_provider.cpp
+      src/registration/ecal_registration_timeout_provider.h
       src/registration/ecal_registration_sender.h
       src/registration/udp/ecal_registration_receiver_udp.cpp
       src/registration/udp/ecal_registration_receiver_udp.h
@@ -323,29 +329,29 @@ endif()
 # serialization
 ######################################
 set(ecal_serialization_src
-    src/serialization/nanopb/nanopb/pb.h
-    src/serialization/nanopb/nanopb/pb_common.c
-    src/serialization/nanopb/nanopb/pb_common.h
-    src/serialization/nanopb/nanopb/pb_decode.c
-    src/serialization/nanopb/nanopb/pb_decode.h
-    src/serialization/nanopb/nanopb/pb_encode.c
-    src/serialization/nanopb/nanopb/pb_encode.h      
-    src/serialization/nanopb/ecal.pb.c
-    src/serialization/nanopb/ecal.pb.h
-    src/serialization/nanopb/host.pb.c
-    src/serialization/nanopb/host.pb.h
-    src/serialization/nanopb/layer.pb.c
-    src/serialization/nanopb/layer.pb.h
-    src/serialization/nanopb/logging.pb.c
-    src/serialization/nanopb/logging.pb.h
-    src/serialization/nanopb/monitoring.pb.c
-    src/serialization/nanopb/monitoring.pb.h
-    src/serialization/nanopb/process.pb.c
-    src/serialization/nanopb/process.pb.h
-    src/serialization/nanopb/service.pb.c
-    src/serialization/nanopb/service.pb.h
-    src/serialization/nanopb/topic.pb.c
-    src/serialization/nanopb/topic.pb.h
+    src/serialization/nanopb/pb.h
+    src/serialization/nanopb/pb_common.c
+    src/serialization/nanopb/pb_common.h
+    src/serialization/nanopb/pb_decode.c
+    src/serialization/nanopb/pb_decode.h
+    src/serialization/nanopb/pb_encode.c
+    src/serialization/nanopb/pb_encode.h
+    src/serialization/nanopb/ecal/core/pb/ecal.npb.c
+    src/serialization/nanopb/ecal/core/pb/ecal.npb.h
+    src/serialization/nanopb/ecal/core/pb/host.npb.c
+    src/serialization/nanopb/ecal/core/pb/host.npb.h
+    src/serialization/nanopb/ecal/core/pb/layer.npb.c
+    src/serialization/nanopb/ecal/core/pb/layer.npb.h
+    src/serialization/nanopb/ecal/core/pb/logging.npb.c
+    src/serialization/nanopb/ecal/core/pb/logging.npb.h
+    src/serialization/nanopb/ecal/core/pb/monitoring.npb.c
+    src/serialization/nanopb/ecal/core/pb/monitoring.npb.h
+    src/serialization/nanopb/ecal/core/pb/process.npb.c
+    src/serialization/nanopb/ecal/core/pb/process.npb.h
+    src/serialization/nanopb/ecal/core/pb/service.npb.c
+    src/serialization/nanopb/ecal/core/pb/service.npb.h
+    src/serialization/nanopb/ecal/core/pb/topic.npb.c
+    src/serialization/nanopb/ecal/core/pb/topic.npb.h
     src/serialization/ecal_serialize_common.cpp
     src/serialization/ecal_serialize_common.h
     src/serialization/ecal_serialize_logging.cpp
@@ -404,6 +410,7 @@ endif()
 set(ecal_util_src
     src/util/ecal_expmap.h
     src/util/ecal_thread.h
+    src/util/expanding_vector.h
     src/util/frequency_calculator.h
     src/util/getenvvar.h
 )
@@ -441,6 +448,27 @@ if (WIN32)
 endif()
 
 ######################################
+# builder
+######################################
+set (ecal_builder_src
+    src/config/builder/logging_attribute_builder.cpp
+    src/config/builder/monitoring_attribute_builder.cpp
+    src/config/builder/registration_attribute_builder.cpp
+    src/logging/config/builder/udp_attribute_builder.cpp
+    src/pubsub/config/builder/reader_attribute_builder.cpp
+    src/pubsub/config/builder/writer_attribute_builder.cpp
+    src/readwrite/config/builder/shm_attribute_builder.cpp
+    src/readwrite/config/builder/tcp_attribute_builder.cpp
+    src/readwrite/config/builder/udp_attribute_builder.cpp
+    src/readwrite/tcp/config/builder/data_reader_tcp_attribute_builder.cpp
+    src/readwrite/udp/config/builder/udp_attribute_builder.cpp
+    src/registration/config/builder/udp_shm_attribute_builder.cpp
+    src/registration/config/builder/sample_applier_attribute_builder.cpp
+    src/registration/udp/config/builder/udp_attribute_builder.cpp
+)
+
+
+######################################
 # c interface
 ######################################
 set(ecal_c_src
@@ -452,6 +480,7 @@ set(ecal_c_src
     src/cimpl/ecal_monitoring_cimpl.cpp
     src/cimpl/ecal_process_cimpl.cpp
     src/cimpl/ecal_publisher_cimpl.cpp
+    src/cimpl/ecal_registration_cimpl.cpp
     src/cimpl/ecal_server_cimpl.cpp
     src/cimpl/ecal_subscriber_cimpl.cpp
     src/cimpl/ecal_time_cimpl.cpp
@@ -480,6 +509,7 @@ set(ecal_header_cmn
     include/ecal/config/subscriber.h
     include/ecal/ecal.h
     include/ecal/ecal_callback.h
+    include/ecal/ecal_config.h
     include/ecal/ecal_client.h
     include/ecal/ecal_core.h
     include/ecal/ecal_deprecate.h
@@ -491,6 +521,7 @@ set(ecal_header_cmn
     include/ecal/ecal_monitoring.h
     include/ecal/ecal_process.h
     include/ecal/ecal_process_severity.h
+    include/ecal/ecal_registration.h
     include/ecal/ecal_publisher.h
     include/ecal/ecal_server.h
     include/ecal/ecal_service_info.h
@@ -511,6 +542,7 @@ set(ecal_header_cimpl
     include/ecal/cimpl/ecal_monitoring_cimpl.h
     include/ecal/cimpl/ecal_process_cimpl.h
     include/ecal/cimpl/ecal_publisher_cimpl.h
+    include/ecal/cimpl/ecal_registration_cimpl.h
     include/ecal/cimpl/ecal_server_cimpl.h
     include/ecal/cimpl/ecal_service_info_cimpl.h
     include/ecal/cimpl/ecal_subscriber_cimpl.h
@@ -558,6 +590,7 @@ set(ecal_sources
     ${ecal_time_src}
     ${ecal_util_src}
     ${ecal_cmn_src}
+    ${ecal_builder_src}
     ${ecal_header_cmn}
     ${ecal_header_msg}
 )
@@ -673,8 +706,8 @@ target_link_libraries(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
   PRIVATE 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/serialization/>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/serialization/nanopb>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/serialization/nanopb/nanopb>
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/>

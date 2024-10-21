@@ -24,7 +24,7 @@
 
 #include "nanopb/pb_encode.h"
 #include "nanopb/pb_decode.h"
-#include "nanopb/ecal.pb.h"
+#include "nanopb/ecal/core/pb/ecal.npb.h"
 
 #include "ecal_serialize_common.h"
 #include "ecal_serialize_sample_registration.h"
@@ -33,6 +33,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace
@@ -406,6 +407,8 @@ namespace
       registration_.process.rclock = pb_sample_.process.rclock;
       // pid
       registration_.identifier.process_id = pb_sample_.process.pid;
+      // tid -> we need to use the PID here, because we don't have a designated field for it
+      registration_.identifier.entity_id = std::to_string(registration_.identifier.process_id);
       // state.severity
       registration_.process.state.severity = static_cast<eCAL::Registration::eProcessSeverity>(pb_sample_.process.state.severity);
       // state.severity_level
@@ -505,7 +508,7 @@ namespace
     if (arg == nullptr)  return false;
     if (*arg == nullptr) return false;
 
-    auto* sample_list = static_cast<std::list<eCAL::Registration::Sample>*>(*arg);
+    auto* sample_list = static_cast<eCAL::Registration::SampleList*>(*arg);
 
     for (const auto& sample : *sample_list)
     {
@@ -535,7 +538,7 @@ namespace
     // prepare sample for encoding
     ///////////////////////////////////////////////
     pb_sample_list_.samples.funcs.encode = &encode_sample_list_field; // NOLINT(*-pro-type-union-access)
-    pb_sample_list_.samples.arg = (void*)(&registration_list_.samples);
+    pb_sample_list_.samples.arg = (void*)(&registration_list_);
 
     ///////////////////////////////////////////////
     // evaluate byte size
@@ -582,7 +585,11 @@ namespace
     if (*arg == nullptr) return false;
 
     eCAL_pb_Sample pb_sample = eCAL_pb_Sample_init_default;
-    eCAL::Registration::Sample sample{};
+
+    // add sample to list
+    auto* sample_list = static_cast<eCAL::Registration::SampleList*>(*arg);
+    // Create a new element directly at the end of the vector
+    auto& sample = sample_list->push_back();
 
     // prepare sample for decoding
     PrepareDecoding(pb_sample, sample);
@@ -595,10 +602,6 @@ namespace
 
     // apply sample values
     AssignValues(pb_sample, sample);
-
-    // add sample to list
-    auto* sample_list = static_cast<std::list<eCAL::Registration::Sample>*>(*arg);
-    sample_list->push_back(sample);
 
     return true;
   }
@@ -615,7 +618,7 @@ namespace
     // prepare sample for decoding
     ///////////////////////////////////////////////
     pb_sample_list.samples.funcs.decode = &decode_sample_list_field; // NOLINT(*-pro-type-union-access)
-    pb_sample_list.samples.arg = &registration_list_.samples;
+    pb_sample_list.samples.arg = &registration_list_;
 
     ///////////////////////////////////////////////
     // decode it

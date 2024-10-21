@@ -40,11 +40,11 @@ namespace eCAL
   // CMemfileRegistrationReceiver
   //////////////////////////////////////////////////////////////////
 
-  CRegistrationReceiverSHM::CRegistrationReceiverSHM(RegistrationApplySampleCallbackT apply_sample_callback)
+  CRegistrationReceiverSHM::CRegistrationReceiverSHM(RegistrationApplySampleCallbackT apply_sample_callback, const Registration::SHM::SAttributes& attr_)
    : m_apply_sample_callback(apply_sample_callback)
   {
     m_memfile_broadcast = std::make_unique<CMemoryFileBroadcast>();
-    m_memfile_broadcast->Create(Config::Experimental::GetShmMonitoringDomain(), Config::Experimental::GetShmMonitoringQueueSize());
+    m_memfile_broadcast->Create(attr_);
     m_memfile_broadcast->FlushLocalEventQueue();
 
     m_memfile_broadcast_reader = std::make_unique<CMemoryFileBroadcastReader>();
@@ -70,15 +70,17 @@ namespace eCAL
 
   void CRegistrationReceiverSHM::Receive()
   {
+    // At the moment this function is called synchronously by a dedicated thread.
+    // If this changes, we need to protect the sample list member variable
     MemfileBroadcastMessageListT message_list;
     if (m_memfile_broadcast_reader->Read(message_list, 0))
     {
-      eCAL::Registration::SampleList sample_list;
+      m_sample_list.clear();
       for (const auto& message : message_list)
       {
-        if (DeserializeFromBuffer(static_cast<const char*>(message.data), message.size, sample_list))
+        if (DeserializeFromBuffer(static_cast<const char*>(message.data), message.size, m_sample_list))
         {
-          for (const auto& sample : sample_list.samples)
+          for (const auto& sample : m_sample_list)
           {
             m_apply_sample_callback(sample);
           }

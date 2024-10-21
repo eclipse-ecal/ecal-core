@@ -27,17 +27,23 @@
 
 #include "registration/ecal_registration_receiver.h"
 
+#include "registration/ecal_registration_timeout_provider.h"
+#include "util/ecal_thread.h"
+
 #include "registration/udp/ecal_registration_receiver_udp.h"
 #if ECAL_CORE_REGISTRATION_SHM
 #include "registration/shm/ecal_registration_receiver_shm.h"
 #endif
-
 #include "io/udp/ecal_udp_configurations.h"
+#include <ecal/ecal_config.h>
 #include <atomic>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
+
+#include "config/builder/udp_shm_attribute_builder.h"
+#include "config/builder/sample_applier_attribute_builder.h"
 
 namespace eCAL
 {
@@ -46,10 +52,17 @@ namespace eCAL
   //////////////////////////////////////////////////////////////////
   std::atomic<bool> CRegistrationReceiver::m_created;
 
-  CRegistrationReceiver::CRegistrationReceiver()
-    : m_use_registration_udp(false)
-    , m_use_registration_shm(false)
-    , m_sample_applier(Config::IsNetworkEnabled(), false, Process::GetHostGroupName(), Process::GetProcessID())
+  CRegistrationReceiver::CRegistrationReceiver(const Registration::SAttributes& attr_)
+    : m_timeout_provider(nullptr)
+    , m_timeout_provider_thread(nullptr)
+#if ECAL_CORE_TRANSPORT_UDP
+    , m_registration_receiver_udp(nullptr)
+#endif
+#if ECAL_CORE_REGISTRATION_SHM
+    , m_registration_receiver_shm(nullptr)
+#endif
+    , m_sample_applier(Registration::SampleApplier::BuildSampleApplierAttributes(attr_))
+    , m_attributes(attr_)
   {
     // Connect User registration callback and gates callback with the sample applier
     m_sample_applier.SetCustomApplySampleCallback("gates", [](const eCAL::Registration::Sample& sample_)
@@ -75,19 +88,30 @@ namespace eCAL
   {
     if(m_created) return;
 
-    // receive registration via udp or shared memory
-    m_use_registration_shm = Config::IsShmRegistrationEnabled();
-    m_use_registration_udp = !m_use_registration_shm;
+    m_timeout_provider = std::make_unique<Registration::CTimeoutProvider<std::chrono::steady_clock>>(
+      m_attributes.timeout,
+      [this](const Registration::Sample& sample_)
+      {
+        return m_sample_applier.ApplySample(sample_);
+      }
+      );
+    m_sample_applier.SetCustomApplySampleCallback("timeout", [this](const eCAL::Registration::Sample& sample_)
+      {
+        m_timeout_provider->ApplySample(sample_);
+      });
+    m_timeout_provider_thread = std::make_unique<CCallbackThread>([this]() {m_timeout_provider->CheckForTimeouts(); });
+    m_timeout_provider_thread->start(std::chrono::milliseconds(100));
 
-    if (m_use_registration_udp)
+    // Why do we have here different behaviour than in the registration provider?
+    if (m_attributes.udp_enabled)    
     {
-      m_registration_receiver_udp = std::make_unique<CRegistrationReceiverUDP>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_); });
+      m_registration_receiver_udp = std::make_unique<CRegistrationReceiverUDP>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_);}, Registration::BuildUDPReceiverAttributes(m_attributes));
     }
 
 #if ECAL_CORE_REGISTRATION_SHM
-    if (m_use_registration_shm)
+    if (m_attributes.shm_enabled)
     {
-      m_registration_receiver_shm = std::make_unique<CRegistrationReceiverSHM>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_); });
+      m_registration_receiver_shm = std::make_unique<CRegistrationReceiverSHM>([this](const Registration::Sample& sample_) {return m_sample_applier.ApplySample(sample_); }, Registration::BuildSHMAttributes(m_attributes));
     }
 #endif
 
@@ -99,17 +123,21 @@ namespace eCAL
     if(!m_created) return;
 
     // stop network registration receive thread
-    if (m_use_registration_udp)
+    if (m_attributes.udp_enabled)
     {
       m_registration_receiver_udp = nullptr;
     }
 
 #if ECAL_CORE_REGISTRATION_SHM
-    if (m_use_registration_shm)
+    if (m_attributes.shm_enabled)
     {
       m_registration_receiver_shm = nullptr;
     }
 #endif
+
+    m_timeout_provider_thread = nullptr;
+    m_sample_applier.RemCustomApplySampleCallback("timeout");
+    m_timeout_provider = nullptr;
 
     m_created          = false;
   }

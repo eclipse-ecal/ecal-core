@@ -97,7 +97,7 @@ namespace eCAL
      * @param data_type_info_  Topic data type information (encoding, type, descriptor).
      * @param config_          Optional configuration parameters.
     **/
-    ECAL_API CSubscriber(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Subscriber::Configuration& config_ = {});
+    ECAL_API CSubscriber(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Subscriber::Configuration& config_ = GetSubscriberConfiguration());
 
     /**
      * @brief Constructor.
@@ -105,7 +105,7 @@ namespace eCAL
      * @param topic_name_      Unique topic name.
      * @param config_          Optional configuration parameters.
     **/
-    ECAL_API explicit CSubscriber(const std::string& topic_name_, const Subscriber::Configuration& config_ = {});
+    ECAL_API explicit CSubscriber(const std::string& topic_name_, const Subscriber::Configuration& config_ = GetSubscriberConfiguration());
 
     /**
      * @brief Destructor. 
@@ -141,7 +141,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Subscriber::Configuration& config_ = {});
+    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Subscriber::Configuration& config_ = GetSubscriberConfiguration());
 
     /**
      * @brief Creates this object.
@@ -209,6 +209,15 @@ namespace eCAL
     ECAL_API bool AddReceiveCallback(ReceiveCallbackT callback_);
 
     /**
+     * @brief Add callback function for incoming receives.
+     *
+     * @param callback_  The callback function to add.
+      *
+      * @return  True if succeeded, false if not.
+     **/
+    ECAL_API bool AddReceiveCallback(ReceiveIDCallbackT callback_);
+
+    /**
      * @brief Remove callback function for incoming receives. 
      *
      * @return  True if succeeded, false if not. 
@@ -261,6 +270,13 @@ namespace eCAL
      * @return  The topic name. 
     **/
     ECAL_API std::string GetTopicName() const;
+
+    /**
+     * @brief Gets a unique ID of this Subscriber
+     *
+     * @return  The topic id.
+    **/
+    ECAL_API Registration::STopicId GetId() const;
 
     /**
      * @brief Gets description of the connected topic.

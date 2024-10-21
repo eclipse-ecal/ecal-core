@@ -33,12 +33,16 @@
 #include "registration/shm/ecal_memfile_broadcast.h"
 #include "registration/shm/ecal_memfile_broadcast_writer.h"
 
+#include "config/attributes/registration_shm_attributes.h"
+
+#include <vector>
+
 namespace eCAL
 {
   class CRegistrationSenderSHM : public CRegistrationSender
   {
   public:
-    CRegistrationSenderSHM();
+    CRegistrationSenderSHM(const Registration::SHM::SAttributes& attr_);
     ~CRegistrationSenderSHM() override;
 
     // Special member functionss
@@ -53,5 +57,6 @@ namespace eCAL
   private:
     CMemoryFileBroadcast                m_memfile_broadcast;
     CMemoryFileBroadcastWriter          m_memfile_broadcast_writer;
+    std::vector<char>                   m_sample_list_buffer;
   };
 }

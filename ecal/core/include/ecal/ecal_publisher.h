@@ -85,7 +85,7 @@ namespace eCAL
      * @param data_type_info_  Topic data type information (encoding, type, descriptor).
      * @param config_          Optional configuration parameters.
     **/
-    ECAL_API CPublisher(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Publisher::Configuration& config_ = {});
+    ECAL_API CPublisher(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Publisher::Configuration& config_ = GetPublisherConfiguration());
 
     /**
      * @brief Constructor.
@@ -93,7 +93,7 @@ namespace eCAL
      * @param topic_name_   Unique topic name.
      * @param config_       Optional configuration parameters.
     **/
-    ECAL_API explicit CPublisher(const std::string& topic_name_, const Publisher::Configuration& config_ = {});
+    ECAL_API explicit CPublisher(const std::string& topic_name_, const Publisher::Configuration& config_ = GetPublisherConfiguration());
 
     /**
      * @brief Destructor. 
@@ -129,7 +129,7 @@ namespace eCAL
      *
      * @return  True if it succeeds, false if it fails.
     **/
-    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Publisher::Configuration& config_ = {});
+    ECAL_API bool Create(const std::string& topic_name_, const SDataTypeInformation& data_type_info_, const Publisher::Configuration& config_ = GetPublisherConfiguration());
 
     /**
      * @brief Creates this object.
@@ -262,6 +262,13 @@ namespace eCAL
      * @return  The topic name. 
     **/
     ECAL_API std::string GetTopicName() const;
+
+    /**
+     * @brief Gets a unique ID of this Publisher
+     *
+     * @return  The topic id.
+    **/
+    ECAL_API Registration::STopicId GetId() const;
 
     /**
      * @brief Gets description of the connected topic.

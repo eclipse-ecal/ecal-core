@@ -1,6 +1,6 @@
 /* ========================= eCAL LICENSE =================================
  *
- * Copyright (C) 2016 - 2019 Continental Corporation
+ * Copyright (C) 2016 - 2024 Continental Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@
 
 #include "ecal_def.h"
 #include "readwrite/ecal_reader_layer.h"
+#include "serialization/ecal_struct_sample_payload.h"
+#include "config/attributes/reader_shm_attributes.h"
 
 #include <cstddef>
 #include <memory>
@@ -35,19 +37,21 @@ namespace eCAL
   ////////////////
   // LAYER
   ////////////////
-  class CSHMReaderLayer : public CReaderLayer<CSHMReaderLayer>
+  class CSHMReaderLayer : public CReaderLayer<CSHMReaderLayer, eCAL::eCALReader::SHM::SAttributes>
   {
   public:
     CSHMReaderLayer() = default;
     ~CSHMReaderLayer() override = default;
 
-    void Initialize() override {}
+    void Initialize(const eCAL::eCALReader::SHM::SAttributes& attr_) override;
     void AddSubscription(const std::string& /*host_name_*/, const std::string& /*topic_name_*/, const std::string& /*topic_id_*/) override {}
     void RemSubscription(const std::string& /*host_name_*/, const std::string& /*topic_name_*/, const std::string& /*topic_id_*/) override {}
 
     void SetConnectionParameter(SReaderLayerPar& par_) override;
 
   private:
-    size_t OnNewShmFileContent(const std::string& topic_name_, const std::string& topic_id_, const char* buf_, size_t len_, long long id_, long long clock_, long long time_, size_t hash_);
+    size_t OnNewShmFileContent(const Payload::TopicInfo& topic_info_, const char* buf_, size_t len_, long long id_, long long clock_, long long time_, size_t hash_);
+
+    eCAL::eCALReader::SHM::SAttributes m_attributes;
   };
 }

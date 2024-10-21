@@ -30,10 +30,10 @@
 #include "serialization/ecal_serialize_sample_registration.h"
 
 
-eCAL::CRegistrationSenderSHM::CRegistrationSenderSHM()
+eCAL::CRegistrationSenderSHM::CRegistrationSenderSHM(const Registration::SHM::SAttributes& attr_)
 {
-  std::cout << "Shared memory monitoring is enabled (domain: " << Config::Experimental::GetShmMonitoringDomain() << " - queue size: " << Config::Experimental::GetShmMonitoringQueueSize() << ")" << '\n';
-  m_memfile_broadcast.Create(Config::Experimental::GetShmMonitoringDomain(), Config::Experimental::GetShmMonitoringQueueSize());
+  std::cout << "Shared memory monitoring is enabled (domain: " << attr_.domain << " - queue size: " << attr_.queue_size << ")" << '\n';
+  m_memfile_broadcast.Create(attr_);
   m_memfile_broadcast_writer.Bind(&m_memfile_broadcast);
 }
 
@@ -54,13 +54,13 @@ bool eCAL::CRegistrationSenderSHM::SendSampleList(const Registration::SampleList
 {
   bool return_value{true};
   // serialize whole sample list
-  std::vector<char> sample_list_buffer;
-  if (SerializeToBuffer(sample_list, sample_list_buffer))
+  m_sample_list_buffer.clear();
+  if (SerializeToBuffer(sample_list, m_sample_list_buffer))
   {
-    if (!sample_list_buffer.empty())
+    if (!m_sample_list_buffer.empty())
     {
       // broadcast sample list over shm
-      return_value &= m_memfile_broadcast_writer.Write(sample_list_buffer.data(), sample_list_buffer.size());
+      return_value &= m_memfile_broadcast_writer.Write(m_sample_list_buffer.data(), m_sample_list_buffer.size());
     }
   }
   return return_value;

@@ -25,6 +25,7 @@
 
 #include "ecal_globals.h"
 #include "readwrite/ecal_reader.h"
+#include "config/builder/reader_attribute_builder.h"
 
 #include <iostream>
 #include <set>
@@ -81,7 +82,7 @@ namespace eCAL
     if (topic_name_.empty()) return(false);
 
     // create datareader
-    m_datareader = std::make_shared<CDataReader>(topic_name_, data_type_info_, config_);
+    m_datareader = std::make_shared<CDataReader>(data_type_info_, BuildReaderAttributes(topic_name_, config_, GetPublisherConfiguration(), GetTransportLayerConfiguration(), GetRegistrationConfiguration()));
 
     // register datareader
     g_subgate()->Register(topic_name_, m_datareader);
@@ -148,7 +149,16 @@ namespace eCAL
 
   bool CSubscriber::AddReceiveCallback(ReceiveCallbackT callback_)
   {
-    if(m_datareader == nullptr) return(false);
+    auto id_callback = [callback_](const Registration::STopicId& topic_id_, const SDataTypeInformation&, const SReceiveCallbackData& data_)
+    {
+      callback_(topic_id_.topic_name.c_str(), &data_);
+    };
+    return AddReceiveCallback(id_callback);
+  }
+
+  bool CSubscriber::AddReceiveCallback(ReceiveIDCallbackT callback_)
+  {
+    if (m_datareader == nullptr) return(false);
     RemReceiveCallback();
     return(m_datareader->AddReceiveCallback(std::move(callback_)));
   }
@@ -188,6 +198,12 @@ namespace eCAL
   {
     if(m_datareader == nullptr) return("");
     return(m_datareader->GetTopicName());
+  }
+
+  Registration::STopicId CSubscriber::GetId() const
+  {
+    if (m_datareader == nullptr) return{};
+    return(m_datareader->GetId());
   }
   
   SDataTypeInformation CSubscriber::GetDataTypeInformation() const
